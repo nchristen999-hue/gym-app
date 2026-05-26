@@ -1338,6 +1338,14 @@
   .paywall-price { margin-bottom: 20px; }
   .paywall-price-amount { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--accent); line-height: 1; }
   .paywall-price-period { font-size: 14px; color: var(--text-dim); }
+  .paywall-billing-tabs { display: flex; gap: 6px; background: var(--surface-2); border-radius: 12px; padding: 4px; margin-bottom: 18px; }
+  .paywall-billing-tab { flex: 1; padding: 10px; border-radius: 9px; background: transparent; border: none; color: var(--text-dim); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; position: relative; }
+  .paywall-billing-tab.active { background: var(--accent); color: #000; }
+  .paywall-billing-tab .save-badge { position: absolute; top: -8px; right: -4px; background: #ff4444; color: #fff; font-size: 9px; padding: 2px 5px; border-radius: 6px; font-weight: 700; letter-spacing: 0; }
+  .paywall-billing-tab.active .save-badge { background: #000; color: var(--accent); }
+  .paywall-price-original { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--text-dim); text-decoration: line-through; line-height: 1; opacity: 0.7; }
+  .paywall-price-row { display: flex; align-items: baseline; justify-content: center; gap: 12px; }
+  .paywall-discount-badge { display: inline-block; background: #ff4444; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 6px; letter-spacing: 1px; margin-top: 6px; }
   .paywall-buy-btn { width: 100%; background: var(--accent); color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; transition: transform 0.15s; }
   .paywall-buy-btn:active { transform: scale(0.98); }
   .paywall-close { background: transparent; color: var(--text-dim); border: 1px solid var(--border); padding: 12px; border-radius: 12px; width: 100%; cursor: pointer; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
@@ -1611,17 +1619,26 @@
     <div class="view" id="view-cardio">
       <div class="card-title" style="margin-bottom:16px;">Cardio-Tracking</div>
 
+      <div class="cardio-type-pills" id="cardioFilterPills" style="margin-bottom:14px;">
+        <div class="cardio-type-pill active" data-filter="all" onclick="setCardioFilter('all')">🏅 Alle</div>
+        <div class="cardio-type-pill" data-filter="Laufen" onclick="setCardioFilter('Laufen')">🏃 Laufen</div>
+        <div class="cardio-type-pill" data-filter="Radfahren" onclick="setCardioFilter('Radfahren')">🚴 Radfahren</div>
+        <div class="cardio-type-pill" data-filter="Schwimmen" onclick="setCardioFilter('Schwimmen')">🏊 Schwimmen</div>
+        <div class="cardio-type-pill" data-filter="Wandern" onclick="setCardioFilter('Wandern')">🥾 Wandern</div>
+        <div class="cardio-type-pill" data-filter="Sonstiges" onclick="setCardioFilter('Sonstiges')">⚡ Sonstiges</div>
+      </div>
+
       <div class="cardio-summary">
         <div class="stat-card">
-          <div class="stat-label">Sessions Total</div>
+          <div class="stat-label">Sessions</div>
           <div class="stat-value" id="cardioTotalCount">0</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">kcal Total</div>
+          <div class="stat-label">kcal</div>
           <div class="stat-value" id="cardioTotalKcal">0<span class="unit">kcal</span></div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Distanz Total</div>
+          <div class="stat-label">Distanz</div>
           <div class="stat-value" id="cardioTotalDist">0<span class="unit">km</span></div>
         </div>
         <div class="stat-card">
@@ -1629,6 +1646,8 @@
           <div class="stat-value" id="cardioWeekCount">0</div>
         </div>
       </div>
+
+      <div id="cardioBestMedal" style="margin-bottom:14px;"></div>
 
       <div id="cardioTemplatesSection" style="margin-bottom:16px;">
         <div class="card-title" style="margin-bottom:8px;">
@@ -2034,9 +2053,17 @@
       <div class="paywall-feature"><span class="check">✓</span><span>Level-System & XP</span></div>
       <div class="paywall-feature"><span class="check">✓</span><span>Daten-Export & Import</span></div>
     </div>
+    <div class="paywall-billing-tabs">
+      <button class="paywall-billing-tab active" data-billing="yearly" onclick="setPaywallBilling('yearly')">Jährlich<span class="save-badge">-50%</span></button>
+      <button class="paywall-billing-tab" data-billing="monthly" onclick="setPaywallBilling('monthly')">Monatlich<span class="save-badge">-50%</span></button>
+    </div>
     <div class="paywall-price">
-      <div class="paywall-price-amount">CHF 17</div>
-      <div class="paywall-price-period">pro Jahr</div>
+      <div class="paywall-price-row">
+        <div class="paywall-price-original" id="paywallPriceOriginal">CHF 34</div>
+        <div class="paywall-price-amount" id="paywallPriceAmount">CHF 17</div>
+      </div>
+      <div class="paywall-price-period" id="paywallPricePeriod">pro Jahr</div>
+      <div class="paywall-discount-badge" id="paywallDiscountBadge">SPARE CHF 17 / Jahr</div>
     </div>
     <button class="paywall-buy-btn" onclick="handlePurchase()">Jetzt upgraden</button>
     <button class="paywall-close" onclick="closePaywall()">Später</button>
@@ -2244,7 +2271,27 @@ function isPro() { return userIsPro; }
 // =============================================
 // PAYWALL
 // =============================================
+let paywallBilling = 'yearly';
+
+const PAYWALL_PRICES = {
+  yearly:  { original: 'CHF 34',   amount: 'CHF 17',    period: 'pro Jahr',  save: 'SPARE CHF 17 / Jahr' },
+  monthly: { original: 'CHF 4.60', amount: 'CHF 2.30',  period: 'pro Monat', save: 'SPARE CHF 2.30 / Monat' }
+};
+
+function setPaywallBilling(billing) {
+  paywallBilling = billing;
+  document.querySelectorAll('.paywall-billing-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.billing === billing);
+  });
+  const p = PAYWALL_PRICES[billing];
+  document.getElementById('paywallPriceOriginal').textContent = p.original;
+  document.getElementById('paywallPriceAmount').textContent = p.amount;
+  document.getElementById('paywallPricePeriod').textContent = p.period;
+  document.getElementById('paywallDiscountBadge').textContent = p.save;
+}
+
 function openPaywall() {
+  setPaywallBilling(paywallBilling);
   document.getElementById('paywallOverlay').classList.add('active');
 }
 
@@ -2440,6 +2487,14 @@ const TIER_INFO = [
   { key: 'gold',     name: 'Gold',   icon: '🥇', idx: 3 },
   { key: 'platinum', name: 'Platin', icon: '💎', idx: 4 },
 ];
+
+const CARDIO_MEDAL_THRESHOLDS = {
+  'Laufen':     [1,   5,   10,  20,  30],
+  'Radfahren':  [10,  25,  50,  80,  120],
+  'Schwimmen':  [0.5, 1,   2,   3,   5],
+  'Wandern':    [3,   8,   15,  25,  40],
+  'Sonstiges':  [1,   5,   10,  20,  30],
+};
 
 let activeProfile = null;
 
@@ -2724,6 +2779,71 @@ function getAllMedals() {
   return medals;
 }
 
+function getCardioMedalTier(type, distance) {
+  const t = CARDIO_MEDAL_THRESHOLDS[type] || CARDIO_MEDAL_THRESHOLDS['Sonstiges'];
+  if (!distance || distance <= 0) return null;
+  for (let i = TIER_INFO.length - 1; i >= 0; i--) {
+    if (t[TIER_INFO[i].idx] > 0 && distance >= t[TIER_INFO[i].idx]) {
+      return TIER_INFO[i].key;
+    }
+  }
+  return null;
+}
+
+function getNextCardioTier(type, distance) {
+  const t = CARDIO_MEDAL_THRESHOLDS[type] || CARDIO_MEDAL_THRESHOLDS['Sonstiges'];
+  for (let i = 0; i < TIER_INFO.length; i++) {
+    const info = TIER_INFO[i];
+    if (t[info.idx] > 0 && distance < t[info.idx]) {
+      const prev = i > 0 ? t[TIER_INFO[i-1].idx] : 0;
+      return {
+        tier: info.key,
+        name: info.name,
+        icon: info.icon,
+        target: t[info.idx],
+        from: prev,
+        current: distance,
+        progress: prev < t[info.idx] ? Math.max(0, Math.min(1, (distance - prev) / (t[info.idx] - prev))) : 0
+      };
+    }
+  }
+  return null;
+}
+
+function getCardioBests() {
+  const bests = {};
+  (state.cardioSessions || []).forEach(s => {
+    const type = s.type || 'Sonstiges';
+    const dist = parseFloat(s.distance) || 0;
+    if (dist <= 0) return;
+    if (!bests[type] || dist > bests[type].distance) {
+      bests[type] = { distance: dist, duration: s.duration, date: s.timestamp };
+    }
+  });
+  (state.workouts || []).forEach(w => {
+    (w.exercises || []).forEach(ex => {
+      if (!ex.isCardio || !ex.done) return;
+      const type = (CARDIO_MEDAL_THRESHOLDS[ex.name] ? ex.name : 'Sonstiges');
+      const dist = parseFloat(ex.distance) || 0;
+      if (dist <= 0) return;
+      if (!bests[type] || dist > bests[type].distance) {
+        bests[type] = { distance: dist, duration: ex.duration, date: w.timestamp };
+      }
+    });
+  });
+  return bests;
+}
+
+function getAllCardioMedals() {
+  const bests = getCardioBests();
+  const medals = [];
+  for (const [type, best] of Object.entries(bests)) {
+    const tier = getCardioMedalTier(type, best.distance);
+    if (tier) medals.push({ type, tier, distance: best.distance, duration: best.duration });
+  }
+  return medals;
+}
+
 function calculateStats() {
   const workouts = state.workouts;
   const totalWorkouts = workouts.length;
@@ -2745,11 +2865,13 @@ function calculateStats() {
   const { current: streak, max: maxStreak } = calculateStreak();
   
   const medals = getAllMedals();
-  const platinumCount = medals.filter(m => m.tier === 'platinum').length;
-  const goldCount = medals.filter(m => m.tier === 'gold').length;
-  const silverCount = medals.filter(m => m.tier === 'silver').length;
-  const bronzeCount = medals.filter(m => m.tier === 'bronze').length;
-  const woodCount = medals.filter(m => m.tier === 'wood').length;
+  const cardioMedals = getAllCardioMedals();
+  const allMedals = [...medals, ...cardioMedals];
+  const platinumCount = allMedals.filter(m => m.tier === 'platinum').length;
+  const goldCount = allMedals.filter(m => m.tier === 'gold').length;
+  const silverCount = allMedals.filter(m => m.tier === 'silver').length;
+  const bronzeCount = allMedals.filter(m => m.tier === 'bronze').length;
+  const woodCount = allMedals.filter(m => m.tier === 'wood').length;
   const totalMedals = platinumCount + goldCount + silverCount + bronzeCount + woodCount;
   
   return { 
@@ -3063,10 +3185,56 @@ function renderMedals() {
   });
   
   const list = document.getElementById('medalList');
-  if (medals.length === 0) {
+  const cardioMedalsList = getAllCardioMedals().sort((a,b) => {
+    const order = { platinum: 0, gold: 1, silver: 2, bronze: 3, wood: 4 };
+    return order[a.tier] - order[b.tier];
+  });
+
+  if (medals.length === 0 && cardioMedalsList.length === 0) {
     list.innerHTML = '<div class="empty-state"><div class="icon">🏅</div><div>Noch keine Medaillen</div><div style="font-size:12px;margin-top:8px;">Trainiere und stelle PRs auf um Medaillen zu sammeln</div></div>';
   } else {
-    list.innerHTML = medals.map(m => {
+    let strengthHtml = '';
+    if (medals.length > 0) {
+      strengthHtml = '<div class="card-title" style="margin:4px 0 10px;font-size:13px;color:var(--text-dim);">💪 Krafttraining</div>';
+    }
+    let cardioHtml = '';
+    if (cardioMedalsList.length > 0) {
+      cardioHtml = '<div class="card-title" style="margin:18px 0 10px;font-size:13px;color:var(--text-dim);">🏃 Cardio</div>' +
+        cardioMedalsList.map(m => {
+          const tierInfo = TIER_INFO.find(t => t.key === m.tier);
+          const icon = CARDIO_ICONS[m.type] || '🏃';
+          const next = getNextCardioTier(m.type, m.distance);
+          let progressHtml = '';
+          if (next) {
+            const pct = (next.progress * 100).toFixed(0);
+            progressHtml = `
+              <div class="medal-progress-row">
+                <span style="font-size:14px;">${next.icon}</span>
+                <div class="medal-progress-bar">
+                  <div class="medal-progress-fill ${next.tier}" style="width:${pct}%"></div>
+                </div>
+                <span class="medal-progress-text">${next.current.toFixed(1)} / ${next.target} km</span>
+              </div>
+            `;
+          } else {
+            progressHtml = `<div class="medal-progress-row"><span style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">💎 MAX TIER ERREICHT</span></div>`;
+          }
+          return `
+            <div class="medal-item" style="flex-direction: column; align-items: stretch;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="medal-icon-big">${tierInfo.icon}</div>
+                <div class="medal-info">
+                  <div class="medal-exercise">${icon} ${escapeHtml(m.type)}</div>
+                  <div class="medal-detail">Beste: <strong>${m.distance.toFixed(1)} km</strong></div>
+                </div>
+                <div class="medal-tier ${m.tier}">${tierInfo.name}</div>
+              </div>
+              ${progressHtml}
+            </div>
+          `;
+        }).join('');
+    }
+    list.innerHTML = strengthHtml + medals.map(m => {
       const tierInfo = TIER_INFO.find(t => t.key === m.tier);
       const next = getNextTier(m.exercise, m.weight);
 
@@ -3103,7 +3271,7 @@ function renderMedals() {
           ${progressHtml}
         </div>
       `;
-    }).join('');
+    }).join('') + cardioHtml;
   }
   
   const grid = document.getElementById('achievementsGrid');
@@ -3780,9 +3948,20 @@ function deleteCardioTemplate(id) {
 }
 
 // --- RENDER CARDIO ---
+let cardioFilterType = 'all';
+
+function setCardioFilter(filter) {
+  cardioFilterType = filter;
+  document.querySelectorAll('#cardioFilterPills .cardio-type-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.filter === filter);
+  });
+  renderCardio();
+}
+
 function renderCardio() {
   renderCardioTemplates();
-  const sessions = state.cardioSessions || [];
+  const all = state.cardioSessions || [];
+  const sessions = cardioFilterType === 'all' ? all : all.filter(c => (c.type || 'Sonstiges') === cardioFilterType);
 
   const totalKcal = sessions.reduce((s, c) => s + (c.kcal || 0), 0);
   const totalDist = sessions.reduce((s, c) => s + (c.distance || 0), 0);
@@ -3793,6 +3972,42 @@ function renderCardio() {
   document.getElementById('cardioTotalKcal').innerHTML = totalKcal.toLocaleString('de-CH') + '<span class="unit">kcal</span>';
   document.getElementById('cardioTotalDist').innerHTML = totalDist.toFixed(1) + '<span class="unit">km</span>';
   document.getElementById('cardioWeekCount').textContent = weekCount;
+
+  // Beste Medaille für die gewählte Sportart anzeigen
+  const bestMedalEl = document.getElementById('cardioBestMedal');
+  if (cardioFilterType !== 'all') {
+    const bests = getCardioBests();
+    const best = bests[cardioFilterType];
+    if (best) {
+      const tier = getCardioMedalTier(cardioFilterType, best.distance);
+      const tierInfo = tier ? TIER_INFO.find(t => t.key === tier) : null;
+      const next = getNextCardioTier(cardioFilterType, best.distance);
+      const tierBadge = tierInfo ? `<span class="medal-tier ${tier}" style="margin-left:auto;">${tierInfo.name}</span>` : '';
+      const nextHtml = next ? `
+        <div class="medal-progress-row" style="margin-top:8px;">
+          <span style="font-size:14px;">${next.icon}</span>
+          <div class="medal-progress-bar"><div class="medal-progress-fill ${next.tier}" style="width:${(next.progress*100).toFixed(0)}%"></div></div>
+          <span class="medal-progress-text">${next.current.toFixed(1)} / ${next.target} km</span>
+        </div>` : '<div style="font-size:11px;color:var(--text-dim);margin-top:6px;">💎 MAX TIER ERREICHT</div>';
+      bestMedalEl.innerHTML = `
+        <div class="medal-item" style="flex-direction:column;align-items:stretch;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="medal-icon-big">${tierInfo ? tierInfo.icon : '🏅'}</div>
+            <div class="medal-info">
+              <div class="medal-exercise">Bestleistung</div>
+              <div class="medal-detail">Längste Distanz: <strong>${best.distance.toFixed(1)} km</strong></div>
+            </div>
+            ${tierBadge}
+          </div>
+          ${nextHtml}
+        </div>
+      `;
+    } else {
+      bestMedalEl.innerHTML = '<div class="empty-state" style="padding:14px;font-size:13px;">Noch keine Einheit in dieser Sportart</div>';
+    }
+  } else {
+    bestMedalEl.innerHTML = '';
+  }
 
   const list = document.getElementById('cardioHistoryList');
   if (sessions.length === 0) {
