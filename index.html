@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a0a0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" id="appleTouchIcon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-192.png">
 <script>if(location.protocol!=='file:'){var l=document.createElement('link');l.rel='manifest';l.href='manifest.json';document.head.appendChild(l);}</script>
 <title>GYMTRACK</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +14,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   
@@ -1283,6 +1286,63 @@
   .login-profile-btn .profile-meta { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
   .login-profile-btn .profile-arrow { color: var(--accent); font-size: 20px; }
   .login-divider { color: var(--text-dim); font-size: 12px; margin: 16px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Auth Form */
+  .auth-tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
+  .auth-tab { flex: 1; background: transparent; border: none; color: var(--text-dim); padding: 12px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
+  .auth-tab.active { background: var(--accent); color: #000; }
+  .auth-input-group { margin-bottom: 14px; }
+  .auth-input-group label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); font-weight: 700; margin-bottom: 6px; }
+  .auth-input-group input { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 14px 16px; border-radius: 12px; font-size: 15px; font-family: inherit; }
+  .auth-input-group input:focus { outline: none; border-color: var(--accent); }
+  .auth-btn { width: 100%; background: var(--accent); color: #000; border: none; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; transition: transform 0.15s; }
+  .auth-btn:active { transform: scale(0.98); }
+  .auth-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .auth-error { background: rgba(255,68,68,0.15); border: 1px solid var(--danger); color: var(--danger); padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 12px; display: none; }
+  .auth-error.show { display: block; animation: fadeIn 0.2s; }
+  .auth-forgot { text-align: center; margin-top: 12px; }
+  .auth-forgot a { color: var(--accent); font-size: 12px; text-decoration: none; font-weight: 600; }
+  .auth-info { font-size: 12px; color: var(--text-dim); text-align: center; margin-top: 16px; }
+
+  /* Pro Lock Overlay */
+  .pro-gated { position: relative; pointer-events: none; }
+  .pro-gated > * { filter: blur(3px); opacity: 0.4; }
+  .pro-gated::after {
+    content: ''; position: absolute; inset: 0; z-index: 10; cursor: pointer; pointer-events: auto;
+  }
+  .pro-lock-badge {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 11;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px 24px; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5); pointer-events: auto; cursor: pointer;
+  }
+  .pro-lock-badge .lock-icon { font-size: 20px; }
+  .pro-lock-badge .lock-text { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text); }
+  .pro-lock-badge .lock-sub { font-size: 10px; color: var(--accent); font-weight: 600; }
+  .tab-lock { font-size: 10px; margin-left: 2px; opacity: 0.6; }
+
+  /* Paywall Modal */
+  .paywall-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(12px);
+    z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .paywall-overlay.active { display: flex; animation: fadeIn 0.3s; }
+  .paywall-card { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 32px 24px; max-width: 380px; width: 100%; text-align: center; }
+  .paywall-icon { font-size: 64px; margin-bottom: 12px; }
+  .paywall-title { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 2px; margin-bottom: 4px; }
+  .paywall-title .accent { color: var(--accent); }
+  .paywall-subtitle { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
+  .paywall-features { text-align: left; margin-bottom: 24px; }
+  .paywall-feature { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 14px; }
+  .paywall-feature .check { color: var(--accent); font-size: 16px; font-weight: 700; }
+  .paywall-price { margin-bottom: 20px; }
+  .paywall-price-amount { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--accent); line-height: 1; }
+  .paywall-price-period { font-size: 14px; color: var(--text-dim); }
+  .paywall-buy-btn { width: 100%; background: var(--accent); color: #000; border: none; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; transition: transform 0.15s; }
+  .paywall-buy-btn:active { transform: scale(0.98); }
+  .paywall-close { background: transparent; color: var(--text-dim); border: 1px solid var(--border); padding: 12px; border-radius: 12px; width: 100%; cursor: pointer; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+  .paywall-restore { margin-top: 12px; }
+  .paywall-restore a { color: var(--text-dim); font-size: 11px; text-decoration: none; }
 </style>
 </head>
 <body>
@@ -1290,11 +1350,50 @@
   <div class="login-container">
     <div class="login-logo">GYM<span style="color:var(--accent)">TRACK</span></div>
     <p class="login-subtitle">Dein persönliches Training</p>
-    <div id="loginProfiles"></div>
-    <div class="login-new">
-      <input type="text" id="loginNameInput" placeholder="Dein Name" maxlength="20" autocomplete="off" onkeydown="if(event.key==='Enter')createProfile()" />
-      <button onclick="createProfile()">Starten</button>
+
+    <div class="auth-tabs" id="authTabs">
+      <button class="auth-tab active" onclick="switchAuthTab('login')">Anmelden</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')">Registrieren</button>
     </div>
+
+    <div class="auth-error" id="authError"></div>
+
+    <!-- LOGIN FORM -->
+    <div id="authLoginForm">
+      <div class="auth-input-group">
+        <label>E-Mail</label>
+        <input type="email" id="loginEmail" placeholder="deine@email.com" autocomplete="email" />
+      </div>
+      <div class="auth-input-group">
+        <label>Passwort</label>
+        <input type="password" id="loginPassword" placeholder="Passwort" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <button class="auth-btn" id="loginBtn" onclick="doLogin()">Anmelden</button>
+      <div class="auth-forgot"><a href="#" onclick="doPasswordReset();return false;">Passwort vergessen?</a></div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="authRegisterForm" style="display:none;">
+      <div class="auth-input-group">
+        <label>Benutzername</label>
+        <input type="text" id="regUsername" placeholder="Dein Name" maxlength="20" autocomplete="username" />
+      </div>
+      <div class="auth-input-group">
+        <label>E-Mail</label>
+        <input type="email" id="regEmail" placeholder="deine@email.com" autocomplete="email" />
+      </div>
+      <div class="auth-input-group">
+        <label>Passwort</label>
+        <input type="password" id="regPassword" placeholder="Min. 6 Zeichen" autocomplete="new-password" />
+      </div>
+      <div class="auth-input-group">
+        <label>Passwort bestätigen</label>
+        <input type="password" id="regPasswordConfirm" placeholder="Nochmal eingeben" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()" />
+      </div>
+      <button class="auth-btn" id="registerBtn" onclick="doRegister()">Konto erstellen</button>
+    </div>
+
+    <div class="auth-info" id="authInfo"></div>
   </div>
 </div>
 <div class="app" id="mainApp" style="display:none;">
@@ -1728,10 +1827,10 @@
     <div class="inner">
       <button class="tab-btn active" data-view="home"><span class="icon">🏠</span><span>Home</span></button>
       <button class="tab-btn" data-view="workout"><span class="icon">💪</span><span>Training</span></button>
-      <button class="tab-btn" data-view="history"><span class="icon">📅</span><span>Historie</span></button>
-      <button class="tab-btn" data-view="cardio"><span class="icon">🏃</span><span>Cardio</span></button>
-      <button class="tab-btn" data-view="medals"><span class="icon">🏆</span><span>Medaillen</span></button>
-      <button class="tab-btn" data-view="progress"><span class="icon">📈</span><span>Stats</span></button>
+      <button class="tab-btn" data-view="history" data-pro="true"><span class="icon">📅</span><span>Historie<span class="tab-lock" id="lockHistory">🔒</span></span></button>
+      <button class="tab-btn" data-view="cardio" data-pro="true"><span class="icon">🏃</span><span>Cardio<span class="tab-lock" id="lockCardio">🔒</span></span></button>
+      <button class="tab-btn" data-view="medals" data-pro="true"><span class="icon">🏆</span><span>Medaillen<span class="tab-lock" id="lockMedals">🔒</span></span></button>
+      <button class="tab-btn" data-view="progress" data-pro="true"><span class="icon">📈</span><span>Stats<span class="tab-lock" id="lockProgress">🔒</span></span></button>
     </div>
   </nav>
 
@@ -1857,8 +1956,13 @@
   <div class="settings-content">
     <div class="settings-section">
       <div class="settings-section-title">👤 Profil</div>
-      <div style="font-size:14px;font-weight:600;margin-bottom:8px;" id="settingsProfileName"></div>
-      <button class="settings-action-btn" onclick="logoutProfile()">🔄 Profil wechseln</button>
+      <div style="font-size:14px;font-weight:600;margin-bottom:4px;" id="settingsProfileName"></div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:4px;" id="settingsProfileEmail"></div>
+      <div style="margin-bottom:12px;">
+        <span id="settingsProBadge" style="display:inline-block;background:var(--accent);color:#000;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:1px;"></span>
+      </div>
+      <button class="settings-action-btn" id="settingsUpgradeBtn" onclick="openPaywall()" style="display:none;border-color:var(--accent);color:var(--accent);">⚡ Auf PRO upgraden</button>
+      <button class="settings-action-btn" onclick="logoutProfile()">🔄 Abmelden</button>
       <button class="settings-action-btn danger" onclick="deleteProfile()">🗑 Profil löschen</button>
     </div>
 
@@ -1880,12 +1984,14 @@
       <div class="bw-list" id="bwList"></div>
     </div>
 
-    <div class="settings-section">
+    <div class="settings-section" id="settingsBackupSection">
       <div class="settings-section-title">💾 Daten-Backup</div>
       <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Sichere deine Daten oder stelle sie von einem Backup wieder her</div>
-      <button class="settings-action-btn" onclick="exportData()">📥 Daten exportieren (JSON)</button>
-      <button class="settings-action-btn" onclick="document.getElementById('importFile').click()">📤 Daten importieren</button>
-      <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)" />
+      <div id="backupProGate">
+        <button class="settings-action-btn" onclick="if(!isPro()){openPaywall();return;}exportData()">📥 Daten exportieren (JSON)</button>
+        <button class="settings-action-btn" onclick="if(!isPro()){openPaywall();return;}document.getElementById('importFile').click()">📤 Daten importieren</button>
+        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)" />
+      </div>
       <button class="settings-action-btn danger" onclick="clearAllData()">🗑 Alle Daten löschen</button>
     </div>
   </div>
@@ -1903,7 +2009,302 @@
   </div>
 </div>
 
+<!-- PAYWALL MODAL -->
+<div class="paywall-overlay" id="paywallOverlay" onclick="if(event.target===this) closePaywall()">
+  <div class="paywall-card">
+    <div class="paywall-icon">⚡</div>
+    <div class="paywall-title">GYM<span class="accent">TRACK</span> PRO</div>
+    <div class="paywall-subtitle">Schalte alle Features frei</div>
+    <div class="paywall-features">
+      <div class="paywall-feature"><span class="check">✓</span><span>Cardio-Tracking (GPS, GPX, Manuell)</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span>Medaillen & Achievements</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span>Fortschritts-Charts & Statistiken</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span>Muskel-Map Visualisierung</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span>Kalender-Heatmap</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span>Körpergewicht-Tracking</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span>Level-System & XP</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span>Daten-Export & Import</span></div>
+    </div>
+    <div class="paywall-price">
+      <div class="paywall-price-amount">CHF 17</div>
+      <div class="paywall-price-period">pro Jahr</div>
+    </div>
+    <button class="paywall-buy-btn" onclick="handlePurchase()">Jetzt upgraden</button>
+    <button class="paywall-close" onclick="closePaywall()">Später</button>
+    <div class="paywall-restore"><a href="#" onclick="restorePurchase();return false;">Kauf wiederherstellen</a></div>
+  </div>
+</div>
+
 <script>
+// =============================================
+// FIREBASE CONFIG — Fill in your Firebase project values
+// =============================================
+const firebaseConfig = {
+  apiKey: "AIzaSyA0-1c_yNlSdZsvnYMX2r1AXuZlBw6Pa5s",
+  authDomain: "gymapp-bb929.firebaseapp.com",
+  projectId: "gymapp-bb929",
+  storageBucket: "gymapp-bb929.firebasestorage.app",
+  messagingSenderId: "31698189822",
+  appId: "1:31698189822:web:1ff326ff336bab2f4fd4af"
+};
+
+const ADMIN_EMAILS = [
+  'nchristen656@gmail.com', 
+  'nevio.christen@gmx.ch'
+  // Füge hier die Email deines Kollegen hinzu:
+  // 'kollege@email.com',
+];
+
+let firebaseApp = null;
+let firebaseAuth = null;
+let firebaseDb = null;
+let currentUser = null;
+let userIsPro = false;
+
+function initFirebase() {
+  try {
+    if (FIREBASE_CONFIG.apiKey === 'DEINE_API_KEY') return false;
+    firebaseApp = firebase.initializeApp(FIREBASE_CONFIG);
+    firebaseAuth = firebase.auth();
+    firebaseDb = firebase.firestore();
+    return true;
+  } catch(e) { return false; }
+}
+
+function isFirebaseReady() {
+  return firebaseAuth !== null;
+}
+
+// =============================================
+// AUTH FUNCTIONS
+// =============================================
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t, i) => {
+    t.classList.toggle('active', (tab === 'login' && i === 0) || (tab === 'register' && i === 1));
+  });
+  document.getElementById('authLoginForm').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('authRegisterForm').style.display = tab === 'register' ? '' : 'none';
+  hideAuthError();
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('authError');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+function hideAuthError() {
+  document.getElementById('authError').classList.remove('show');
+}
+
+async function doRegister() {
+  hideAuthError();
+  const username = document.getElementById('regUsername').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const confirm = document.getElementById('regPasswordConfirm').value;
+
+  if (!username) return showAuthError('Benutzername eingeben.');
+  if (!email) return showAuthError('E-Mail eingeben.');
+  if (password.length < 6) return showAuthError('Passwort muss min. 6 Zeichen haben.');
+  if (password !== confirm) return showAuthError('Passwörter stimmen nicht überein.');
+
+  const btn = document.getElementById('registerBtn');
+  btn.disabled = true;
+  btn.textContent = 'Wird erstellt...';
+
+  if (!isFirebaseReady()) {
+    // Offline/local mode fallback
+    const profiles = getProfiles();
+    if (profiles.some(p => p.toLowerCase() === username.toLowerCase())) {
+      btn.disabled = false; btn.textContent = 'Konto erstellen';
+      return showAuthError('Benutzername bereits vergeben.');
+    }
+    profiles.push(username);
+    saveProfiles(profiles);
+    localStorage.setItem('gymtrack_user_email', email);
+    localStorage.setItem('gymtrack_user_name', username);
+    userIsPro = ADMIN_EMAILS.includes(email.toLowerCase());
+    selectProfile(username);
+    btn.disabled = false; btn.textContent = 'Konto erstellen';
+    return;
+  }
+
+  try {
+    const cred = await firebaseAuth.createUserWithEmailAndPassword(email, password);
+    await cred.user.updateProfile({ displayName: username });
+    await firebaseDb.collection('users').doc(cred.user.uid).set({
+      username: username,
+      email: email,
+      plan: ADMIN_EMAILS.includes(email.toLowerCase()) ? 'pro' : 'free',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    currentUser = cred.user;
+    await checkProStatus();
+    const profiles = getProfiles();
+    if (!profiles.includes(username)) { profiles.push(username); saveProfiles(profiles); }
+    selectProfile(username);
+  } catch(e) {
+    const msgs = {
+      'auth/email-already-in-use': 'Diese E-Mail ist bereits registriert.',
+      'auth/invalid-email': 'Ungültige E-Mail-Adresse.',
+      'auth/weak-password': 'Passwort zu schwach (min. 6 Zeichen).',
+    };
+    showAuthError(msgs[e.code] || e.message);
+  }
+  btn.disabled = false; btn.textContent = 'Konto erstellen';
+}
+
+async function doLogin() {
+  hideAuthError();
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+
+  if (!email) return showAuthError('E-Mail eingeben.');
+  if (!password) return showAuthError('Passwort eingeben.');
+
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.textContent = 'Wird angemeldet...';
+
+  if (!isFirebaseReady()) {
+    // Offline/local mode fallback
+    const storedEmail = localStorage.getItem('gymtrack_user_email');
+    const storedName = localStorage.getItem('gymtrack_user_name');
+    if (storedEmail && storedEmail === email && storedName) {
+      userIsPro = ADMIN_EMAILS.includes(email.toLowerCase());
+      selectProfile(storedName);
+    } else {
+      showAuthError('Firebase nicht konfiguriert. Registriere dich zuerst lokal.');
+    }
+    btn.disabled = false; btn.textContent = 'Anmelden';
+    return;
+  }
+
+  try {
+    const cred = await firebaseAuth.signInWithEmailAndPassword(email, password);
+    currentUser = cred.user;
+    await checkProStatus();
+    const name = cred.user.displayName || email.split('@')[0];
+    const profiles = getProfiles();
+    if (!profiles.includes(name)) { profiles.push(name); saveProfiles(profiles); }
+    selectProfile(name);
+  } catch(e) {
+    const msgs = {
+      'auth/user-not-found': 'Kein Konto mit dieser E-Mail.',
+      'auth/wrong-password': 'Falsches Passwort.',
+      'auth/invalid-credential': 'E-Mail oder Passwort falsch.',
+      'auth/too-many-requests': 'Zu viele Versuche. Bitte warte.',
+      'auth/invalid-email': 'Ungültige E-Mail-Adresse.',
+    };
+    showAuthError(msgs[e.code] || e.message);
+  }
+  btn.disabled = false; btn.textContent = 'Anmelden';
+}
+
+async function doPasswordReset() {
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) return showAuthError('Gib zuerst deine E-Mail ein.');
+  if (!isFirebaseReady()) return showAuthError('Firebase nicht konfiguriert.');
+  try {
+    await firebaseAuth.sendPasswordResetEmail(email);
+    const info = document.getElementById('authInfo');
+    info.textContent = 'Passwort-Reset E-Mail gesendet! Prüfe dein Postfach.';
+    info.style.color = 'var(--accent)';
+  } catch(e) {
+    showAuthError('Konnte keine Reset-E-Mail senden.');
+  }
+}
+
+async function checkProStatus() {
+  if (!currentUser) { userIsPro = false; return; }
+  if (ADMIN_EMAILS.includes(currentUser.email.toLowerCase())) { userIsPro = true; return; }
+  if (!isFirebaseReady()) { userIsPro = false; return; }
+  try {
+    const doc = await firebaseDb.collection('users').doc(currentUser.uid).get();
+    if (doc.exists) {
+      userIsPro = doc.data().plan === 'pro';
+    }
+  } catch(e) { userIsPro = false; }
+}
+
+function isPro() { return userIsPro; }
+
+// =============================================
+// PAYWALL
+// =============================================
+function openPaywall() {
+  document.getElementById('paywallOverlay').classList.add('active');
+}
+
+function closePaywall() {
+  document.getElementById('paywallOverlay').classList.remove('active');
+}
+
+function handlePurchase() {
+  // In-App Purchase happens here in native app (Capacitor/StoreKit)
+  // For web: placeholder
+  alert('In-App Purchase wird in der App Store Version aktiviert.\n\nFür Test-Zwecke: Füge deine E-Mail zu ADMIN_EMAILS im Code hinzu.');
+}
+
+function restorePurchase() {
+  if (!isFirebaseReady()) {
+    alert('Firebase nicht konfiguriert.');
+    return;
+  }
+  checkProStatus().then(() => {
+    if (userIsPro) {
+      closePaywall();
+      updateProUI();
+      showToast('Pro-Status wiederhergestellt!');
+    } else {
+      alert('Kein aktives Abo gefunden.');
+    }
+  });
+}
+
+function updateProUI() {
+  const pro = isPro();
+  document.querySelectorAll('.tab-lock').forEach(el => {
+    el.style.display = pro ? 'none' : '';
+  });
+  applyHomeGating();
+}
+
+function applyHomeGating() {
+  const pro = isPro();
+  const proWidgets = ['muscleWeekWidget', 'muscleMapCard'];
+  // Level card
+  const levelCard = document.querySelector('.level-card');
+  if (levelCard) toggleProGate(levelCard, pro);
+  // Muscle week widget
+  const mww = document.getElementById('muscleWeekWidget');
+  if (mww) toggleProGate(mww, pro);
+  // Muscle map
+  const mmCard = document.querySelector('.muscle-map-card');
+  if (mmCard) toggleProGate(mmCard, pro);
+}
+
+function toggleProGate(el, pro) {
+  if (pro) {
+    el.classList.remove('pro-gated');
+    const badge = el.querySelector('.pro-lock-badge');
+    if (badge) badge.remove();
+  } else {
+    if (!el.classList.contains('pro-gated')) {
+      el.classList.add('pro-gated');
+      const badge = document.createElement('div');
+      badge.className = 'pro-lock-badge';
+      badge.innerHTML = '<span class="lock-icon">🔒</span><div><div class="lock-text">PRO Feature</div><div class="lock-sub">Upgrade für CHF 17/Jahr</div></div>';
+      badge.onclick = (e) => { e.stopPropagation(); openPaywall(); };
+      el.appendChild(badge);
+    }
+  }
+}
+
+// =============================================
+// EXERCISES & DATA
+// =============================================
 const EXERCISES = [
   { name: 'Bankdrücken', muscle: 'Brust' },
   { name: 'Schrägbankdrücken', muscle: 'Brust' },
@@ -2062,26 +2463,7 @@ function storageKey() {
 }
 
 function renderLoginScreen() {
-  const profiles = getProfiles();
-  const container = document.getElementById('loginProfiles');
-  if (profiles.length === 0) {
-    container.innerHTML = '';
-    return;
-  }
-  let html = '<div class="login-divider">Profil wählen</div><div class="login-profiles">';
-  profiles.forEach(name => {
-    let meta = '';
-    try {
-      const d = JSON.parse(localStorage.getItem('gymtrack_' + name + '_v2') || '{}');
-      const count = (d.workouts || []).length;
-      meta = count + ' Workout' + (count !== 1 ? 's' : '');
-    } catch(e) {}
-    html += '<button class="login-profile-btn" onclick="selectProfile(\'' + name.replace(/'/g, "\\'") + '\')">'
-      + '<div class="profile-info"><div class="profile-name">' + name + '</div><div class="profile-meta">' + meta + '</div></div>'
-      + '<div class="profile-arrow">→</div></button>';
-  });
-  html += '</div>';
-  container.innerHTML = html;
+  // Auth is now handled by Firebase login/register forms
 }
 
 function createProfile() {
@@ -2122,16 +2504,18 @@ function migrateOldData() {
 
 function logoutProfile() {
   activeProfile = null;
+  currentUser = null;
+  userIsPro = false;
   localStorage.removeItem('gymtrack_active');
   state = {
     workouts: [], prs: {}, myTemplates: [], customThresholds: {},
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
     customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [],
   };
+  if (isFirebaseReady()) firebaseAuth.signOut().catch(() => {});
   document.getElementById('mainApp').style.display = 'none';
   document.getElementById('loginScreen').style.display = '';
   closeSettings();
-  renderLoginScreen();
 }
 
 function deleteProfile() {
@@ -2146,6 +2530,16 @@ function deleteProfile() {
 function renderSettingsProfile() {
   const el = document.getElementById('settingsProfileName');
   if (el) el.textContent = activeProfile || '';
+  const emailEl = document.getElementById('settingsProfileEmail');
+  if (emailEl) emailEl.textContent = currentUser ? currentUser.email : (localStorage.getItem('gymtrack_user_email') || '');
+  const badge = document.getElementById('settingsProBadge');
+  if (badge) {
+    badge.textContent = isPro() ? 'PRO' : 'FREE';
+    badge.style.background = isPro() ? 'var(--accent)' : 'var(--surface-2)';
+    badge.style.color = isPro() ? '#000' : 'var(--text-dim)';
+  }
+  const upgradeBtn = document.getElementById('settingsUpgradeBtn');
+  if (upgradeBtn) upgradeBtn.style.display = isPro() ? 'none' : '';
 }
 
 function loadState() {
@@ -2422,6 +2816,7 @@ function renderHome() {
   renderTemplates();
   if (typeof renderMuscleWeekWidget === 'function') renderMuscleWeekWidget();
   if (typeof renderMuscleMap === 'function') renderMuscleMap();
+  updateProUI();
 }
 
 function renderTemplates() {
@@ -3818,6 +4213,10 @@ function escapeHtml(s) {
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const view = btn.dataset.view;
+    if (btn.dataset.pro === 'true' && !isPro()) {
+      openPaywall();
+      return;
+    }
     showView(view);
   });
 });
@@ -4463,12 +4862,33 @@ function renderMuscleMap() {
 
 // Init app — MUST be after all let/const declarations to avoid TDZ
 (function initApp() {
-  const savedProfile = localStorage.getItem('gymtrack_active');
-  const profiles = getProfiles();
-  if (savedProfile && profiles.includes(savedProfile)) {
-    selectProfile(savedProfile);
+  const fbReady = initFirebase();
+
+  if (fbReady) {
+    firebaseAuth.onAuthStateChanged(async (user) => {
+      if (user) {
+        currentUser = user;
+        await checkProStatus();
+        const name = user.displayName || user.email.split('@')[0];
+        const profiles = getProfiles();
+        if (!profiles.includes(name)) { profiles.push(name); saveProfiles(profiles); }
+        if (!activeProfile) selectProfile(name);
+      } else {
+        document.getElementById('loginScreen').style.display = '';
+        document.getElementById('mainApp').style.display = 'none';
+      }
+    });
   } else {
-    renderLoginScreen();
+    // Firebase not configured — fallback to local mode
+    const savedProfile = localStorage.getItem('gymtrack_active');
+    const profiles = getProfiles();
+    const savedEmail = localStorage.getItem('gymtrack_user_email');
+    if (savedEmail) userIsPro = ADMIN_EMAILS.includes(savedEmail.toLowerCase());
+    if (savedProfile && profiles.includes(savedProfile)) {
+      selectProfile(savedProfile);
+    } else {
+      document.getElementById('loginScreen').style.display = '';
+    }
   }
 })();
 
