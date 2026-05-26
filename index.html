@@ -2067,6 +2067,7 @@ function initFirebase() {
     if (FIREBASE_CONFIG.apiKey === 'DEINE_API_KEY') return false;
     firebaseApp = firebase.initializeApp(FIREBASE_CONFIG);
     firebaseAuth = firebase.auth();
+    firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
     firebaseDb = firebase.firestore();
     return true;
   } catch(e) { return false; }
@@ -4866,7 +4867,11 @@ function renderMuscleMap() {
   const fbReady = initFirebase();
 
   if (fbReady) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'none';
+    let authResolved = false;
     firebaseAuth.onAuthStateChanged(async (user) => {
+      authResolved = true;
       if (user) {
         currentUser = user;
         await checkProStatus();
@@ -4879,6 +4884,11 @@ function renderMuscleMap() {
         document.getElementById('mainApp').style.display = 'none';
       }
     });
+    setTimeout(() => {
+      if (!authResolved && !currentUser) {
+        document.getElementById('loginScreen').style.display = '';
+      }
+    }, 3000);
   } else {
     // Firebase not configured — fallback to local mode
     const savedProfile = localStorage.getItem('gymtrack_active');
