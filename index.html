@@ -1630,6 +1630,14 @@
         </div>
       </div>
 
+      <div id="cardioTemplatesSection" style="margin-bottom:16px;">
+        <div class="card-title" style="margin-bottom:8px;">
+          <span>Meine Cardio-Templates</span>
+          <span class="card-title-action" onclick="openCardioTemplateBuilder()">+ Neu</span>
+        </div>
+        <div class="template-list" id="cardioTemplateList"></div>
+      </div>
+
       <button class="cardio-toggle-btn" id="cardioToggleBtn" onclick="toggleCardioForm()">+ Neue Cardio-Einheit</button>
 
       <div class="cardio-form" id="cardioForm" style="display:none;">
@@ -1761,6 +1769,7 @@
             </div>
           </div>
           <button class="cardio-save-btn" onclick="saveCardioSession()">Speichern</button>
+          <button class="save-template-btn" onclick="saveCardioAsTemplate()">★ Als Template speichern</button>
         </div>
       </div>
 
@@ -2446,6 +2455,7 @@ let state = {
   bodyWeights: [],
   restTimeDuration: 90,
   cardioSessions: [],
+  cardioTemplates: [],
 };
 let timerInterval = null;
 let templateBuilder = { editingId: null, name: '', exercises: [] };
@@ -2512,7 +2522,7 @@ function logoutProfile() {
   state = {
     workouts: [], prs: {}, myTemplates: [], customThresholds: {},
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
-    customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [],
+    customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [], cardioTemplates: [],
   };
   if (isFirebaseReady()) firebaseAuth.signOut().catch(() => {});
   document.getElementById('mainApp').style.display = 'none';
@@ -2548,7 +2558,7 @@ function loadState() {
   state = {
     workouts: [], prs: {}, myTemplates: [], customThresholds: {},
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
-    customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [],
+    customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [], cardioTemplates: [],
   };
   const saved = localStorage.getItem(storageKey());
   if (saved) {
@@ -2583,11 +2593,17 @@ function saveState() {
     bodyWeights: state.bodyWeights,
     restTimeDuration: state.restTimeDuration,
     cardioSessions: state.cardioSessions,
+    cardioTemplates: state.cardioTemplates,
   }));
 }
 
 function getAllExercises() {
   return [...EXERCISES, ...state.customExercises];
+}
+
+function isCardioExercise(name) {
+  const ex = getAllExercises().find(e => e.name === name);
+  return ex && ex.muscle === 'Cardio';
 }
 
 function calculateSetPoints(weight, reps) {
@@ -2598,6 +2614,14 @@ function calculateSetPoints(weight, reps) {
 function calculateWorkoutPoints(w) {
   let pts = 0;
   w.exercises.forEach(ex => {
+    if (ex.isCardio) {
+      if (ex.done) {
+        const dur = parseFloat(ex.duration) || 0;
+        const kcal = parseFloat(ex.kcal) || 0;
+        pts += Math.round(dur * 2 + kcal / 5);
+      }
+      return;
+    }
     ex.sets.forEach(s => {
       if (s.done) pts += calculateSetPoints(s.weight, s.reps);
     });
@@ -2871,6 +2895,14 @@ function renderWorkout() {
   
   let livePts = 0;
   state.currentWorkout.exercises.forEach(ex => {
+    if (ex.isCardio) {
+      if (ex.done) {
+        const dur = parseFloat(ex.duration) || 0;
+        const kcal = parseFloat(ex.kcal) || 0;
+        livePts += Math.round(dur * 2 + kcal / 5);
+      }
+      return;
+    }
     ex.sets.forEach(s => {
       if (s.done) livePts += calculateSetPoints(s.weight, s.reps);
     });
@@ -2878,12 +2910,43 @@ function renderWorkout() {
   document.getElementById('livePoints').textContent = livePts;
   
   container.innerHTML = state.currentWorkout.exercises.map((ex, exIdx) => {
+    const isSkipped = ex.skipped;
+    if (ex.isCardio) {
+      return `
+        <div class="exercise-block${isSkipped ? ' skipped' : ''}">
+          <div class="exercise-header">
+            <button class="skip-toggle${isSkipped ? '' : ' active'}" onclick="toggleSkipExercise(${exIdx})" title="${isSkipped ? 'Übung aktivieren' : 'Übung überspringen'}">${isSkipped ? '—' : '✓'}</button>
+            <div style="flex:1;margin-left:10px;">
+              <div class="exercise-name">🏃 ${escapeHtml(ex.name)}</div>
+              <div class="exercise-pr" style="color:var(--text-dim);">Cardio</div>
+            </div>
+            <button class="icon-btn" onclick="removeExercise(${exIdx})">✕</button>
+          </div>
+          <div class="cardio-form-grid" style="margin-top:8px;">
+            <div class="cardio-field">
+              <label>Dauer (min)</label>
+              <input type="number" inputmode="numeric" value="${ex.duration || ''}" oninput="updateCardioEx(${exIdx},'duration',this.value)" placeholder="z.B. 30" />
+            </div>
+            <div class="cardio-field">
+              <label>Distanz (km)</label>
+              <input type="number" inputmode="decimal" step="0.1" value="${ex.distance || ''}" oninput="updateCardioEx(${exIdx},'distance',this.value)" placeholder="z.B. 5.0" />
+            </div>
+            <div class="cardio-field">
+              <label>kcal</label>
+              <input type="number" inputmode="numeric" value="${ex.kcal || ''}" oninput="updateCardioEx(${exIdx},'kcal',this.value)" placeholder="optional" />
+            </div>
+            <div class="cardio-field" style="display:flex;align-items:flex-end;">
+              <div class="set-check ${ex.done ? 'done' : ''}" style="margin:0;" onclick="toggleCardioEx(${exIdx})">${ex.done ? '✓ Erledigt' : 'Erledigt?'}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
     const pr = state.prs[ex.name];
     const medal = pr ? getMedalTier(ex.name, pr.weight) : null;
     const tierInfo = medal ? TIER_INFO.find(t => t.key === medal) : null;
     const medalIcon = tierInfo ? tierInfo.icon : '';
     const prText = pr ? `${medalIcon} PR: ${pr.weight}kg × ${pr.reps}` : 'Noch kein PR';
-    const isSkipped = ex.skipped;
     return `
     <div class="exercise-block${isSkipped ? ' skipped' : ''}">
       <div class="exercise-header">
@@ -2913,19 +2976,57 @@ function renderWorkout() {
   `}).join('');
 }
 
+function updateCardioEx(exIdx, field, value) {
+  const ex = state.currentWorkout.exercises[exIdx];
+  if (!ex) return;
+  ex[field] = parseFloat(value) || '';
+}
+
+function toggleCardioEx(exIdx) {
+  const ex = state.currentWorkout.exercises[exIdx];
+  if (!ex) return;
+  ex.done = !ex.done;
+  renderWorkout();
+}
+
 function renderHistory() {
   const list = document.getElementById('historyList');
-  if (state.workouts.length === 0) {
+  const workouts = (state.workouts || []).map(w => ({ kind: 'workout', timestamp: w.timestamp, data: w }));
+  const cardios = (state.cardioSessions || []).map(c => ({ kind: 'cardio', timestamp: c.date || c.timestamp || 0, data: c }));
+  const merged = [...workouts, ...cardios].sort((a,b) => b.timestamp - a.timestamp);
+
+  if (merged.length === 0) {
     list.innerHTML = '<div class="empty-state"><div class="icon">📅</div><div>Noch keine Workouts</div></div>';
     return;
   }
-  const sorted = [...state.workouts].sort((a,b) => b.timestamp - a.timestamp);
-  list.innerHTML = sorted.map(w => {
-    const d = new Date(w.timestamp);
+
+  list.innerHTML = merged.map(item => {
+    const d = new Date(item.timestamp);
     const dateStr = d.toLocaleDateString('de-CH', { weekday: 'short', day: '2-digit', month: 'short' });
     const timeStr = d.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' });
-    const totalSets = w.exercises.reduce((sum, ex) => sum + ex.sets.filter(s => s.done).length, 0);
-    const totalVolume = w.exercises.reduce((sum, ex) => sum + ex.sets.reduce((s2, st) => s2 + (st.done ? (st.weight||0)*(st.reps||0) : 0), 0), 0);
+
+    if (item.kind === 'cardio') {
+      const c = item.data;
+      const icon = (typeof CARDIO_ICONS !== 'undefined' && CARDIO_ICONS[c.type]) || '🏃';
+      const dur = c.duration ? `${Math.round(c.duration)} Min` : '-';
+      return `
+        <div class="history-item">
+          <div class="history-date">${dateStr} • ${timeStr}</div>
+          <div class="history-name">${icon} ${escapeHtml(c.type || 'Cardio')} <span class="pr-badge" style="background:var(--surface-2);color:var(--text-dim);">CARDIO</span></div>
+          <div class="history-meta">
+            <span><strong>${dur}</strong></span>
+            ${c.distance ? `<span><strong>${(+c.distance).toFixed(1)}</strong> km</span>` : ''}
+            ${c.kcal ? `<span><strong>${c.kcal}</strong> kcal</span>` : ''}
+            ${c.points ? `<span class="history-points">+${c.points} XP</span>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    const w = item.data;
+    const totalSets = w.exercises.reduce((sum, ex) => sum + (ex.isCardio ? 0 : ex.sets.filter(s => s.done).length), 0);
+    const totalVolume = w.exercises.reduce((sum, ex) => sum + (ex.isCardio ? 0 : ex.sets.reduce((s2, st) => s2 + (st.done ? (st.weight||0)*(st.reps||0) : 0), 0)), 0);
+    const cardioCount = w.exercises.filter(ex => ex.isCardio).length;
     const dur = w.duration ? `${Math.round(w.duration/60)} Min` : '-';
     return `
       <div class="history-item">
@@ -2933,6 +3034,7 @@ function renderHistory() {
         <div class="history-name">
           ${escapeHtml(w.name || 'Workout')}
           ${w.prs ? `<span class="pr-badge">${w.prs} PR</span>` : ''}
+          ${cardioCount ? `<span class="pr-badge" style="background:var(--surface-2);color:var(--text-dim);">+${cardioCount} Cardio</span>` : ''}
         </div>
         <div class="history-meta">
           <span><strong>${w.exercises.length}</strong> Übungen</span>
@@ -3585,8 +3687,101 @@ function closeCardioDetail() {
   if (cardioDetailMapInstance) { cardioDetailMapInstance.remove(); cardioDetailMapInstance = null; }
 }
 
+// --- CARDIO TEMPLATES ---
+function renderCardioTemplates() {
+  const list = document.getElementById('cardioTemplateList');
+  if (!list) return;
+  const tpls = state.cardioTemplates || [];
+  if (tpls.length === 0) {
+    list.innerHTML = '<div class="empty-state" style="padding:14px;font-size:13px;">Noch keine Cardio-Templates. Erstelle eines mit "+ Neu" oder im Manuell-Modus.</div>';
+    return;
+  }
+  list.innerHTML = tpls.map(t => {
+    const icon = (typeof CARDIO_ICONS !== 'undefined' && CARDIO_ICONS[t.type]) || '🏃';
+    const meta = [
+      t.duration ? `${t.duration} Min` : null,
+      t.distance ? `${(+t.distance).toFixed(1)} km` : null
+    ].filter(Boolean).join(' • ') || 'Keine Vorgaben';
+    return `
+      <div class="template-item">
+        <div onclick="startCardioTemplate('${t.id}')" style="flex:1;min-width:0;">
+          <div class="template-name">${icon} ${escapeHtml(t.name)}</div>
+          <div class="template-meta">${escapeHtml(t.type)} • ${meta}</div>
+        </div>
+        <div class="template-actions">
+          <button class="template-edit-btn" onclick="event.stopPropagation(); deleteCardioTemplate('${t.id}')">✕</button>
+          <div class="template-arrow" onclick="startCardioTemplate('${t.id}')">→</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openCardioTemplateBuilder() {
+  const name = prompt('Name für das Cardio-Template?');
+  if (!name || !name.trim()) return;
+  const type = prompt('Sportart (Laufen, Radfahren, Schwimmen, Wandern, Sonstiges)?', 'Laufen') || 'Laufen';
+  const duration = parseFloat(prompt('Dauer in Min (optional, leer lassen für 0):', '') || '0') || 0;
+  const distance = parseFloat(prompt('Distanz in km (optional, leer lassen für 0):', '') || '0') || 0;
+  if (!state.cardioTemplates) state.cardioTemplates = [];
+  state.cardioTemplates.push({
+    id: 'ctpl_' + Date.now(),
+    name: name.trim(),
+    type, duration, distance
+  });
+  saveState();
+  renderCardioTemplates();
+  showToast('★ Cardio-Template gespeichert');
+}
+
+function saveCardioAsTemplate() {
+  const name = prompt('Name für das Cardio-Template?');
+  if (!name || !name.trim()) return;
+  const duration = parseFloat(document.getElementById('cardioDuration').value) || 0;
+  const distance = parseFloat(document.getElementById('cardioDistance').value) || 0;
+  if (!state.cardioTemplates) state.cardioTemplates = [];
+  state.cardioTemplates.push({
+    id: 'ctpl_' + Date.now(),
+    name: name.trim(),
+    type: selectedCardioType,
+    duration, distance
+  });
+  saveState();
+  renderCardioTemplates();
+  showToast('★ Cardio-Template gespeichert');
+}
+
+function startCardioTemplate(id) {
+  const t = (state.cardioTemplates || []).find(x => x.id === id);
+  if (!t) return;
+  const form = document.getElementById('cardioForm');
+  const btn = document.getElementById('cardioToggleBtn');
+  if (form.style.display === 'none') {
+    form.style.display = '';
+    btn.textContent = '× Abbrechen';
+  }
+  selectCardioType(t.type || 'Laufen');
+  setCardioMode('manual');
+  document.getElementById('cardioDuration').value = t.duration || '';
+  document.getElementById('cardioDistance').value = t.distance || '';
+  document.getElementById('cardioElevation').value = '';
+  document.getElementById('cardioPace').value = '';
+  document.getElementById('cardioHR').value = '';
+  document.getElementById('cardioKcal').value = '';
+  autoFillKcal('cardio');
+  showToast('📋 Template geladen — Werte anpassen & speichern');
+}
+
+function deleteCardioTemplate(id) {
+  if (!confirm('Cardio-Template löschen?')) return;
+  state.cardioTemplates = (state.cardioTemplates || []).filter(t => t.id !== id);
+  saveState();
+  renderCardioTemplates();
+}
+
 // --- RENDER CARDIO ---
 function renderCardio() {
+  renderCardioTemplates();
   const sessions = state.cardioSessions || [];
 
   const totalKcal = sessions.reduce((s, c) => s + (c.kcal || 0), 0);
@@ -3814,6 +4009,17 @@ function startFromTemplate(name, exercises) {
 }
 
 function createExerciseEntry(name) {
+  if (isCardioExercise(name)) {
+    return {
+      name,
+      isCardio: true,
+      duration: '',
+      distance: '',
+      kcal: '',
+      done: false,
+      sets: []
+    };
+  }
   const lastEntry = findLastEntry(name);
   const sets = [];
   const setCount = lastEntry ? lastEntry.sets.length : 3;
@@ -3950,25 +4156,30 @@ function finishWorkout() {
   const w = state.currentWorkout;
   w.name = document.getElementById('workoutName').value || 'Workout';
   
-  w.exercises = w.exercises.filter(ex => !ex.skipped && ex.sets.some(s => s.done));
+  w.exercises = w.exercises.filter(ex => {
+    if (ex.skipped) return false;
+    if (ex.isCardio) return ex.done;
+    return ex.sets.some(s => s.done);
+  });
   if (w.exercises.length === 0) {
     if (!confirm('Keine Sätze als erledigt markiert. Trotzdem speichern?')) return;
   }
   w.exercises.forEach(ex => {
-    ex.sets = ex.sets.filter(s => s.done);
+    if (!ex.isCardio) ex.sets = ex.sets.filter(s => s.done);
   });
-  
+
   w.timestamp = Date.now();
   w.duration = Math.floor((Date.now() - state.workoutStartTime) / 1000);
-  
+
   let prs = 0;
   const newMedals = [];
   w.exercises.forEach(ex => {
+    if (ex.isCardio) return;
     ex.sets.forEach(s => {
       const w_ = s.weight || 0;
       const r_ = s.reps || 0;
       if (w_ <= 0 || r_ <= 0) return;
-      
+
       const current = state.prs[ex.name];
       const oldWeight = current ? current.weight : 0;
 
