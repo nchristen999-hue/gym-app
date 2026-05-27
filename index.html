@@ -2414,6 +2414,14 @@ const TRANSLATIONS = {
   achGold5: { en:'5× Gold', de:'5× Gold', es:'5× Oro', fr:'5× Or', it:'5× Oro' },
   achPlatinum1: { en:'1× Platinum', de:'1× Platin', es:'1× Platino', fr:'1× Platine', it:'1× Platino' },
 
+  // ── DEFAULT TEMPLATES ──
+  tplPush: { en:'Push (Chest/Shoulder/Triceps)', de:'Push (Brust/Schulter/Trizeps)', es:'Push (Pecho/Hombro/Tríceps)', fr:'Push (Poitrine/Épaule/Triceps)', it:'Push (Petto/Spalla/Tricipiti)' },
+  tplPull: { en:'Pull (Back/Biceps)', de:'Pull (Rücken/Bizeps)', es:'Pull (Espalda/Bíceps)', fr:'Pull (Dos/Biceps)', it:'Pull (Schiena/Bicipiti)' },
+  tplLegs: { en:'Legs', de:'Legs (Beine)', es:'Piernas', fr:'Jambes', it:'Gambe' },
+  tplUpper: { en:'Upper Body', de:'Upper Body', es:'Tren superior', fr:'Haut du corps', it:'Parte superiore' },
+  tplLower: { en:'Lower Body', de:'Lower Body', es:'Tren inferior', fr:'Bas du corps', it:'Parte inferiore' },
+  tplArms: { en:'Arms Day', de:'Arms Day', es:'Día de brazos', fr:'Jour bras', it:'Giorno braccia' },
+
   // ── MUSCLE GROUPS ──
   muscleBrust: { en:'Chest', de:'Brust', es:'Pecho', fr:'Poitrine', it:'Petto' },
   muscleRuecken: { en:'Back', de:'Rücken', es:'Espalda', fr:'Dos', it:'Schiena' },
@@ -2999,12 +3007,12 @@ const EXERCISES = [
 ];
 
 const DEFAULT_TEMPLATES = [
-  { name: 'Push (Brust/Schulter/Trizeps)', exercises: ['Bankdrücken', 'Schulterdrücken', 'Schrägbankdrücken', 'Seitheben', 'Trizeps Drücken'] },
-  { name: 'Pull (Rücken/Bizeps)', exercises: ['Kreuzheben', 'Klimmzüge', 'Langhantelrudern', 'Latzug breit', 'Bizeps Curls'] },
-  { name: 'Legs (Beine)', exercises: ['Kniebeugen', 'Rumänisches Kreuzheben', 'Beinpresse', 'Beinbeuger', 'Wadenheben stehend'] },
-  { name: 'Upper Body', exercises: ['Bankdrücken', 'Langhantelrudern', 'Schulterdrücken', 'Klimmzüge', 'Bizeps Curls', 'Trizeps Drücken'] },
-  { name: 'Lower Body', exercises: ['Kniebeugen', 'Rumänisches Kreuzheben', 'Beinpresse', 'Wadenheben stehend', 'Plank'] },
-  { name: 'Arms Day', exercises: ['Bizeps Curls', 'Hammer Curls', 'Trizeps Drücken', 'Skull Crushers', 'Handgelenk-Curls'] },
+  { nameKey: 'tplPush', exercises: ['Bankdrücken', 'Schulterdrücken', 'Schrägbankdrücken', 'Seitheben', 'Trizeps Drücken'] },
+  { nameKey: 'tplPull', exercises: ['Kreuzheben', 'Klimmzüge', 'Langhantelrudern', 'Latzug breit', 'Bizeps Curls'] },
+  { nameKey: 'tplLegs', exercises: ['Kniebeugen', 'Rumänisches Kreuzheben', 'Beinpresse', 'Beinbeuger', 'Wadenheben stehend'] },
+  { nameKey: 'tplUpper', exercises: ['Bankdrücken', 'Langhantelrudern', 'Schulterdrücken', 'Klimmzüge', 'Bizeps Curls', 'Trizeps Drücken'] },
+  { nameKey: 'tplLower', exercises: ['Kniebeugen', 'Rumänisches Kreuzheben', 'Beinpresse', 'Wadenheben stehend', 'Plank'] },
+  { nameKey: 'tplArms', exercises: ['Bizeps Curls', 'Hammer Curls', 'Trizeps Drücken', 'Skull Crushers', 'Handgelenk-Curls'] },
 ];
 
 const LEVELS = [
@@ -3413,28 +3421,28 @@ function getThresholds(exerciseName) {
 }
 
 function getMedalTier(exerciseName, weight) {
-  const t = getThresholds(exerciseName);
+  const th = getThresholds(exerciseName);
   for (let i = TIER_INFO.length - 1; i >= 0; i--) {
     const info = TIER_INFO[i];
-    if (weight >= t[info.idx] && t[info.idx] > 0) return info.key;
+    if (weight >= th[info.idx] && th[info.idx] > 0) return info.key;
   }
   return null;
 }
 
 function getNextTier(exerciseName, weight) {
-  const t = getThresholds(exerciseName);
+  const th = getThresholds(exerciseName);
   for (let i = 0; i < TIER_INFO.length; i++) {
     const info = TIER_INFO[i];
-    if (t[info.idx] > 0 && weight < t[info.idx]) {
-      const prevThreshold = i > 0 ? t[TIER_INFO[i-1].idx] : 0;
+    if (th[info.idx] > 0 && weight < th[info.idx]) {
+      const prevThreshold = i > 0 ? th[TIER_INFO[i-1].idx] : 0;
       return {
         tier: info.key,
         name: info.name,
         icon: info.icon,
-        target: t[info.idx],
+        target: th[info.idx],
         from: prevThreshold,
         current: weight,
-        progress: prevThreshold < t[info.idx] ? Math.max(0, Math.min(1, (weight - prevThreshold) / (t[info.idx] - prevThreshold))) : 0
+        progress: prevThreshold < th[info.idx] ? Math.max(0, Math.min(1, (weight - prevThreshold) / (th[info.idx] - prevThreshold))) : 0
       };
     }
   }
@@ -3453,10 +3461,10 @@ function getAllMedals() {
 }
 
 function getCardioMedalTier(type, distance) {
-  const t = CARDIO_MEDAL_THRESHOLDS[type] || CARDIO_MEDAL_THRESHOLDS['Sonstiges'];
+  const th = CARDIO_MEDAL_THRESHOLDS[type] || CARDIO_MEDAL_THRESHOLDS['Sonstiges'];
   if (!distance || distance <= 0) return null;
   for (let i = TIER_INFO.length - 1; i >= 0; i--) {
-    if (t[TIER_INFO[i].idx] > 0 && distance >= t[TIER_INFO[i].idx]) {
+    if (th[TIER_INFO[i].idx] > 0 && distance >= th[TIER_INFO[i].idx]) {
       return TIER_INFO[i].key;
     }
   }
@@ -3464,19 +3472,19 @@ function getCardioMedalTier(type, distance) {
 }
 
 function getNextCardioTier(type, distance) {
-  const t = CARDIO_MEDAL_THRESHOLDS[type] || CARDIO_MEDAL_THRESHOLDS['Sonstiges'];
+  const th = CARDIO_MEDAL_THRESHOLDS[type] || CARDIO_MEDAL_THRESHOLDS['Sonstiges'];
   for (let i = 0; i < TIER_INFO.length; i++) {
     const info = TIER_INFO[i];
-    if (t[info.idx] > 0 && distance < t[info.idx]) {
-      const prev = i > 0 ? t[TIER_INFO[i-1].idx] : 0;
+    if (th[info.idx] > 0 && distance < th[info.idx]) {
+      const prev = i > 0 ? th[TIER_INFO[i-1].idx] : 0;
       return {
         tier: info.key,
         name: info.name,
         icon: info.icon,
-        target: t[info.idx],
+        target: th[info.idx],
         from: prev,
         current: distance,
-        progress: prev < t[info.idx] ? Math.max(0, Math.min(1, (distance - prev) / (t[info.idx] - prev))) : 0
+        progress: prev < th[info.idx] ? Math.max(0, Math.min(1, (distance - prev) / (th[info.idx] - prev))) : 0
       };
     }
   }
@@ -3671,7 +3679,7 @@ function renderTemplates() {
   def.innerHTML = DEFAULT_TEMPLATES.map((tpl, i) => `
     <div class="template-item" onclick="startDefaultTemplate(${i})">
       <div style="flex:1;">
-        <div class="template-name">${tpl.name}</div>
+        <div class="template-name">${t(tpl.nameKey)}</div>
         <div class="template-meta">${tpl.exercises.length} ${exWord2}</div>
       </div>
       <div class="template-arrow">→</div>
@@ -4005,7 +4013,7 @@ function toggleCardioForm() {
   const btn = document.getElementById('cardioToggleBtn');
   if (form.style.display === 'none') {
     form.style.display = '';
-    btn.textContent = '✕ Abbrechen';
+    btn.textContent = '✕ ' + t('cancel');
     if (cardioMode === 'gps') setTimeout(initGpsMap, 100);
   } else {
     if (gpsState === 'tracking' || gpsState === 'paused') {
@@ -4013,7 +4021,7 @@ function toggleCardioForm() {
       gpsReset();
     }
     form.style.display = 'none';
-    btn.textContent = '+ Neue Cardio-Einheit';
+    btn.textContent = t('newCardioSession');
     clearCardioForm();
   }
 }
@@ -4595,18 +4603,18 @@ function saveCardioAsTemplate() {
 }
 
 function startCardioTemplate(id) {
-  const t = (state.cardioTemplates || []).find(x => x.id === id);
-  if (!t) return;
+  const ct = (state.cardioTemplates || []).find(x => x.id === id);
+  if (!ct) return;
   const form = document.getElementById('cardioForm');
   const btn = document.getElementById('cardioToggleBtn');
   if (form.style.display === 'none') {
     form.style.display = '';
-    btn.textContent = '× Abbrechen';
+    btn.textContent = '× ' + t('cancel');
   }
-  selectCardioType(t.type || 'Laufen');
+  selectCardioType(ct.type || 'Laufen');
   setCardioMode('manual');
-  document.getElementById('cardioDuration').value = t.duration || '';
-  document.getElementById('cardioDistance').value = t.distance || '';
+  document.getElementById('cardioDuration').value = ct.duration || '';
+  document.getElementById('cardioDistance').value = ct.distance || '';
   document.getElementById('cardioElevation').value = '';
   document.getElementById('cardioPace').value = '';
   document.getElementById('cardioHR').value = '';
@@ -4617,7 +4625,7 @@ function startCardioTemplate(id) {
 
 function deleteCardioTemplate(id) {
   if (!confirm(t('confirmDeleteCardioTpl'))) return;
-  state.cardioTemplates = (state.cardioTemplates || []).filter(t => t.id !== id);
+  state.cardioTemplates = (state.cardioTemplates || []).filter(ct => ct.id !== id);
   saveState();
   renderCardioTemplates();
 }
@@ -4875,14 +4883,14 @@ function startEmptyWorkout() {
 }
 
 function startDefaultTemplate(idx) {
-  const t = DEFAULT_TEMPLATES[idx];
-  startFromTemplate(t.name.split(' ')[0], t.exercises);
+  const tpl = DEFAULT_TEMPLATES[idx];
+  startFromTemplate(t(tpl.nameKey).split(' ')[0], tpl.exercises);
 }
 
 function startMyTemplate(id) {
-  const t = state.myTemplates.find(t => t.id === id);
-  if (!t) return;
-  startFromTemplate(t.name, t.exercises);
+  const tpl = state.myTemplates.find(mt => mt.id === id);
+  if (!tpl) return;
+  startFromTemplate(tpl.name, tpl.exercises);
 }
 
 function startFromTemplate(name, exercises) {
@@ -5175,9 +5183,9 @@ function saveAsTemplate() {
 
 function openTemplateBuilder(id) {
   if (id) {
-    const t = state.myTemplates.find(t => t.id === id);
-    if (!t) return;
-    templateBuilder = { editingId: id, name: t.name, exercises: [...t.exercises] };
+    const tpl = state.myTemplates.find(mt => mt.id === id);
+    if (!tpl) return;
+    templateBuilder = { editingId: id, name: tpl.name, exercises: [...tpl.exercises] };
     document.getElementById('templateModalTitle').textContent = t('editTemplate');
     document.getElementById('deleteTemplateBtn').style.display = 'block';
   } else {
@@ -5219,10 +5227,10 @@ function saveTemplate() {
   if (templateBuilder.exercises.length === 0) { showToast(t('minOneExercise')); return; }
   
   if (templateBuilder.editingId) {
-    const t = state.myTemplates.find(t => t.id === templateBuilder.editingId);
-    if (t) {
-      t.name = name;
-      t.exercises = templateBuilder.exercises;
+    const tpl = state.myTemplates.find(mt => mt.id === templateBuilder.editingId);
+    if (tpl) {
+      tpl.name = name;
+      tpl.exercises = templateBuilder.exercises;
     }
   } else {
     state.myTemplates.push({
@@ -5239,7 +5247,7 @@ function saveTemplate() {
 function deleteTemplate() {
   if (!templateBuilder.editingId) return;
   if (!confirm(t('confirmDeleteTemplate'))) return;
-  state.myTemplates = state.myTemplates.filter(t => t.id !== templateBuilder.editingId);
+  state.myTemplates = state.myTemplates.filter(mt => mt.id !== templateBuilder.editingId);
   saveState();
   closeTemplateModal();
   renderHome();
@@ -5303,10 +5311,10 @@ function resetThresholds() {
 }
 
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show';
-  setTimeout(() => t.className = 'toast', 2500);
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show';
+  setTimeout(() => el.className = 'toast', 2500);
 }
 
 function escapeHtml(s) {
