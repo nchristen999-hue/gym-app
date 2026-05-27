@@ -2482,6 +2482,110 @@ function tMuscle(m) { return t(MUSCLE_KEYS[m] || m); }
 function tSport(type) { return t(SPORT_KEYS[type] || 'other'); }
 function getLoc() { return { de:'de-CH', es:'es', fr:'fr', it:'it' }[currentLang] || 'en'; }
 
+const EX_NAMES = {
+  'Bankdrücken':{ en:'Bench Press', es:'Press de banca', fr:'Développé couché', it:'Panca piana' },
+  'Schrägbankdrücken':{ en:'Incline Bench Press', es:'Press inclinado', fr:'Développé incliné', it:'Panca inclinata' },
+  'Negativ-Bankdrücken':{ en:'Decline Bench Press', es:'Press declinado', fr:'Développé décliné', it:'Panca declinata' },
+  'Kurzhantel-Bankdrücken':{ en:'DB Bench Press', es:'Press con mancuernas', fr:'Développé haltères', it:'Panca con manubri' },
+  'KH Schrägbankdrücken':{ en:'DB Incline Press', es:'Press inclinado mancuernas', fr:'Développé incliné haltères', it:'Panca inclinata manubri' },
+  'Butterfly':{ en:'Pec Deck / Butterfly', es:'Pec Deck', fr:'Butterfly', it:'Butterfly' },
+  'Cable Crossover':{ en:'Cable Crossover', es:'Cruce de poleas', fr:'Cable Crossover', it:'Cable Crossover' },
+  'Dips':{ en:'Dips', es:'Fondos', fr:'Dips', it:'Dips' },
+  'Liegestütze':{ en:'Push-Ups', es:'Flexiones', fr:'Pompes', it:'Flessioni' },
+  'Chest Press (Maschine)':{ en:'Chest Press (Machine)', es:'Press de pecho (máquina)', fr:'Chest Press (machine)', it:'Chest Press (macchina)' },
+  'Incline Chest Press (Maschine)':{ en:'Incline Chest Press (Machine)', es:'Press inclinado (máquina)', fr:'Chest Press incliné (machine)', it:'Chest Press inclinata (macchina)' },
+  'KH Flys flach':{ en:'DB Flys flat', es:'Aperturas planas', fr:'Écartés haltères plat', it:'Croci manubri piatto' },
+  'KH Flys schräg':{ en:'DB Flys incline', es:'Aperturas inclinadas', fr:'Écartés haltères incliné', it:'Croci manubri inclinato' },
+  'Pullover':{ en:'Pullover', es:'Pullover', fr:'Pullover', it:'Pullover' },
+  'Kreuzheben':{ en:'Deadlift', es:'Peso muerto', fr:'Soulevé de terre', it:'Stacco da terra' },
+  'Klimmzüge':{ en:'Pull-Ups', es:'Dominadas', fr:'Tractions', it:'Trazioni' },
+  'Latzug breit':{ en:'Lat Pulldown wide', es:'Jalón al pecho ancho', fr:'Tirage vertical large', it:'Lat Machine larga' },
+  'Latzug eng':{ en:'Lat Pulldown close', es:'Jalón al pecho cerrado', fr:'Tirage vertical serré', it:'Lat Machine stretta' },
+  'Rudern (Kabel)':{ en:'Cable Row', es:'Remo con cable', fr:'Tirage horizontal câble', it:'Rematore al cavo' },
+  'Langhantelrudern':{ en:'Barbell Row', es:'Remo con barra', fr:'Rowing barre', it:'Rematore con bilanciere' },
+  'T-Bar Rudern':{ en:'T-Bar Row', es:'Remo T-Bar', fr:'Rowing T-Bar', it:'T-Bar Row' },
+  'KH Rudern einarmig':{ en:'Single-Arm DB Row', es:'Remo con mancuerna', fr:'Rowing haltère unilatéral', it:'Rematore manubrio' },
+  'Seated Row (Maschine)':{ en:'Seated Row (Machine)', es:'Remo sentado (máquina)', fr:'Tirage horizontal (machine)', it:'Seated Row (macchina)' },
+  'Chest Supported Row':{ en:'Chest Supported Row', es:'Remo con apoyo', fr:'Rowing poitrine', it:'Rematore con appoggio' },
+  'Latzug V-Griff':{ en:'Lat Pulldown V-Bar', es:'Jalón V-Bar', fr:'Tirage vertical V-Bar', it:'Lat Machine V-Bar' },
+  'Hyperextensions':{ en:'Hyperextensions', es:'Hiperextensiones', fr:'Hyperextensions', it:'Hyperextensions' },
+  'Face Pulls':{ en:'Face Pulls', es:'Face Pulls', fr:'Face Pulls', it:'Face Pulls' },
+  'Meadows Row':{ en:'Meadows Row', es:'Remo Meadows', fr:'Rowing Meadows', it:'Meadows Row' },
+  'Pendlay Row':{ en:'Pendlay Row', es:'Remo Pendlay', fr:'Rowing Pendlay', it:'Pendlay Row' },
+  'Shrugs':{ en:'Shrugs', es:'Encogimientos', fr:'Shrugs', it:'Scrollate' },
+  'Kniebeugen':{ en:'Squats', es:'Sentadillas', fr:'Squats', it:'Squat' },
+  'Frontkniebeugen':{ en:'Front Squats', es:'Sentadilla frontal', fr:'Squats avant', it:'Front Squat' },
+  'Beinpresse':{ en:'Leg Press', es:'Prensa de piernas', fr:'Presse à cuisses', it:'Leg Press' },
+  'Hack Squat':{ en:'Hack Squat', es:'Hack Squat', fr:'Hack Squat', it:'Hack Squat' },
+  'Rumänisches Kreuzheben':{ en:'Romanian Deadlift', es:'Peso muerto rumano', fr:'Soulevé de terre roumain', it:'Stacco rumeno' },
+  'Beinstrecker':{ en:'Leg Extension', es:'Extensión de piernas', fr:'Leg Extension', it:'Leg Extension' },
+  'Beinbeuger':{ en:'Leg Curl', es:'Curl de piernas', fr:'Leg Curl', it:'Leg Curl' },
+  'Beinbeuger sitzend':{ en:'Seated Leg Curl', es:'Curl sentado', fr:'Leg Curl assis', it:'Leg Curl seduto' },
+  'Wadenheben stehend':{ en:'Standing Calf Raise', es:'Elevación de talones de pie', fr:'Mollets debout', it:'Calf Raise in piedi' },
+  'Wadenheben sitzend':{ en:'Seated Calf Raise', es:'Elevación de talones sentado', fr:'Mollets assis', it:'Calf Raise seduto' },
+  'Ausfallschritte':{ en:'Lunges', es:'Zancadas', fr:'Fentes', it:'Affondi' },
+  'Bulgarische Kniebeugen':{ en:'Bulgarian Split Squat', es:'Sentadilla búlgara', fr:'Squat bulgare', it:'Squat bulgaro' },
+  'Hip Thrust':{ en:'Hip Thrust', es:'Hip Thrust', fr:'Hip Thrust', it:'Hip Thrust' },
+  'Sumo Kreuzheben':{ en:'Sumo Deadlift', es:'Peso muerto sumo', fr:'Soulevé de terre sumo', it:'Stacco sumo' },
+  'Goblet Squat':{ en:'Goblet Squat', es:'Goblet Squat', fr:'Goblet Squat', it:'Goblet Squat' },
+  'Beinpresse einbeinig':{ en:'Single-Leg Press', es:'Prensa unilateral', fr:'Presse unilatérale', it:'Leg Press unilaterale' },
+  'Adduktoren':{ en:'Adductors', es:'Aductores', fr:'Adducteurs', it:'Adduttori' },
+  'Abduktoren':{ en:'Abductors', es:'Abductores', fr:'Abducteurs', it:'Abduttori' },
+  'Schulterdrücken':{ en:'Overhead Press', es:'Press militar', fr:'Développé épaules', it:'Lento avanti' },
+  'KH Schulterdrücken':{ en:'DB Shoulder Press', es:'Press hombro mancuernas', fr:'Développé haltères', it:'Lento manubri' },
+  'Arnold Press':{ en:'Arnold Press', es:'Press Arnold', fr:'Arnold Press', it:'Arnold Press' },
+  'Seitheben':{ en:'Lateral Raise', es:'Elevaciones laterales', fr:'Élévations latérales', it:'Alzate laterali' },
+  'Seitheben (Kabel)':{ en:'Cable Lateral Raise', es:'Elevación lateral cable', fr:'Élévation latérale câble', it:'Alzate laterali cavo' },
+  'Frontheben':{ en:'Front Raise', es:'Elevación frontal', fr:'Élévation frontale', it:'Alzate frontali' },
+  'Reverse Fly':{ en:'Reverse Fly', es:'Pájaro invertido', fr:'Oiseau', it:'Reverse Fly' },
+  'Reverse Fly (Kabel)':{ en:'Cable Reverse Fly', es:'Pájaro invertido cable', fr:'Oiseau câble', it:'Reverse Fly cavo' },
+  'Schulterdrücken (Maschine)':{ en:'Shoulder Press (Machine)', es:'Press hombro (máquina)', fr:'Développé épaules (machine)', it:'Shoulder Press (macchina)' },
+  'Upright Row':{ en:'Upright Row', es:'Remo al mentón', fr:'Rowing menton', it:'Tirate al mento' },
+  'Bizeps Curls':{ en:'Barbell Curls', es:'Curl con barra', fr:'Curl barre', it:'Curl bilanciere' },
+  'Bizeps Curls (SZ-Stange)':{ en:'EZ-Bar Curls', es:'Curl barra Z', fr:'Curl barre EZ', it:'Curl barra EZ' },
+  'KH Bizeps Curls':{ en:'DB Curls', es:'Curl mancuernas', fr:'Curl haltères', it:'Curl manubri' },
+  'Hammer Curls':{ en:'Hammer Curls', es:'Curl martillo', fr:'Curl marteau', it:'Hammer Curl' },
+  'Konzentrations-Curls':{ en:'Concentration Curls', es:'Curl concentrado', fr:'Curl concentré', it:'Curl concentrato' },
+  'Preacher Curls':{ en:'Preacher Curls', es:'Curl predicador', fr:'Curl pupitre', it:'Preacher Curl' },
+  'Scott Curls':{ en:'Scott Curls', es:'Curl Scott', fr:'Curl Scott', it:'Scott Curl' },
+  'Kabel Curls':{ en:'Cable Curls', es:'Curl con cable', fr:'Curl câble', it:'Curl al cavo' },
+  'Incline Curls':{ en:'Incline Curls', es:'Curl inclinado', fr:'Curl incliné', it:'Curl inclinato' },
+  'Spider Curls':{ en:'Spider Curls', es:'Spider Curl', fr:'Spider Curl', it:'Spider Curl' },
+  'Drag Curls':{ en:'Drag Curls', es:'Drag Curl', fr:'Drag Curl', it:'Drag Curl' },
+  'Bizepsmaschine':{ en:'Bicep Machine', es:'Máquina de bíceps', fr:'Machine biceps', it:'Macchina bicipiti' },
+  'Trizeps Drücken':{ en:'Tricep Pushdown', es:'Empuje de tríceps', fr:'Tirage triceps', it:'Pushdown tricipiti' },
+  'Trizeps Seil':{ en:'Tricep Rope Pushdown', es:'Extensión cuerda', fr:'Extension corde', it:'Pushdown corda' },
+  'French Press':{ en:'French Press', es:'Press francés', fr:'Barre au front', it:'French Press' },
+  'Trizeps Dips':{ en:'Tricep Dips', es:'Fondos de tríceps', fr:'Dips triceps', it:'Dips tricipiti' },
+  'Kickbacks':{ en:'Kickbacks', es:'Patada de tríceps', fr:'Kickbacks', it:'Kickbacks' },
+  'Overhead Trizeps Extension':{ en:'Overhead Tricep Extension', es:'Extensión sobre cabeza', fr:'Extension au-dessus de la tête', it:'Estensione sopra la testa' },
+  'Skull Crushers':{ en:'Skull Crushers', es:'Rompecráneos', fr:'Skull Crushers', it:'Skull Crushers' },
+  'Close Grip Bankdrücken':{ en:'Close Grip Bench Press', es:'Press agarre cerrado', fr:'Développé serré', it:'Panca presa stretta' },
+  'Trizeps Maschine':{ en:'Tricep Machine', es:'Máquina de tríceps', fr:'Machine triceps', it:'Macchina tricipiti' },
+  'KH Trizeps Extension':{ en:'DB Tricep Extension', es:'Extensión mancuerna', fr:'Extension haltère', it:'Estensione manubrio' },
+  'Diamond Liegestütze':{ en:'Diamond Push-Ups', es:'Flexiones diamante', fr:'Pompes diamant', it:'Flessioni diamante' },
+  'JM Press':{ en:'JM Press', es:'JM Press', fr:'JM Press', it:'JM Press' },
+  'Handgelenk-Curls':{ en:'Wrist Curls', es:'Curl de muñeca', fr:'Curl poignet', it:'Curl polso' },
+  'Reverse Curls':{ en:'Reverse Curls', es:'Curl inverso', fr:'Curl inversé', it:'Curl inverso' },
+  'Wrist Roller':{ en:'Wrist Roller', es:'Rodillo de muñeca', fr:'Wrist Roller', it:'Wrist Roller' },
+  'Farmer Walks':{ en:'Farmer Walks', es:'Paseo del granjero', fr:'Marche du fermier', it:'Farmer Walk' },
+  'Reverse Wrist Curls':{ en:'Reverse Wrist Curls', es:'Curl inverso de muñeca', fr:'Curl poignet inversé', it:'Curl polso inverso' },
+  'Gripper':{ en:'Gripper', es:'Gripper', fr:'Gripper', it:'Gripper' },
+  'Plank':{ en:'Plank', es:'Plancha', fr:'Planche', it:'Plank' },
+  'Crunches':{ en:'Crunches', es:'Abdominales', fr:'Crunchs', it:'Crunch' },
+  'Beinheben':{ en:'Leg Raises', es:'Elevación de piernas', fr:'Relevé de jambes', it:'Alzate gambe' },
+  'Beinheben hängend':{ en:'Hanging Leg Raises', es:'Elevación colgado', fr:'Relevé de jambes suspendu', it:'Alzate gambe sospeso' },
+  'Russian Twists':{ en:'Russian Twists', es:'Giros rusos', fr:'Russian Twists', it:'Russian Twist' },
+  'Cable Crunches':{ en:'Cable Crunches', es:'Crunch con cable', fr:'Crunch câble', it:'Crunch al cavo' },
+  'Ab Wheel Rollout':{ en:'Ab Wheel Rollout', es:'Rueda abdominal', fr:'Ab Wheel', it:'Ab Wheel' },
+  'Woodchoppers':{ en:'Woodchoppers', es:'Leñador', fr:'Bûcheron', it:'Woodchopper' },
+  'Side Plank':{ en:'Side Plank', es:'Plancha lateral', fr:'Planche latérale', it:'Plank laterale' },
+  'Sit-Ups':{ en:'Sit-Ups', es:'Abdominales', fr:'Sit-Ups', it:'Sit-Up' },
+  'Mountain Climbers':{ en:'Mountain Climbers', es:'Escaladores', fr:'Mountain Climbers', it:'Mountain Climber' },
+  'Toe Touches':{ en:'Toe Touches', es:'Tocar los pies', fr:'Toucher les pieds', it:'Toe Touch' },
+};
+function tEx(name) { const e = EX_NAMES[name]; if (!e || currentLang === 'de') return name; return e[currentLang] || e['en'] || name; }
+
 function setLanguage(lang) {
   currentLang = lang;
   localStorage.setItem('gymtrack_lang', lang);
@@ -3610,7 +3714,7 @@ function renderWorkout() {
           <div class="exercise-header">
             <button class="skip-toggle${isSkipped ? '' : ' active'}" onclick="toggleSkipExercise(${exIdx})">${isSkipped ? '—' : '✓'}</button>
             <div style="flex:1;margin-left:10px;">
-              <div class="exercise-name">🏃 ${escapeHtml(ex.name)}</div>
+              <div class="exercise-name">🏃 ${escapeHtml(tEx(ex.name))}</div>
               <div class="exercise-pr" style="color:var(--text-dim);">Cardio</div>
             </div>
             <button class="icon-btn" onclick="removeExercise(${exIdx})">✕</button>
@@ -3645,7 +3749,7 @@ function renderWorkout() {
       <div class="exercise-header">
         <button class="skip-toggle${isSkipped ? '' : ' active'}" onclick="toggleSkipExercise(${exIdx})">${isSkipped ? '—' : '✓'}</button>
         <div style="flex:1;margin-left:10px;">
-          <div class="exercise-name">${escapeHtml(ex.name)}</div>
+          <div class="exercise-name">${escapeHtml(tEx(ex.name))}</div>
           <div class="exercise-pr">${prText}</div>
         </div>
         <button class="icon-btn" onclick="removeExercise(${exIdx})">✕</button>
@@ -3795,8 +3899,8 @@ function renderMedals() {
               <div style="display: flex; align-items: center; gap: 12px;">
                 <div class="medal-icon-big">${tierInfo.icon}</div>
                 <div class="medal-info">
-                  <div class="medal-exercise">${icon} ${escapeHtml(m.type)}</div>
-                  <div class="medal-detail">Beste: <strong>${m.distance.toFixed(1)} km</strong></div>
+                  <div class="medal-exercise">${icon} ${tSport(m.type)}</div>
+                  <div class="medal-detail">${t('best')}: <strong>${m.distance.toFixed(1)} km</strong></div>
                 </div>
                 <div class="medal-tier ${m.tier}">${tierInfo.name}</div>
               </div>
@@ -3834,7 +3938,7 @@ function renderMedals() {
           <div style="display: flex; align-items: center; gap: 12px;">
             <div class="medal-icon-big">${tierInfo.icon}</div>
             <div class="medal-info">
-              <div class="medal-exercise">${escapeHtml(m.exercise)}</div>
+              <div class="medal-exercise">${escapeHtml(tEx(m.exercise))}</div>
               <div class="medal-detail">PR: <strong>${m.weight}kg</strong> × ${m.reps} Reps</div>
             </div>
             <div class="medal-tier ${m.tier}">${tierInfo.name}</div>
@@ -4619,7 +4723,7 @@ function renderProgress() {
   const select = document.getElementById('progressSelect');
   const current = select.value;
   select.innerHTML = `<option value="">${t('selectExercise')}</option>` +
-    [...allExercises].sort().map(e => `<option value="${escapeHtml(e)}" ${e===current?'selected':''}>${escapeHtml(e)}</option>`).join('');
+    [...allExercises].sort((a,b) => tEx(a).localeCompare(tEx(b))).map(e => `<option value="${escapeHtml(e)}" ${e===current?'selected':''}>${escapeHtml(tEx(e))}</option>`).join('');
   
   renderChart();
 }
@@ -4852,12 +4956,12 @@ function closeExerciseModal() {
 function filterExercises() {
   const q = document.getElementById('exerciseSearch').value.toLowerCase();
   const list = document.getElementById('exerciseListModal');
-  const filtered = getAllExercises().filter(e => e.name.toLowerCase().includes(q) || e.muscle.toLowerCase().includes(q));
+  const filtered = getAllExercises().filter(e => tEx(e.name).toLowerCase().includes(q) || e.name.toLowerCase().includes(q) || tMuscle(e.muscle).toLowerCase().includes(q));
   list.innerHTML = filtered.map(e => {
     const isSelected = exercisePickerMode === 'template' && templateBuilder.exercises.includes(e.name);
     return `
       <div class="exercise-option ${isSelected ? 'selected' : ''}" onclick="pickExercise('${e.name.replace(/'/g, "\\'")}')">
-        <span>${escapeHtml(e.name)}${isSelected ? ' ✓' : ''}</span>
+        <span>${escapeHtml(tEx(e.name))}${isSelected ? ' ✓' : ''}</span>
         <span class="muscle">${tMuscle(e.muscle)}</span>
       </div>
     `;
@@ -4999,17 +5103,17 @@ function finishWorkout() {
   pendingCelebrations = [];
   pendingCelebrations.push({
     icon: prs > 0 ? '🚀' : '💪',
-    title: 'WORKOUT FERTIG!',
-    subtitle: prs > 0 ? `${prs} neue PR${prs>1?'s':''}!` : 'Gut gemacht!',
+    title: t('workoutDone'),
+    subtitle: prs > 0 ? `${prs} PR${prs>1?'s':''}!` : '🔥',
     points: '+' + w.points + ' XP'
   });
-  
+
   newMedals.forEach(m => {
     const tierInfo = TIER_INFO.find(t => t.key === m.tier);
     pendingCelebrations.push({
       icon: tierInfo.icon,
-      title: tierInfo.name.toUpperCase() + '-MEDAILLE!',
-      subtitle: m.exercise + ' • ' + m.weight + 'kg × ' + m.reps,
+      title: tierInfo.name.toUpperCase() + '!',
+      subtitle: tEx(m.exercise) + ' • ' + m.weight + 'kg × ' + m.reps,
       points: ''
     });
   });
@@ -5058,7 +5162,7 @@ function saveAsTemplate() {
     showToast(t('addExFirst'));
     return;
   }
-  const name = document.getElementById('workoutName').value || prompt('Template-Name:');
+  const name = document.getElementById('workoutName').value || prompt(t('templateNamePh'));
   if (!name) return;
   state.myTemplates.push({
     id: 'tpl_' + Date.now(),
@@ -5074,11 +5178,11 @@ function openTemplateBuilder(id) {
     const t = state.myTemplates.find(t => t.id === id);
     if (!t) return;
     templateBuilder = { editingId: id, name: t.name, exercises: [...t.exercises] };
-    document.getElementById('templateModalTitle').textContent = 'Template bearbeiten';
+    document.getElementById('templateModalTitle').textContent = t('editTemplate');
     document.getElementById('deleteTemplateBtn').style.display = 'block';
   } else {
     templateBuilder = { editingId: null, name: '', exercises: [] };
-    document.getElementById('templateModalTitle').textContent = 'Neues Template';
+    document.getElementById('templateModalTitle').textContent = t('newTemplate');
     document.getElementById('deleteTemplateBtn').style.display = 'none';
   }
   document.getElementById('templateNameInput').value = templateBuilder.name;
@@ -5092,13 +5196,13 @@ function renderTemplateBuilder() {
   document.getElementById('tplExCount').textContent = templateBuilder.exercises.length;
   const list = document.getElementById('templateExercises');
   if (templateBuilder.exercises.length === 0) {
-    list.innerHTML = '<div class="empty-state" style="padding:16px;font-size:13px;">Noch keine Übungen hinzugefügt</div>';
+    list.innerHTML = `<div class="empty-state" style="padding:16px;font-size:13px;">${t('addExFirst')}</div>`;
   } else {
     list.innerHTML = templateBuilder.exercises.map((name, i) => `
       <div class="template-editor-block">
         <div>
           <div style="font-family:'JetBrains Mono',monospace;color:var(--text-dim);font-size:11px;display:inline-block;margin-right:8px;">${i+1}</div>
-          <span class="template-editor-name">${escapeHtml(name)}</span>
+          <span class="template-editor-name">${escapeHtml(tEx(name))}</span>
         </div>
         <button class="icon-btn" onclick="removeTemplateExercise(${i})">✕</button>
       </div>
@@ -5155,25 +5259,25 @@ function closeThresholdsModal() {
 }
 function renderThresholdsList() {
   const q = document.getElementById('thresholdSearch').value.toLowerCase();
-  const filtered = getAllExercises().filter(e => e.name.toLowerCase().includes(q) || e.muscle.toLowerCase().includes(q));
+  const filtered = getAllExercises().filter(e => tEx(e.name).toLowerCase().includes(q) || e.name.toLowerCase().includes(q) || tMuscle(e.muscle).toLowerCase().includes(q));
   const list = document.getElementById('thresholdsList');
   if (filtered.length === 0) {
-    list.innerHTML = '<div class="empty-state" style="padding:16px;font-size:13px;">Keine Übung gefunden</div>';
+    list.innerHTML = `<div class="empty-state" style="padding:16px;font-size:13px;">${t('noExFound')}</div>`;
     return;
   }
   list.innerHTML = filtered.map(e => {
-    const t = getThresholds(e.name);
+    const th = getThresholds(e.name);
     return `
       <div class="threshold-row">
         <div class="threshold-row-name">
-          ${escapeHtml(e.name)}
-          <span class="threshold-row-muscle">${e.muscle}</span>
+          ${escapeHtml(tEx(e.name))}
+          <span class="threshold-row-muscle">${tMuscle(e.muscle)}</span>
         </div>
         <div class="threshold-inputs">
           ${TIER_INFO.map(tier => `
             <div class="threshold-input-cell">
               <span class="icon">${tier.icon}</span>
-              <input type="number" inputmode="decimal" value="${t[tier.idx] || ''}" 
+              <input type="number" inputmode="decimal" value="${th[tier.idx] || ''}"
                 placeholder="0"
                 onchange="updateThreshold('${e.name.replace(/'/g, "\\'")}',${tier.idx},this.value)" />
             </div>
