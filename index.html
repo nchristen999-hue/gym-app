@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -1462,7 +1462,7 @@
           <div class="stat-value" id="totalWorkouts">0</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Diese Woche</div>
+          <div class="stat-label" data-i18n="thisWeek">This Week</div>
           <div class="stat-value" id="weekWorkouts">0</div>
         </div>
         <div class="stat-card">
@@ -1489,11 +1489,11 @@
       <!-- MUSCLE MAP WIDGET -->
       <div class="muscle-map-card">
         <div class="muscle-map-header">
-          <div class="card-title" style="margin:0;">Muskel-Map</div>
+          <div class="card-title" style="margin:0;" data-i18n="muscleMap">Muscle Map</div>
           <div class="muscle-map-filters">
-            <button class="muscle-map-filter active" data-period="week" onclick="setMuscleMapPeriod('week')">Woche</button>
-            <button class="muscle-map-filter" data-period="month" onclick="setMuscleMapPeriod('month')">Monat</button>
-            <button class="muscle-map-filter" data-period="all" onclick="setMuscleMapPeriod('all')">Gesamt</button>
+            <button class="muscle-map-filter active" data-period="week" onclick="setMuscleMapPeriod('week')" data-i18n="week">Week</button>
+            <button class="muscle-map-filter" data-period="month" onclick="setMuscleMapPeriod('month')" data-i18n="month">Month</button>
+            <button class="muscle-map-filter" data-period="all" onclick="setMuscleMapPeriod('all')" data-i18n="total">Total</button>
           </div>
         </div>
         <div class="muscle-map-body">
@@ -1530,7 +1530,7 @@
               <path class="body-outline" d="M54,218 Q53,240 52,265" />
               <path class="body-outline" d="M76,218 Q77,240 78,265" />
             </svg>
-            <div class="muscle-map-label">Vorne</div>
+            <div class="muscle-map-label" data-i18n="front">Front</div>
           </div>
           <!-- BACK VIEW -->
           <div>
@@ -1565,27 +1565,27 @@
               <path class="body-outline" d="M54,218 Q53,240 52,265" />
               <path class="body-outline" d="M76,218 Q77,240 78,265" />
             </svg>
-            <div class="muscle-map-label">Hinten</div>
+            <div class="muscle-map-label" data-i18n="back">Back</div>
           </div>
         </div>
         <div class="muscle-map-legend" id="muscleMapLegend"></div>
       </div>
 
       <div class="section-tabs">
-        <button class="section-tab active" data-tpl="my">Meine Workouts</button>
-        <button class="section-tab" data-tpl="default">Standard</button>
+        <button class="section-tab active" data-tpl="my" data-i18n="myWorkouts">My Workouts</button>
+        <button class="section-tab" data-tpl="default" data-i18n="standard">Default</button>
       </div>
       
       <div id="myTemplatesSection">
         <div class="card-title">
-          <span>Eigene Templates</span>
-          <span class="card-title-action" onclick="openTemplateBuilder()">+ Neu erstellen</span>
+          <span data-i18n="ownTemplates">My Templates</span>
+          <span class="card-title-action" onclick="openTemplateBuilder()" data-i18n="createNew">+ Create new</span>
         </div>
         <div class="template-list" id="myTemplateList"></div>
       </div>
       
       <div id="defaultTemplatesSection" style="display:none;">
-        <div class="card-title">Vorgefertigte Templates</div>
+        <div class="card-title" data-i18n="prefabTemplates">Preset Templates</div>
         <div class="template-list" id="defaultTemplateList"></div>
       </div>
     </div>
@@ -1593,32 +1593,32 @@
     <div class="view" id="view-workout">
       <div id="workoutEmpty" class="empty-state" style="padding:40px 20px;">
         <div class="icon">💪</div>
-        <div style="font-size:16px;font-weight:600;margin-bottom:8px;">Kein aktives Training</div>
-        <div style="color:var(--text-dim);font-size:13px;margin-bottom:20px;">Starte ein Workout von Home oder hier</div>
-        <button class="start-workout-btn" onclick="startEmptyWorkout()" style="margin:0 auto;">+ Neues Workout</button>
+        <div style="font-size:16px;font-weight:600;margin-bottom:8px;" data-i18n="noActiveWorkout">No active workout</div>
+        <div style="color:var(--text-dim);font-size:13px;margin-bottom:20px;" data-i18n="startWorkoutHere">Start a workout from Home or here</div>
+        <button class="start-workout-btn" onclick="startEmptyWorkout()" style="margin:0 auto;" data-i18n="newWorkout">+ New Workout</button>
       </div>
       <div id="workoutActive" style="display:none;">
         <div class="workout-header">
           <div>
-            <div class="card-title" style="margin: 0;">Aktives Training</div>
-            <div class="live-points">Punkte: <span class="val" id="livePoints">0</span></div>
+            <div class="card-title" style="margin: 0;" data-i18n="activeWorkout">Active Workout</div>
+            <div class="live-points"><span data-i18n="points">Points</span>: <span class="val" id="livePoints">0</span></div>
           </div>
           <div style="text-align:right;">
             <div class="workout-timer" id="workoutTimer">00:00</div>
             <div id="workoutRestTimer" style="display:none;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--accent);margin-top:2px;"></div>
           </div>
         </div>
-        <input type="text" class="workout-name-input" id="workoutName" placeholder="Workout-Name (z.B. Push)" />
+        <input type="text" class="workout-name-input" id="workoutName" data-i18n="workoutNamePh" placeholder="Workout name (e.g. Push)" />
         <div id="exerciseContainer"></div>
-        <button class="add-exercise-btn" onclick="openExerciseModal()">+ Übung hinzufügen</button>
-        <button class="finish-btn" onclick="finishWorkout()">Workout abschliessen</button>
-        <button class="save-template-btn" onclick="saveAsTemplate()">★ Als Template speichern</button>
-        <button class="cancel-btn" onclick="cancelWorkout()">Abbrechen</button>
+        <button class="add-exercise-btn" onclick="openExerciseModal()" data-i18n="addExercise">+ Add exercise</button>
+        <button class="finish-btn" onclick="finishWorkout()" data-i18n="finishWorkout">Finish workout</button>
+        <button class="save-template-btn" onclick="saveAsTemplate()" data-i18n="saveAsTemplate">★ Save as template</button>
+        <button class="cancel-btn" onclick="cancelWorkout()" data-i18n="cancel">Cancel</button>
       </div>
     </div>
 
     <div class="view" id="view-history">
-      <div class="card-title" style="margin-bottom: 16px;">Trainings-Historie</div>
+      <div class="card-title" style="margin-bottom: 16px;" data-i18n="trainingHistory">Training History</div>
       <div class="calendar-section" id="calendarSection">
         <div class="calendar-nav">
           <button class="calendar-nav-btn" onclick="calendarPrev()">‹</button>
@@ -1633,7 +1633,7 @@
     </div>
 
     <div class="view" id="view-cardio">
-      <div class="card-title" style="margin-bottom:16px;">Cardio-Tracking</div>
+      <div class="card-title" style="margin-bottom:16px;" data-i18n="cardioTracking">Cardio Tracking</div>
 
       <div class="cardio-type-pills" id="cardioFilterPills" style="margin-bottom:14px;">
         <div class="cardio-type-pill active" data-filter="all" onclick="setCardioFilter('all')">🏅 Alle</div>
@@ -1646,7 +1646,7 @@
 
       <div class="cardio-summary">
         <div class="stat-card">
-          <div class="stat-label">Sessions</div>
+          <div class="stat-label" data-i18n="sessions">Sessions</div>
           <div class="stat-value" id="cardioTotalCount">0</div>
         </div>
         <div class="stat-card">
@@ -1654,11 +1654,11 @@
           <div class="stat-value" id="cardioTotalKcal">0<span class="unit">kcal</span></div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Distanz</div>
+          <div class="stat-label" data-i18n="distance">Distance</div>
           <div class="stat-value" id="cardioTotalDist">0<span class="unit">km</span></div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Diese Woche</div>
+          <div class="stat-label" data-i18n="thisWeek">This Week</div>
           <div class="stat-value" id="cardioWeekCount">0</div>
         </div>
       </div>
@@ -1667,16 +1667,16 @@
 
       <div id="cardioTemplatesSection" style="margin-bottom:16px;">
         <div class="card-title" style="margin-bottom:8px;">
-          <span>Meine Cardio-Templates</span>
-          <span class="card-title-action" onclick="openCardioTemplateBuilder()">+ Neu</span>
+          <span data-i18n="myCardioTemplates">My Cardio Templates</span>
+          <span class="card-title-action" onclick="openCardioTemplateBuilder()">+ New</span>
         </div>
         <div class="template-list" id="cardioTemplateList"></div>
       </div>
 
-      <button class="cardio-toggle-btn" id="cardioToggleBtn" onclick="toggleCardioForm()">+ Neue Cardio-Einheit</button>
+      <button class="cardio-toggle-btn" id="cardioToggleBtn" onclick="toggleCardioForm()" data-i18n="newCardioSession">+ New Cardio Session</button>
 
       <div class="cardio-form" id="cardioForm" style="display:none;">
-        <div class="card-title" style="margin-bottom:10px;">Sportart</div>
+        <div class="card-title" style="margin-bottom:10px;" data-i18n="sport">Sport</div>
         <div class="cardio-type-pills" id="cardioTypePills">
           <div class="cardio-type-pill active" data-type="Laufen" onclick="selectCardioType('Laufen')">🏃 Laufen</div>
           <div class="cardio-type-pill" data-type="Radfahren" onclick="selectCardioType('Radfahren')">🚴 Radfahren</div>
@@ -1808,60 +1808,60 @@
         </div>
       </div>
 
-      <div class="card-title" style="margin:16px 0 12px;">Vergangene Einheiten</div>
+      <div class="card-title" style="margin:16px 0 12px;" data-i18n="pastSessions">Past Sessions</div>
       <div id="cardioHistoryList"></div>
     </div>
 
     <div class="view" id="view-medals">
-      <div class="card-title" style="margin-bottom: 16px;">Medaillen-Sammlung</div>
+      <div class="card-title" style="margin-bottom: 16px;" data-i18n="medalCollection">Medal Collection</div>
       <div class="medals-summary">
         <div class="medal-stat platinum">
           <div class="medal-stat-icon">💎</div>
           <div class="medal-stat-count" id="platinumCount">0</div>
-          <div class="medal-stat-label">Platin</div>
+          <div class="medal-stat-label" data-i18n="platinum">Platinum</div>
         </div>
         <div class="medal-stat gold">
           <div class="medal-stat-icon">🥇</div>
           <div class="medal-stat-count" id="goldCount">0</div>
-          <div class="medal-stat-label">Gold</div>
+          <div class="medal-stat-label" data-i18n="gold">Gold</div>
         </div>
         <div class="medal-stat silver">
           <div class="medal-stat-icon">🥈</div>
           <div class="medal-stat-count" id="silverCount">0</div>
-          <div class="medal-stat-label">Silber</div>
+          <div class="medal-stat-label" data-i18n="silver">Silver</div>
         </div>
         <div class="medal-stat bronze">
           <div class="medal-stat-icon">🥉</div>
           <div class="medal-stat-count" id="bronzeCount">0</div>
-          <div class="medal-stat-label">Bronze</div>
+          <div class="medal-stat-label" data-i18n="bronze">Bronze</div>
         </div>
         <div class="medal-stat wood">
           <div class="medal-stat-icon">🪵</div>
           <div class="medal-stat-count" id="woodCount">0</div>
-          <div class="medal-stat-label">Holz</div>
+          <div class="medal-stat-label" data-i18n="wood">Wood</div>
         </div>
       </div>
 
       <div class="card-title" style="margin-bottom: 12px;">
-        <span>Persönliche Rekorde</span>
-        <span class="card-title-action" onclick="openThresholdsModal()">⚙ Schwellen</span>
+        <span data-i18n="personalRecords">Personal Records</span>
+        <span class="card-title-action" onclick="openThresholdsModal()">⚙ <span data-i18n="thresholds">Thresholds</span></span>
       </div>
       <div class="medal-list" id="medalList"></div>
       
-      <div class="card-title" style="margin: 24px 0 12px;">Achievements</div>
+      <div class="card-title" style="margin: 24px 0 12px;" data-i18n="achievements">Achievements</div>
       <div class="achievements-grid" id="achievementsGrid"></div>
     </div>
 
     <div class="view" id="view-progress">
-      <div class="card-title" style="margin-bottom: 16px;">Fortschritt</div>
+      <div class="card-title" style="margin-bottom: 16px;" data-i18n="progress">Progress</div>
       <select class="exercise-select" id="progressSelect" onchange="renderChart()">
-        <option value="">Übung wählen...</option>
+        <option value="" data-i18n="selectExercise">Select exercise...</option>
       </select>
       <div class="chart-container">
         <canvas id="progressChart" width="400" height="240"></canvas>
         <div id="chartEmpty" class="empty-state" style="display:none;">
           <div class="icon">📊</div>
-          <div>Wähle eine Übung um Fortschritt zu sehen</div>
+          <div data-i18n="selectExToSee">Select an exercise to see progress</div>
         </div>
       </div>
     </div>
@@ -1869,11 +1869,11 @@
 
   <nav class="tabs">
     <div class="inner">
-      <button class="tab-btn active" data-view="home"><span class="icon">🏠</span><span>Home</span></button>
-      <button class="tab-btn" data-view="workout"><span class="icon">💪</span><span>Training</span></button>
-      <button class="tab-btn" data-view="history" data-pro="true"><span class="icon">📅</span><span>Historie<span class="tab-lock" id="lockHistory">🔒</span></span></button>
+      <button class="tab-btn active" data-view="home"><span class="icon">🏠</span><span data-i18n="home">Home</span></button>
+      <button class="tab-btn" data-view="workout"><span class="icon">💪</span><span data-i18n="training">Training</span></button>
+      <button class="tab-btn" data-view="history" data-pro="true"><span class="icon">📅</span><span><span data-i18n="history">History</span><span class="tab-lock" id="lockHistory">🔒</span></span></button>
       <button class="tab-btn" data-view="cardio" data-pro="true"><span class="icon">🏃</span><span>Cardio<span class="tab-lock" id="lockCardio">🔒</span></span></button>
-      <button class="tab-btn" data-view="medals" data-pro="true"><span class="icon">🏆</span><span>Medaillen<span class="tab-lock" id="lockMedals">🔒</span></span></button>
+      <button class="tab-btn" data-view="medals" data-pro="true"><span class="icon">🏆</span><span><span data-i18n="medals">Medals</span><span class="tab-lock" id="lockMedals">🔒</span></span></button>
       <button class="tab-btn" data-view="progress" data-pro="true"><span class="icon">📈</span><span>Stats<span class="tab-lock" id="lockProgress">🔒</span></span></button>
     </div>
   </nav>
@@ -1881,11 +1881,11 @@
   <div class="modal-overlay" id="exerciseModal" style="z-index:210;" onclick="if(event.target===this) closeExerciseModal()">
     <div class="modal">
       <div class="modal-handle"></div>
-      <div class="modal-title" id="exerciseModalTitle">Übung wählen</div>
-      <button class="custom-ex-btn" onclick="toggleCustomExForm()">+ Eigene Übung erstellen</button>
+      <div class="modal-title" id="exerciseModalTitle" data-i18n="chooseExercise">Choose exercise</div>
+      <button class="custom-ex-btn" onclick="toggleCustomExForm()" data-i18n="createCustomEx">+ Create custom exercise</button>
       <div class="custom-ex-form" id="customExForm">
         <div class="row">
-          <input type="text" class="input-field" id="customExName" placeholder="Übungsname" style="margin:0;flex:1;" />
+          <input type="text" class="input-field" id="customExName" data-i18n="exerciseName" placeholder="Exercise name" style="margin:0;flex:1;" />
           <select id="customExMuscle">
             <option value="Brust">Brust</option>
             <option value="Rücken">Rücken</option>
@@ -1899,12 +1899,12 @@
             <option value="Sonstiges">Sonstiges</option>
           </select>
         </div>
-        <button class="save-btn" onclick="saveCustomExercise()">Hinzufügen</button>
+        <button class="save-btn" onclick="saveCustomExercise()" data-i18n="add">Add</button>
       </div>
-      <input type="text" class="input-field" id="exerciseSearch" placeholder="Suchen..." oninput="filterExercises()" />
+      <input type="text" class="input-field" id="exerciseSearch" data-i18n="search" placeholder="Search..." oninput="filterExercises()" />
       <div class="exercise-list-modal" id="exerciseListModal"></div>
       <div class="modal-actions" id="exerciseModalActions" style="display:none;">
-        <button class="btn-secondary" onclick="closeExerciseModal()">Fertig</button>
+        <button class="btn-secondary" onclick="closeExerciseModal()" data-i18n="done">Done</button>
       </div>
     </div>
   </div>
@@ -1912,8 +1912,8 @@
   <div class="modal-overlay" id="templateModal" onclick="if(event.target===this) closeTemplateModal()">
     <div class="modal">
       <div class="modal-handle"></div>
-      <div class="modal-title" id="templateModalTitle">Neues Template</div>
-      <input type="text" class="input-field" id="templateNameInput" placeholder="Template-Name (z.B. Mein Push)" />
+      <div class="modal-title" id="templateModalTitle" data-i18n="newTemplate">New Template</div>
+      <input type="text" class="input-field" id="templateNameInput" data-i18n="templateNamePh" placeholder="Template name (e.g. My Push)" />
       
       <div class="card-title" style="margin-bottom: 8px;">
         <span>Übungen (<span id="tplExCount">0</span>)</span>
@@ -1922,9 +1922,9 @@
       <div id="templateExercises"></div>
       
       <div class="modal-actions">
-        <button class="btn-secondary" onclick="closeTemplateModal()">Abbruch</button>
-        <button class="btn-danger" id="deleteTemplateBtn" style="display:none;" onclick="deleteTemplate()">Löschen</button>
-        <button class="btn-primary" onclick="saveTemplate()">Speichern</button>
+        <button class="btn-secondary" onclick="closeTemplateModal()" data-i18n="cancel">Cancel</button>
+        <button class="btn-danger" id="deleteTemplateBtn" style="display:none;" onclick="deleteTemplate()" data-i18n="delete">Delete</button>
+        <button class="btn-primary" onclick="saveTemplate()" data-i18n="save">Save</button>
       </div>
     </div>
   </div>
@@ -1933,11 +1933,11 @@
   <div class="modal-overlay" id="levelPathModal" onclick="if(event.target===this) closeLevelPath()">
     <div class="modal">
       <div class="modal-handle"></div>
-      <div class="modal-title">Level-Pfad</div>
+      <div class="modal-title" data-i18n="levelPath">Level Path</div>
       <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;" id="levelPathSub"></div>
       <div class="level-path" id="levelPathList"></div>
       <div class="modal-actions">
-        <button class="btn-primary" onclick="closeLevelPath()">Schliessen</button>
+        <button class="btn-primary" onclick="closeLevelPath()" data-i18n="close">Close</button>
       </div>
     </div>
   </div>
@@ -1946,15 +1946,13 @@
   <div class="modal-overlay" id="thresholdsModal" onclick="if(event.target===this) closeThresholdsModal()">
     <div class="modal">
       <div class="modal-handle"></div>
-      <div class="modal-title">Medaillen-Schwellen</div>
-      <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 16px;">
-        Passe die Gewichts-Schwellen (in kg) für jede Übung an. Reihenfolge: 🪵 Holz → 🥉 Bronze → 🥈 Silber → 🥇 Gold → 💎 Platin
-      </div>
-      <input type="text" class="input-field" id="thresholdSearch" placeholder="Übung suchen..." oninput="renderThresholdsList()" />
+      <div class="modal-title" data-i18n="medalThresholds">Medal Thresholds</div>
+      <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 16px;" data-i18n="thresholdsDesc">Adjust weight thresholds (in kg) for each exercise. Order: 🪵 Wood → 🥉 Bronze → 🥈 Silver → 🥇 Gold → 💎 Platinum</div>
+      <input type="text" class="input-field" id="thresholdSearch" data-i18n="searchExercise" placeholder="Search exercise..." oninput="renderThresholdsList()" />
       <div id="thresholdsList"></div>
       <div class="modal-actions">
-        <button class="btn-secondary" onclick="resetThresholds()">Reset</button>
-        <button class="btn-primary" onclick="closeThresholdsModal()">Fertig</button>
+        <button class="btn-secondary" onclick="resetThresholds()" data-i18n="reset">Reset</button>
+        <button class="btn-primary" onclick="closeThresholdsModal()" data-i18n="done">Done</button>
       </div>
     </div>
   </div>
@@ -1964,11 +1962,11 @@
 <div class="modal-overlay cardio-detail-modal" id="cardioDetailModal" onclick="if(event.target===this) closeCardioDetail()">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title" id="cardioDetailTitle">Cardio Details</div>
+    <div class="modal-title" id="cardioDetailTitle" data-i18n="cardioDetails">Cardio Details</div>
     <div class="detail-map" id="cardioDetailMap"></div>
     <div class="detail-stats-grid" id="cardioDetailStats"></div>
     <div class="modal-actions">
-      <button class="btn-primary" onclick="closeCardioDetail()">Schliessen</button>
+      <button class="btn-primary" onclick="closeCardioDetail()" data-i18n="close">Close</button>
     </div>
   </div>
 </div>
@@ -1983,7 +1981,7 @@
     <div class="rest-timer-countdown" id="restTimerCountdown">90</div>
   </div>
   <div class="rest-timer-info">
-    <div class="rest-timer-label">Pause</div>
+    <div class="rest-timer-label" data-i18n="restPause">Rest</div>
     <div class="rest-timer-btns">
       <button class="rest-timer-btn" onclick="adjustRestTimer(-15)">−15s</button>
       <button class="rest-timer-btn" onclick="adjustRestTimer(15)">+15s</button>
@@ -1996,32 +1994,43 @@
 <!-- SETTINGS OVERLAY -->
 <div class="settings-overlay" id="settingsOverlay">
   <div class="settings-header">
-    <div class="settings-header-title">Einstellungen</div>
+    <div class="settings-header-title" data-i18n="settings">Settings</div>
     <button class="settings-close" onclick="closeSettings()">✕</button>
   </div>
   <div class="settings-content">
     <div class="settings-section">
-      <div class="settings-section-title">👤 Profil</div>
+      <div class="settings-section-title">🌐 <span data-i18n="language">Language</span></div>
+      <select id="langSelect" onchange="setLanguage(this.value)" style="width:100%;padding:10px 12px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;">
+        <option value="en">🇬🇧 English</option>
+        <option value="de">🇩🇪 Deutsch</option>
+        <option value="es">🇪🇸 Español</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="it">🇮🇹 Italiano</option>
+      </select>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-title">👤 <span data-i18n="profile">Profile</span></div>
       <div style="font-size:14px;font-weight:600;margin-bottom:4px;" id="settingsProfileName"></div>
       <div style="font-size:12px;color:var(--text-dim);margin-bottom:4px;" id="settingsProfileEmail"></div>
       <div style="margin-bottom:12px;">
         <span id="settingsProBadge" style="display:inline-block;background:var(--accent);color:#000;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:1px;"></span>
       </div>
-      <button class="settings-action-btn" id="settingsUpgradeBtn" onclick="openPaywall()" style="display:none;border-color:var(--accent);color:var(--accent);">⚡ Auf PRO upgraden</button>
-      <button class="settings-action-btn" onclick="logoutProfile()">🔄 Abmelden</button>
-      <button class="settings-action-btn danger" onclick="deleteProfile()">🗑 Profil löschen</button>
+      <button class="settings-action-btn" id="settingsUpgradeBtn" onclick="openPaywall()" style="display:none;border-color:var(--accent);color:var(--accent);" data-i18n="upgradeToPro">⚡ Upgrade to PRO</button>
+      <button class="settings-action-btn" onclick="logoutProfile()" data-i18n="logout">🔄 Logout</button>
+      <button class="settings-action-btn danger" onclick="deleteProfile()" data-i18n="deleteProfile">🗑 Delete profile</button>
     </div>
 
     <div class="settings-section">
-      <div class="settings-section-title">⏱ Pausentimer</div>
-      <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Standard-Pausenzeit zwischen Sätzen</div>
+      <div class="settings-section-title">⏱ <span data-i18n="restTimer">Rest Timer</span></div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;" data-i18n="restTimerDesc">Default rest time between sets</div>
       <div class="rest-time-options" id="restTimeOptions"></div>
     </div>
 
     <div class="settings-section">
-      <div class="settings-section-title">⚖ Körpergewicht</div>
+      <div class="settings-section-title">⚖ <span data-i18n="bodyWeight">Body Weight</span></div>
       <div class="bw-entry-row">
-        <input type="number" inputmode="decimal" id="bwInput" placeholder="Gewicht in kg" step="0.1" />
+        <input type="number" inputmode="decimal" id="bwInput" data-i18n="weightInKg" placeholder="Weight in kg" step="0.1" />
         <button onclick="addBodyWeight()">Speichern</button>
       </div>
       <div class="bw-chart-container">
@@ -2031,14 +2040,14 @@
     </div>
 
     <div class="settings-section" id="settingsBackupSection">
-      <div class="settings-section-title">💾 Daten-Backup</div>
-      <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">Sichere deine Daten oder stelle sie von einem Backup wieder her</div>
+      <div class="settings-section-title">💾 <span data-i18n="dataBackup">Data Backup</span></div>
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;" data-i18n="backupDesc">Save your data or restore from a backup</div>
       <div id="backupProGate">
-        <button class="settings-action-btn" onclick="if(!isPro()){openPaywall();return;}exportData()">📥 Daten exportieren (JSON)</button>
-        <button class="settings-action-btn" onclick="if(!isPro()){openPaywall();return;}document.getElementById('importFile').click()">📤 Daten importieren</button>
+        <button class="settings-action-btn" onclick="if(!isPro()){openPaywall();return;}exportData()" data-i18n="exportData">📥 Export data (JSON)</button>
+        <button class="settings-action-btn" onclick="if(!isPro()){openPaywall();return;}document.getElementById('importFile').click()" data-i18n="importData">📤 Import data</button>
         <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)" />
       </div>
-      <button class="settings-action-btn danger" onclick="clearAllData()">🗑 Alle Daten löschen</button>
+      <button class="settings-action-btn danger" onclick="clearAllData()" data-i18n="deleteAllData">🗑 Delete all data</button>
     </div>
   </div>
 </div>
@@ -2048,10 +2057,10 @@
 <div class="celebration-overlay" id="celebration">
   <div class="celebration">
     <div class="celebration-icon" id="celIcon">🏆</div>
-    <div class="celebration-title" id="celTitle">WORKOUT FERTIG!</div>
+    <div class="celebration-title" id="celTitle" data-i18n="workoutDone">WORKOUT DONE!</div>
     <div class="celebration-subtitle" id="celSubtitle"></div>
     <div class="celebration-points" id="celPoints">+0 XP</div>
-    <button class="celebration-btn" onclick="closeCelebration()">Weiter</button>
+    <button class="celebration-btn" onclick="closeCelebration()" data-i18n="continue">Continue</button>
   </div>
 </div>
 
@@ -2060,20 +2069,20 @@
   <div class="paywall-card">
     <div class="paywall-icon">⚡</div>
     <div class="paywall-title">GYM<span class="accent">TRACK</span> PRO</div>
-    <div class="paywall-subtitle">Schalte alle Features frei</div>
+    <div class="paywall-subtitle" data-i18n="unlockAll">Unlock all features</div>
     <div class="paywall-features">
-      <div class="paywall-feature"><span class="check">✓</span><span>Cardio-Tracking (GPS, GPX, Manuell)</span></div>
-      <div class="paywall-feature"><span class="check">✓</span><span>Medaillen & Achievements</span></div>
-      <div class="paywall-feature"><span class="check">✓</span><span>Fortschritts-Charts & Statistiken</span></div>
-      <div class="paywall-feature"><span class="check">✓</span><span>Muskel-Map Visualisierung</span></div>
-      <div class="paywall-feature"><span class="check">✓</span><span>Kalender-Heatmap</span></div>
-      <div class="paywall-feature"><span class="check">✓</span><span>Körpergewicht-Tracking</span></div>
-      <div class="paywall-feature"><span class="check">✓</span><span>Level-System & XP</span></div>
-      <div class="paywall-feature"><span class="check">✓</span><span>Daten-Export & Import</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span data-i18n="cardioTrackingFeat">Cardio Tracking (GPS, GPX, Manual)</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span data-i18n="medalsAchievements">Medals & Achievements</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span data-i18n="progressCharts">Progress Charts & Statistics</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span data-i18n="muscleMapVis">Muscle Map Visualization</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span data-i18n="calendarHeatmap">Calendar Heatmap</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span data-i18n="bodyWeightTracking">Body Weight Tracking</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span data-i18n="levelSystemXP">Level System & XP</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span data-i18n="dataExportImport">Data Export & Import</span></div>
     </div>
     <div class="paywall-billing-tabs">
-      <button class="paywall-billing-tab active" data-billing="yearly" onclick="setPaywallBilling('yearly')">Jährlich<span class="save-badge">-50%</span></button>
-      <button class="paywall-billing-tab" data-billing="monthly" onclick="setPaywallBilling('monthly')">Monatlich<span class="save-badge">-50%</span></button>
+      <button class="paywall-billing-tab active" data-billing="yearly" onclick="setPaywallBilling('yearly')"><span data-i18n="yearly">Yearly</span><span class="save-badge">-50%</span></button>
+      <button class="paywall-billing-tab" data-billing="monthly" onclick="setPaywallBilling('monthly')"><span data-i18n="monthly">Monthly</span><span class="save-badge">-50%</span></button>
     </div>
     <div class="paywall-price">
       <div class="paywall-price-row">
@@ -2083,9 +2092,9 @@
       <div class="paywall-price-period" id="paywallPricePeriod">pro Jahr</div>
       <div class="paywall-discount-badge" id="paywallDiscountBadge">SPARE CHF 17 / Jahr</div>
     </div>
-    <button class="paywall-buy-btn" onclick="handlePurchase()">Jetzt upgraden</button>
-    <button class="paywall-close" onclick="closePaywall()">Später</button>
-    <div class="paywall-restore"><a href="#" onclick="restorePurchase();return false;">Kauf wiederherstellen</a></div>
+    <button class="paywall-buy-btn" onclick="handlePurchase()" data-i18n="upgradeNow">Upgrade now</button>
+    <button class="paywall-close" onclick="closePaywall()" data-i18n="later">Later</button>
+    <div class="paywall-restore"><a href="#" onclick="restorePurchase();return false;" data-i18n="restorePurchase">Restore purchase</a></div>
   </div>
 </div>
 
@@ -2115,6 +2124,334 @@ let firebaseAuth = null;
 let firebaseDb = null;
 let currentUser = null;
 let userIsPro = false;
+
+// =============================================
+// i18n — TRANSLATIONS
+// =============================================
+let currentLang = localStorage.getItem('gymtrack_lang') || 'en';
+
+const TRANSLATIONS = {
+  // ── NAV TABS ──
+  home: { en:'Home', de:'Home', es:'Inicio', fr:'Accueil', it:'Home' },
+  training: { en:'Training', de:'Training', es:'Entreno', fr:'Entraîn.', it:'Allenamento' },
+  history: { en:'History', de:'Historie', es:'Historial', fr:'Historique', it:'Storico' },
+  cardio: { en:'Cardio', de:'Cardio', es:'Cardio', fr:'Cardio', it:'Cardio' },
+  medals: { en:'Medals', de:'Medaillen', es:'Medallas', fr:'Médailles', it:'Medaglie' },
+  stats: { en:'Stats', de:'Stats', es:'Estadíst.', fr:'Stats', it:'Stats' },
+
+  // ── GREETINGS ──
+  greetMorning: { en:'GOOD MORNING', de:'GUTEN MORGEN', es:'BUENOS DÍAS', fr:'BONJOUR', it:'BUONGIORNO' },
+  greetAfternoon: { en:'AFTERNOON', de:'NACHMITTAG', es:'BUENAS TARDES', fr:'APRÈS-MIDI', it:'BUON POMERIGGIO' },
+  greetEvening: { en:'EVENING SESSION', de:'ABEND-SESSION', es:'SESIÓN NOCTURNA', fr:'SESSION DU SOIR', it:'SESSIONE SERALE' },
+
+  // ── HOME ──
+  workouts: { en:'Workouts', de:'Workouts', es:'Entrenos', fr:'Séances', it:'Allenamenti' },
+  thisWeek: { en:'This Week', de:'Diese Woche', es:'Esta semana', fr:'Cette semaine', it:'Questa sett.' },
+  totalVolume: { en:'Volume', de:'Volumen', es:'Volumen', fr:'Volume', it:'Volume' },
+  totalMedals: { en:'Medals', de:'Medaillen', es:'Medallas', fr:'Médailles', it:'Medaglie' },
+  myWorkouts: { en:'My Workouts', de:'Meine Workouts', es:'Mis entrenos', fr:'Mes séances', it:'I miei allenamenti' },
+  standard: { en:'Default', de:'Standard', es:'Estándar', fr:'Standard', it:'Standard' },
+  ownTemplates: { en:'My Templates', de:'Eigene Templates', es:'Mis plantillas', fr:'Mes modèles', it:'I miei modelli' },
+  createNew: { en:'+ Create new', de:'+ Neu erstellen', es:'+ Crear nuevo', fr:'+ Créer', it:'+ Crea nuovo' },
+  prefabTemplates: { en:'Preset Templates', de:'Vorgefertigte Templates', es:'Plantillas predefinidas', fr:'Modèles prédéfinis', it:'Modelli predefiniti' },
+  noTemplatesYet: { en:'No custom templates yet', de:'Noch keine eigenen Templates', es:'Aún no hay plantillas', fr:'Pas encore de modèles', it:'Nessun modello personalizzato' },
+  createFirstTemplate: { en:'Create your first template above with "+ Create new"', de:'Erstelle dein erstes Template oben mit "+ Neu erstellen"', es:'Crea tu primera plantilla con "+ Crear nuevo"', fr:'Créez votre premier modèle avec "+ Créer"', it:'Crea il tuo primo modello con "+ Crea nuovo"' },
+  exercises: { en:'exercises', de:'Übungen', es:'ejercicios', fr:'exercices', it:'esercizi' },
+
+  // ── MUSCLE MAP ──
+  muscleMap: { en:'Muscle Map', de:'Muskel-Map', es:'Mapa muscular', fr:'Carte musculaire', it:'Mappa muscolare' },
+  week: { en:'Week', de:'Woche', es:'Semana', fr:'Semaine', it:'Settimana' },
+  month: { en:'Month', de:'Monat', es:'Mes', fr:'Mois', it:'Mese' },
+  total: { en:'Total', de:'Gesamt', es:'Total', fr:'Total', it:'Totale' },
+  front: { en:'Front', de:'Vorne', es:'Frente', fr:'Avant', it:'Davanti' },
+  back: { en:'Back', de:'Hinten', es:'Espalda', fr:'Arrière', it:'Dietro' },
+  noTraining: { en:'No training', de:'Kein Training', es:'Sin entrenamiento', fr:'Pas d\'entraîn.', it:'Nessun allenamento' },
+  kgVolume: { en:'kg volume', de:'kg Volumen', es:'kg volumen', fr:'kg volume', it:'kg volume' },
+
+  // ── WORKOUT ──
+  noActiveWorkout: { en:'No active workout', de:'Kein aktives Training', es:'Sin entreno activo', fr:'Pas d\'entraîn. actif', it:'Nessun allenamento attivo' },
+  startWorkoutHere: { en:'Start a workout from Home or here', de:'Starte ein Workout von Home oder hier', es:'Inicia un entreno desde Inicio o aquí', fr:'Lancez une séance depuis Accueil ou ici', it:'Inizia un allenamento da Home o qui' },
+  newWorkout: { en:'+ New Workout', de:'+ Neues Workout', es:'+ Nuevo entreno', fr:'+ Nouvelle séance', it:'+ Nuovo allenamento' },
+  activeWorkout: { en:'Active Workout', de:'Aktives Training', es:'Entreno activo', fr:'Entraîn. actif', it:'Allenamento attivo' },
+  points: { en:'Points', de:'Punkte', es:'Puntos', fr:'Points', it:'Punti' },
+  workoutNamePh: { en:'Workout name (e.g. Push)', de:'Workout-Name (z.B. Push)', es:'Nombre (ej. Push)', fr:'Nom (ex. Push)', it:'Nome (es. Push)' },
+  addExercise: { en:'+ Add exercise', de:'+ Übung hinzufügen', es:'+ Añadir ejercicio', fr:'+ Ajouter exercice', it:'+ Aggiungi esercizio' },
+  finishWorkout: { en:'Finish workout', de:'Workout abschliessen', es:'Terminar entreno', fr:'Terminer séance', it:'Termina allenamento' },
+  saveAsTemplate: { en:'★ Save as template', de:'★ Als Template speichern', es:'★ Guardar como plantilla', fr:'★ Sauver comme modèle', it:'★ Salva come modello' },
+  cancel: { en:'Cancel', de:'Abbrechen', es:'Cancelar', fr:'Annuler', it:'Annulla' },
+  set: { en:'Set', de:'Set', es:'Serie', fr:'Série', it:'Serie' },
+  addSet: { en:'+ Set', de:'+ Satz', es:'+ Serie', fr:'+ Série', it:'+ Serie' },
+  noPrYet: { en:'No PR yet', de:'Noch kein PR', es:'Aún sin PR', fr:'Pas de PR', it:'Nessun PR' },
+  done: { en:'Done', de:'Erledigt', es:'Hecho', fr:'Fait', it:'Fatto' },
+  doneQ: { en:'Done?', de:'Erledigt?', es:'¿Hecho?', fr:'Fait ?', it:'Fatto?' },
+
+  // ── HISTORY ──
+  trainingHistory: { en:'Training History', de:'Trainings-Historie', es:'Historial de entrenos', fr:'Historique d\'entraîn.', it:'Storico allenamenti' },
+  noWorkoutsYet: { en:'No workouts yet', de:'Noch keine Workouts', es:'Aún no hay entrenos', fr:'Pas encore de séances', it:'Nessun allenamento' },
+  sets: { en:'sets', de:'Sätze', es:'series', fr:'séries', it:'serie' },
+  min: { en:'min', de:'Min', es:'min', fr:'min', it:'min' },
+
+  // ── CALENDAR ──
+  gymDays: { en:'Gym Days', de:'Gym-Tage', es:'Días gym', fr:'Jours gym', it:'Giorni gym' },
+  cardioDays: { en:'Cardio Days', de:'Cardio-Tage', es:'Días cardio', fr:'Jours cardio', it:'Giorni cardio' },
+  gym: { en:'Gym', de:'Gym', es:'Gym', fr:'Gym', it:'Gym' },
+  both: { en:'Both', de:'Beides', es:'Ambos', fr:'Les deux', it:'Entrambi' },
+  daysTrained: { en:'days trained', de:'Tage trainiert', es:'días entrenados', fr:'jours entraînés', it:'giorni allenati' },
+
+  months: {
+    en:['January','February','March','April','May','June','July','August','September','October','November','December'],
+    de:['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+    es:['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    fr:['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
+    it:['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'],
+  },
+  days: {
+    en:['Mo','Tu','We','Th','Fr','Sa','Su'],
+    de:['Mo','Di','Mi','Do','Fr','Sa','So'],
+    es:['Lu','Ma','Mi','Ju','Vi','Sá','Do'],
+    fr:['Lu','Ma','Me','Je','Ve','Sa','Di'],
+    it:['Lu','Ma','Me','Gi','Ve','Sa','Do'],
+  },
+
+  // ── CARDIO ──
+  cardioTracking: { en:'Cardio Tracking', de:'Cardio-Tracking', es:'Seguimiento cardio', fr:'Suivi cardio', it:'Tracking cardio' },
+  all: { en:'All', de:'Alle', es:'Todos', fr:'Tous', it:'Tutti' },
+  running: { en:'Running', de:'Laufen', es:'Correr', fr:'Course', it:'Corsa' },
+  cycling: { en:'Cycling', de:'Radfahren', es:'Ciclismo', fr:'Cyclisme', it:'Ciclismo' },
+  swimming: { en:'Swimming', de:'Schwimmen', es:'Natación', fr:'Natation', it:'Nuoto' },
+  hiking: { en:'Hiking', de:'Wandern', es:'Senderismo', fr:'Randonnée', it:'Escursionismo' },
+  other: { en:'Other', de:'Sonstiges', es:'Otro', fr:'Autre', it:'Altro' },
+  sessions: { en:'Sessions', de:'Sessions', es:'Sesiones', fr:'Sessions', it:'Sessioni' },
+  distance: { en:'Distance', de:'Distanz', es:'Distancia', fr:'Distance', it:'Distanza' },
+  myCardioTemplates: { en:'My Cardio Templates', de:'Meine Cardio-Templates', es:'Mis plantillas cardio', fr:'Mes modèles cardio', it:'Modelli cardio' },
+  newCardioSession: { en:'+ New Cardio Session', de:'+ Neue Cardio-Einheit', es:'+ Nueva sesión cardio', fr:'+ Nouvelle session cardio', it:'+ Nuova sessione cardio' },
+  sport: { en:'Sport', de:'Sportart', es:'Deporte', fr:'Sport', it:'Sport' },
+  gpsLive: { en:'📡 GPS Live', de:'📡 GPS Live', es:'📡 GPS Live', fr:'📡 GPS Live', it:'📡 GPS Live' },
+  gpxImport: { en:'📂 GPX Import', de:'📂 GPX Import', es:'📂 GPX Import', fr:'📂 GPX Import', it:'📂 GPX Import' },
+  manual: { en:'✏️ Manual', de:'✏️ Manuell', es:'✏️ Manual', fr:'✏️ Manuel', it:'✏️ Manuale' },
+  gpsReady: { en:'GPS ready', de:'GPS bereit', es:'GPS listo', fr:'GPS prêt', it:'GPS pronto' },
+  duration: { en:'Duration', de:'Dauer', es:'Duración', fr:'Durée', it:'Durata' },
+  pace: { en:'Pace', de:'Pace', es:'Ritmo', fr:'Allure', it:'Ritmo' },
+  elevation: { en:'Elevation', de:'Höhenmeter', es:'Desnivel', fr:'Dénivelé', it:'Dislivello' },
+  speed: { en:'Speed', de:'Geschw.', es:'Veloc.', fr:'Vitesse', it:'Velocità' },
+  avgHR: { en:'Avg HR (bpm)', de:'Ø Puls (bpm)', es:'FC media (bpm)', fr:'FC moy. (bpm)', it:'FC media (bpm)' },
+  optional: { en:'optional', de:'optional', es:'opcional', fr:'optionnel', it:'opzionale' },
+  save: { en:'Save', de:'Speichern', es:'Guardar', fr:'Sauvegarder', it:'Salva' },
+  pastSessions: { en:'Past Sessions', de:'Vergangene Einheiten', es:'Sesiones pasadas', fr:'Sessions passées', it:'Sessioni passate' },
+  uploadGpx: { en:'Upload GPX file', de:'GPX-Datei hochladen', es:'Subir archivo GPX', fr:'Importer fichier GPX', it:'Carica file GPX' },
+  dragGpx: { en:'Tap or drag a .gpx file here', de:'Tippe oder ziehe eine .gpx Datei hierher', es:'Toca o arrastra un archivo .gpx aquí', fr:'Appuyez ou glissez un fichier .gpx ici', it:'Tocca o trascina un file .gpx qui' },
+  durationMin: { en:'Duration (min)', de:'Dauer (Min)', es:'Duración (min)', fr:'Durée (min)', it:'Durata (min)' },
+  distanceKm: { en:'Distance (km)', de:'Distanz (km)', es:'Distancia (km)', fr:'Distance (km)', it:'Distanza (km)' },
+  elevationM: { en:'Elevation (m)', de:'Höhenmeter (m)', es:'Desnivel (m)', fr:'Dénivelé (m)', it:'Dislivello (m)' },
+  avgPace: { en:'Avg Pace (min/km)', de:'Ø Pace (min/km)', es:'Ritmo medio (min/km)', fr:'Allure moy. (min/km)', it:'Ritmo medio (min/km)' },
+  kcalCalc: { en:'kcal (calculated)', de:'kcal (berechnet)', es:'kcal (calculado)', fr:'kcal (calculé)', it:'kcal (calcolato)' },
+  fromGpx: { en:'from GPX', de:'aus GPX', es:'desde GPX', fr:'depuis GPX', it:'da GPX' },
+
+  // ── MEDALS ──
+  medalCollection: { en:'Medal Collection', de:'Medaillen-Sammlung', es:'Colección de medallas', fr:'Collection de médailles', it:'Collezione medaglie' },
+  platinum: { en:'Platinum', de:'Platin', es:'Platino', fr:'Platine', it:'Platino' },
+  gold: { en:'Gold', de:'Gold', es:'Oro', fr:'Or', it:'Oro' },
+  silver: { en:'Silver', de:'Silber', es:'Plata', fr:'Argent', it:'Argento' },
+  bronze: { en:'Bronze', de:'Bronze', es:'Bronce', fr:'Bronze', it:'Bronzo' },
+  wood: { en:'Wood', de:'Holz', es:'Madera', fr:'Bois', it:'Legno' },
+  personalRecords: { en:'Personal Records', de:'Persönliche Rekorde', es:'Récords personales', fr:'Records personnels', it:'Record personali' },
+  thresholds: { en:'Thresholds', de:'Schwellen', es:'Umbrales', fr:'Seuils', it:'Soglie' },
+  achievements: { en:'Achievements', de:'Achievements', es:'Logros', fr:'Succès', it:'Obiettivi' },
+  noMedalsYet: { en:'No medals yet', de:'Noch keine Medaillen', es:'Sin medallas aún', fr:'Pas encore de médailles', it:'Nessuna medaglia' },
+  trainToCollect: { en:'Train and set PRs to collect medals', de:'Trainiere und stelle PRs auf um Medaillen zu sammeln', es:'Entrena y establece PRs para coleccionar medallas', fr:'Entraînez-vous et battez des PRs pour collecter des médailles', it:'Allenati e stabilisci PR per collezionare medaglie' },
+  strengthTraining: { en:'Strength', de:'Krafttraining', es:'Fuerza', fr:'Force', it:'Forza' },
+  maxTierReached: { en:'MAX TIER REACHED', de:'MAX TIER ERREICHT', es:'NIVEL MÁX ALCANZADO', fr:'PALIER MAX ATTEINT', it:'LIVELLO MAX RAGGIUNTO' },
+  best: { en:'Best', de:'Beste', es:'Mejor', fr:'Meilleur', it:'Migliore' },
+
+  // ── PROGRESS ──
+  progress: { en:'Progress', de:'Fortschritt', es:'Progreso', fr:'Progrès', it:'Progresso' },
+  selectExercise: { en:'Select exercise...', de:'Übung wählen...', es:'Elegir ejercicio...', fr:'Choisir exercice...', it:'Scegli esercizio...' },
+  selectExToSee: { en:'Select an exercise to see progress', de:'Wähle eine Übung um Fortschritt zu sehen', es:'Selecciona un ejercicio para ver progreso', fr:'Choisissez un exercice pour voir les progrès', it:'Seleziona un esercizio per vedere i progressi' },
+
+  // ── EXERCISE MODAL ──
+  chooseExercise: { en:'Choose exercise', de:'Übung wählen', es:'Elegir ejercicio', fr:'Choisir exercice', it:'Scegli esercizio' },
+  chooseExercises: { en:'Choose exercises', de:'Übungen wählen', es:'Elegir ejercicios', fr:'Choisir exercices', it:'Scegli esercizi' },
+  createCustomEx: { en:'+ Create custom exercise', de:'+ Eigene Übung erstellen', es:'+ Crear ejercicio propio', fr:'+ Créer exercice perso', it:'+ Crea esercizio custom' },
+  exerciseName: { en:'Exercise name', de:'Übungsname', es:'Nombre del ejercicio', fr:'Nom de l\'exercice', it:'Nome esercizio' },
+  add: { en:'Add', de:'Hinzufügen', es:'Añadir', fr:'Ajouter', it:'Aggiungi' },
+  search: { en:'Search...', de:'Suchen...', es:'Buscar...', fr:'Chercher...', it:'Cerca...' },
+  noExFound: { en:'No exercise found', de:'Keine Übung gefunden', es:'Ejercicio no encontrado', fr:'Aucun exercice trouvé', it:'Nessun esercizio trovato' },
+
+  // ── TEMPLATE MODAL ──
+  newTemplate: { en:'New Template', de:'Neues Template', es:'Nueva plantilla', fr:'Nouveau modèle', it:'Nuovo modello' },
+  editTemplate: { en:'Edit Template', de:'Template bearbeiten', es:'Editar plantilla', fr:'Modifier modèle', it:'Modifica modello' },
+  templateNamePh: { en:'Template name (e.g. My Push)', de:'Template-Name (z.B. Mein Push)', es:'Nombre (ej. Mi Push)', fr:'Nom (ex. Mon Push)', it:'Nome (es. Il mio Push)' },
+  delete: { en:'Delete', de:'Löschen', es:'Eliminar', fr:'Supprimer', it:'Elimina' },
+
+  // ── LEVEL PATH ──
+  levelPath: { en:'Level Path', de:'Level-Pfad', es:'Ruta de nivel', fr:'Chemin de niveau', it:'Percorso livello' },
+  close: { en:'Close', de:'Schliessen', es:'Cerrar', fr:'Fermer', it:'Chiudi' },
+
+  // ── THRESHOLDS ──
+  medalThresholds: { en:'Medal Thresholds', de:'Medaillen-Schwellen', es:'Umbrales de medallas', fr:'Seuils de médailles', it:'Soglie medaglie' },
+  thresholdsDesc: {
+    en:'Adjust weight thresholds (in kg) for each exercise. Order: 🪵 Wood → 🥉 Bronze → 🥈 Silver → 🥇 Gold → 💎 Platinum',
+    de:'Passe die Gewichts-Schwellen (in kg) für jede Übung an. Reihenfolge: 🪵 Holz → 🥉 Bronze → 🥈 Silber → 🥇 Gold → 💎 Platin',
+    es:'Ajusta los umbrales de peso (en kg) para cada ejercicio. Orden: 🪵 Madera → 🥉 Bronce → 🥈 Plata → 🥇 Oro → 💎 Platino',
+    fr:'Ajustez les seuils de poids (en kg) pour chaque exercice. Ordre: 🪵 Bois → 🥉 Bronze → 🥈 Argent → 🥇 Or → 💎 Platine',
+    it:'Regola le soglie di peso (in kg) per ogni esercizio. Ordine: 🪵 Legno → 🥉 Bronzo → 🥈 Argento → 🥇 Oro → 💎 Platino',
+  },
+  searchExercise: { en:'Search exercise...', de:'Übung suchen...', es:'Buscar ejercicio...', fr:'Chercher exercice...', it:'Cerca esercizio...' },
+  reset: { en:'Reset', de:'Reset', es:'Reiniciar', fr:'Réinitialiser', it:'Ripristina' },
+
+  // ── CARDIO DETAIL ──
+  cardioDetails: { en:'Cardio Details', de:'Cardio Details', es:'Detalles cardio', fr:'Détails cardio', it:'Dettagli cardio' },
+
+  // ── REST TIMER ──
+  restPause: { en:'Rest', de:'Pause', es:'Pausa', fr:'Repos', it:'Pausa' },
+
+  // ── SETTINGS ──
+  settings: { en:'Settings', de:'Einstellungen', es:'Ajustes', fr:'Paramètres', it:'Impostazioni' },
+  profile: { en:'Profile', de:'Profil', es:'Perfil', fr:'Profil', it:'Profilo' },
+  upgradeToPro: { en:'⚡ Upgrade to PRO', de:'⚡ Auf PRO upgraden', es:'⚡ Mejorar a PRO', fr:'⚡ Passer à PRO', it:'⚡ Passa a PRO' },
+  logout: { en:'🔄 Logout', de:'🔄 Abmelden', es:'🔄 Cerrar sesión', fr:'🔄 Déconnexion', it:'🔄 Disconnetti' },
+  deleteProfile: { en:'🗑 Delete profile', de:'🗑 Profil löschen', es:'🗑 Eliminar perfil', fr:'🗑 Supprimer profil', it:'🗑 Elimina profilo' },
+  restTimer: { en:'Rest Timer', de:'Pausentimer', es:'Temporizador de pausa', fr:'Chrono de repos', it:'Timer di pausa' },
+  restTimerDesc: { en:'Default rest time between sets', de:'Standard-Pausenzeit zwischen Sätzen', es:'Tiempo de descanso entre series', fr:'Temps de repos par défaut entre séries', it:'Tempo di pausa predefinito tra le serie' },
+  bodyWeight: { en:'Body Weight', de:'Körpergewicht', es:'Peso corporal', fr:'Poids corporel', it:'Peso corporeo' },
+  weightInKg: { en:'Weight in kg', de:'Gewicht in kg', es:'Peso en kg', fr:'Poids en kg', it:'Peso in kg' },
+  dataBackup: { en:'Data Backup', de:'Daten-Backup', es:'Copia de seguridad', fr:'Sauvegarde', it:'Backup dati' },
+  backupDesc: { en:'Save your data or restore from a backup', de:'Sichere deine Daten oder stelle sie von einem Backup wieder her', es:'Guarda tus datos o restaura desde una copia', fr:'Sauvegardez vos données ou restaurez depuis une sauvegarde', it:'Salva i tuoi dati o ripristina da un backup' },
+  exportData: { en:'📥 Export data (JSON)', de:'📥 Daten exportieren (JSON)', es:'📥 Exportar datos (JSON)', fr:'📥 Exporter données (JSON)', it:'📥 Esporta dati (JSON)' },
+  importData: { en:'📤 Import data', de:'📤 Daten importieren', es:'📤 Importar datos', fr:'📤 Importer données', it:'📤 Importa dati' },
+  deleteAllData: { en:'🗑 Delete all data', de:'🗑 Alle Daten löschen', es:'🗑 Eliminar todos los datos', fr:'🗑 Supprimer toutes les données', it:'🗑 Elimina tutti i dati' },
+  language: { en:'Language', de:'Sprache', es:'Idioma', fr:'Langue', it:'Lingua' },
+
+  // ── PAYWALL ──
+  unlockAll: { en:'Unlock all features', de:'Schalte alle Features frei', es:'Desbloquea todas las funciones', fr:'Débloquez toutes les fonctions', it:'Sblocca tutte le funzionalità' },
+  cardioTrackingFeat: { en:'Cardio Tracking (GPS, GPX, Manual)', de:'Cardio-Tracking (GPS, GPX, Manuell)', es:'Seguimiento cardio (GPS, GPX, Manual)', fr:'Suivi cardio (GPS, GPX, Manuel)', it:'Tracking cardio (GPS, GPX, Manuale)' },
+  medalsAchievements: { en:'Medals & Achievements', de:'Medaillen & Achievements', es:'Medallas y logros', fr:'Médailles et succès', it:'Medaglie e obiettivi' },
+  progressCharts: { en:'Progress Charts & Statistics', de:'Fortschritts-Charts & Statistiken', es:'Gráficos de progreso y estadísticas', fr:'Graphiques de progrès et statistiques', it:'Grafici di progresso e statistiche' },
+  muscleMapVis: { en:'Muscle Map Visualization', de:'Muskel-Map Visualisierung', es:'Visualización de mapa muscular', fr:'Visualisation carte musculaire', it:'Visualizzazione mappa muscolare' },
+  calendarHeatmap: { en:'Calendar Heatmap', de:'Kalender-Heatmap', es:'Mapa de calor del calendario', fr:'Calendrier heatmap', it:'Calendario heatmap' },
+  bodyWeightTracking: { en:'Body Weight Tracking', de:'Körpergewicht-Tracking', es:'Seguimiento de peso', fr:'Suivi du poids', it:'Monitoraggio peso' },
+  levelSystemXP: { en:'Level System & XP', de:'Level-System & XP', es:'Sistema de niveles y XP', fr:'Système de niveaux et XP', it:'Sistema livelli e XP' },
+  dataExportImport: { en:'Data Export & Import', de:'Daten-Export & Import', es:'Exportar e importar datos', fr:'Export et import de données', it:'Esportazione e importazione dati' },
+  yearly: { en:'Yearly', de:'Jährlich', es:'Anual', fr:'Annuel', it:'Annuale' },
+  monthly: { en:'Monthly', de:'Monatlich', es:'Mensual', fr:'Mensuel', it:'Mensile' },
+  perYear: { en:'per year', de:'pro Jahr', es:'por año', fr:'par an', it:'all\'anno' },
+  perMonth: { en:'per month', de:'pro Monat', es:'por mes', fr:'par mois', it:'al mese' },
+  saveAmount: { en:'SAVE', de:'SPARE', es:'AHORRA', fr:'ÉCONOMISEZ', it:'RISPARMIA' },
+  upgradeNow: { en:'Upgrade now', de:'Jetzt upgraden', es:'Mejorar ahora', fr:'Passer maintenant', it:'Aggiorna ora' },
+  later: { en:'Later', de:'Später', es:'Más tarde', fr:'Plus tard', it:'Più tardi' },
+  restorePurchase: { en:'Restore purchase', de:'Kauf wiederherstellen', es:'Restaurar compra', fr:'Restaurer achat', it:'Ripristina acquisto' },
+
+  // ── CELEBRATION ──
+  workoutDone: { en:'WORKOUT DONE!', de:'WORKOUT FERTIG!', es:'¡ENTRENO COMPLETADO!', fr:'SÉANCE TERMINÉE !', it:'ALLENAMENTO FINITO!' },
+  continue: { en:'Continue', de:'Weiter', es:'Continuar', fr:'Continuer', it:'Continua' },
+
+  // ── TOASTS / ALERTS / CONFIRMS ──
+  gpsSaved: { en:'GPS cardio saved!', de:'GPS-Cardio gespeichert!', es:'¡Cardio GPS guardado!', fr:'Cardio GPS sauvegardé !', it:'Cardio GPS salvato!' },
+  gpxSaved: { en:'GPX cardio saved!', de:'GPX-Cardio gespeichert!', es:'¡Cardio GPX guardado!', fr:'Cardio GPX sauvegardé !', it:'Cardio GPX salvato!' },
+  cardioSaved: { en:'Cardio saved!', de:'Cardio gespeichert!', es:'¡Cardio guardado!', fr:'Cardio sauvegardé !', it:'Cardio salvato!' },
+  templateSaved: { en:'★ Template saved', de:'★ Template gespeichert', es:'★ Plantilla guardada', fr:'★ Modèle sauvegardé', it:'★ Modello salvato' },
+  templateDeleted: { en:'Template deleted', de:'Template gelöscht', es:'Plantilla eliminada', fr:'Modèle supprimé', it:'Modello eliminato' },
+  templateLoaded: { en:'📋 Template loaded — adjust values & save', de:'📋 Template geladen — Werte anpassen & speichern', es:'📋 Plantilla cargada — ajusta valores y guarda', fr:'📋 Modèle chargé — ajustez et sauvegardez', it:'📋 Modello caricato — modifica valori e salva' },
+  cardioTemplateSaved: { en:'★ Cardio template saved', de:'★ Cardio-Template gespeichert', es:'★ Plantilla cardio guardada', fr:'★ Modèle cardio sauvegardé', it:'★ Modello cardio salvato' },
+  addExFirst: { en:'⚠️ Add exercises first', de:'⚠️ Erst Übungen hinzufügen', es:'⚠️ Añade ejercicios primero', fr:'⚠️ Ajoutez d\'abord des exercices', it:'⚠️ Aggiungi prima degli esercizi' },
+  savedAsTemplate: { en:'★ Saved as template', de:'★ Als Template gespeichert', es:'★ Guardado como plantilla', fr:'★ Sauvé comme modèle', it:'★ Salvato come modello' },
+  nameMissing: { en:'⚠️ Name missing', de:'⚠️ Name fehlt', es:'⚠️ Falta nombre', fr:'⚠️ Nom manquant', it:'⚠️ Nome mancante' },
+  minOneExercise: { en:'⚠️ At least 1 exercise', de:'⚠️ Mindestens 1 Übung', es:'⚠️ Al menos 1 ejercicio', fr:'⚠️ Au moins 1 exercice', it:'⚠️ Almeno 1 esercizio' },
+  enterName: { en:'⚠️ Enter a name', de:'⚠️ Name eingeben', es:'⚠️ Ingresa un nombre', fr:'⚠️ Entrez un nom', it:'⚠️ Inserisci un nome' },
+  exAlreadyExists: { en:'⚠️ Exercise already exists', de:'⚠️ Übung existiert bereits', es:'⚠️ El ejercicio ya existe', fr:'⚠️ L\'exercice existe déjà', it:'⚠️ L\'esercizio esiste già' },
+  exAdded: { en:'added', de:'hinzugefügt', es:'añadido', fr:'ajouté', it:'aggiunto' },
+  validWeight: { en:'⚠️ Enter valid weight (20-300 kg)', de:'⚠️ Gültiges Gewicht eingeben (20-300 kg)', es:'⚠️ Ingresa peso válido (20-300 kg)', fr:'⚠️ Entrez un poids valide (20-300 kg)', it:'⚠️ Inserisci peso valido (20-300 kg)' },
+  kgSaved: { en:'kg saved', de:'kg gespeichert', es:'kg guardado', fr:'kg sauvegardé', it:'kg salvato' },
+  backupDownloaded: { en:'📥 Backup downloaded', de:'📥 Backup heruntergeladen', es:'📥 Backup descargado', fr:'📥 Sauvegarde téléchargée', it:'📥 Backup scaricato' },
+  invalidFile: { en:'⚠️ Invalid file', de:'⚠️ Ungültige Datei', es:'⚠️ Archivo inválido', fr:'⚠️ Fichier invalide', it:'⚠️ File non valido' },
+  dataRestored: { en:'✓ Data restored', de:'✓ Daten wiederhergestellt', es:'✓ Datos restaurados', fr:'✓ Données restaurées', it:'✓ Dati ripristinati' },
+  fileReadError: { en:'⚠️ Error reading file', de:'⚠️ Fehler beim Lesen der Datei', es:'⚠️ Error al leer archivo', fr:'⚠️ Erreur de lecture du fichier', it:'⚠️ Errore lettura file' },
+  thresholdsReset: { en:'Thresholds reset', de:'Schwellen zurückgesetzt', es:'Umbrales reiniciados', fr:'Seuils réinitialisés', it:'Soglie ripristinate' },
+  proRestored: { en:'Pro status restored!', de:'Pro-Status wiederhergestellt!', es:'¡Estado Pro restaurado!', fr:'Statut Pro restauré !', it:'Stato Pro ripristinato!' },
+  noActiveSub: { en:'No active subscription found.', de:'Kein aktives Abo gefunden.', es:'No se encontró suscripción activa.', fr:'Aucun abonnement actif trouvé.', it:'Nessun abbonamento attivo trovato.' },
+  gpsNotAvailable: { en:'GPS not available on this device.', de:'GPS nicht verfügbar auf diesem Gerät.', es:'GPS no disponible en este dispositivo.', fr:'GPS non disponible sur cet appareil.', it:'GPS non disponibile su questo dispositivo.' },
+  tooFewGpsPoints: { en:'Too few GPS points.', de:'Zu wenig GPS-Punkte.', es:'Muy pocos puntos GPS.', fr:'Trop peu de points GPS.', it:'Troppo pochi punti GPS.' },
+  noTrackpointsGpx: { en:'No trackpoints found in GPX.', de:'Keine Trackpunkte in GPX gefunden.', es:'No se encontraron puntos en GPX.', fr:'Aucun point dans le GPX.', it:'Nessun punto trovato nel GPX.' },
+  enterDurationOrDist: { en:'Please enter at least duration or distance.', de:'Bitte mindestens Dauer oder Distanz eingeben.', es:'Ingresa al menos duración o distancia.', fr:'Entrez au moins la durée ou la distance.', it:'Inserisci almeno durata o distanza.' },
+  confirmDeleteCardio: { en:'Delete cardio session?', de:'Cardio-Einheit löschen?', es:'¿Eliminar sesión cardio?', fr:'Supprimer session cardio ?', it:'Eliminare sessione cardio?' },
+  confirmDeleteTemplate: { en:'Delete template?', de:'Template wirklich löschen?', es:'¿Eliminar plantilla?', fr:'Supprimer le modèle ?', it:'Eliminare il modello?' },
+  confirmDeleteCardioTpl: { en:'Delete cardio template?', de:'Cardio-Template löschen?', es:'¿Eliminar plantilla cardio?', fr:'Supprimer modèle cardio ?', it:'Eliminare modello cardio?' },
+  confirmRemoveEx: { en:'Remove exercise?', de:'Übung entfernen?', es:'¿Eliminar ejercicio?', fr:'Retirer l\'exercice ?', it:'Rimuovere esercizio?' },
+  confirmDiscardWorkout: { en:'Discard workout? All data will be lost.', de:'Workout wirklich verwerfen? Alle Daten gehen verloren.', es:'¿Descartar entreno? Se perderán todos los datos.', fr:'Abandonner la séance ? Toutes les données seront perdues.', it:'Annullare allenamento? Tutti i dati andranno persi.' },
+  confirmNoSets: { en:'No sets marked as done. Save anyway?', de:'Keine Sätze als erledigt markiert. Trotzdem speichern?', es:'Ninguna serie marcada como hecha. ¿Guardar de todos modos?', fr:'Aucune série marquée. Sauvegarder quand même ?', it:'Nessuna serie completata. Salvare comunque?' },
+  confirmActiveWorkout: { en:'You have an active workout. Discard?', de:'Du hast bereits ein aktives Workout. Verwerfen?', es:'Tienes un entreno activo. ¿Descartar?', fr:'Séance en cours. Abandonner ?', it:'Hai un allenamento attivo. Annullare?' },
+  confirmGpsCancel: { en:'GPS recording in progress. Cancel?', de:'GPS-Aufzeichnung läuft. Wirklich abbrechen?', es:'Grabación GPS en curso. ¿Cancelar?', fr:'Enregistrement GPS en cours. Annuler ?', it:'Registrazione GPS in corso. Annullare?' },
+  confirmDeleteProfile: { en:'Delete profile and all data?', de:'Profil und alle Daten löschen?', es:'¿Eliminar perfil y todos los datos?', fr:'Supprimer le profil et toutes les données ?', it:'Eliminare profilo e tutti i dati?' },
+  confirmDeleteAll: { en:'Delete ALL data permanently? This cannot be undone!', de:'ALLE Daten unwiderruflich löschen? Dies kann nicht rückgängig gemacht werden!', es:'¿Eliminar TODOS los datos permanentemente? ¡No se puede deshacer!', fr:'Supprimer TOUTES les données ? Irréversible !', it:'Eliminare TUTTI i dati? Non può essere annullato!' },
+  confirmDeleteAll2: { en:'Really sure? Export a backup first!', de:'Wirklich sicher? Exportiere zuerst ein Backup!', es:'¿Seguro? ¡Exporta un backup primero!', fr:'Vraiment sûr ? Exportez d\'abord une sauvegarde !', it:'Davvero sicuro? Esporta prima un backup!' },
+  confirmResetThresholds: { en:'Reset all thresholds to defaults?', de:'Alle Schwellen auf Standardwerte zurücksetzen?', es:'¿Reiniciar todos los umbrales?', fr:'Réinitialiser tous les seuils ?', it:'Ripristinare tutte le soglie?' },
+  confirmLoadBackup: { en:'Load backup? This will overwrite all current data!', de:'Backup laden? Das überschreibt alle aktuellen Daten!', es:'¿Cargar backup? ¡Sobreescribirá todos los datos actuales!', fr:'Charger la sauvegarde ? Cela écrasera toutes les données !', it:'Caricare backup? Sovrascriverà tutti i dati attuali!' },
+
+  // ── AUTH ──
+  login: { en:'Login', de:'Anmelden', es:'Iniciar sesión', fr:'Connexion', it:'Accedi' },
+  register: { en:'Register', de:'Registrieren', es:'Registrarse', fr:'S\'inscrire', it:'Registrati' },
+  email: { en:'Email', de:'E-Mail', es:'Correo', fr:'E-mail', it:'Email' },
+  password: { en:'Password', de:'Passwort', es:'Contraseña', fr:'Mot de passe', it:'Password' },
+  username: { en:'Username', de:'Benutzername', es:'Nombre de usuario', fr:'Nom d\'utilisateur', it:'Nome utente' },
+  forgotPassword: { en:'Forgot password?', de:'Passwort vergessen?', es:'¿Olvidaste la contraseña?', fr:'Mot de passe oublié ?', it:'Password dimenticata?' },
+
+  // ── ACHIEVEMENT TITLES ──
+  achFirst: { en:'First Workout', de:'Erstes Workout', es:'Primer entreno', fr:'Première séance', it:'Primo allenamento' },
+  achStreak3: { en:'3-Day Streak', de:'3 Tage Streak', es:'Racha de 3 días', fr:'Série de 3 jours', it:'3 giorni consecutivi' },
+  achStreak7: { en:'7-Day Streak', de:'7 Tage Streak', es:'Racha de 7 días', fr:'Série de 7 jours', it:'7 giorni consecutivi' },
+  achStreak30: { en:'30-Day Streak', de:'30 Tage Streak', es:'Racha de 30 días', fr:'Série de 30 jours', it:'30 giorni consecutivi' },
+  achWorkouts10: { en:'10 Workouts', de:'10 Workouts', es:'10 Entrenos', fr:'10 Séances', it:'10 Allenamenti' },
+  achWorkouts50: { en:'50 Workouts', de:'50 Workouts', es:'50 Entrenos', fr:'50 Séances', it:'50 Allenamenti' },
+  achWorkouts100: { en:'100 Workouts', de:'100 Workouts', es:'100 Entrenos', fr:'100 Séances', it:'100 Allenamenti' },
+  achVolume10k: { en:'10,000kg Volume', de:'10.000kg Volumen', es:'10.000kg Volumen', fr:'10.000kg Volume', it:'10.000kg Volume' },
+  achVolume50k: { en:'50,000kg Volume', de:'50.000kg Volumen', es:'50.000kg Volumen', fr:'50.000kg Volume', it:'50.000kg Volume' },
+  achPoints1k: { en:'1,000 XP', de:'1.000 XP', es:'1.000 XP', fr:'1.000 XP', it:'1.000 XP' },
+  achPoints5k: { en:'5,000 XP', de:'5.000 XP', es:'5.000 XP', fr:'5.000 XP', it:'5.000 XP' },
+  achGold5: { en:'5× Gold', de:'5× Gold', es:'5× Oro', fr:'5× Or', it:'5× Oro' },
+  achPlatinum1: { en:'1× Platinum', de:'1× Platin', es:'1× Platino', fr:'1× Platine', it:'1× Platino' },
+};
+
+function t(key) {
+  const entry = TRANSLATIONS[key];
+  if (!entry) return key;
+  return entry[currentLang] || entry['en'] || key;
+}
+
+function tArr(key) {
+  const entry = TRANSLATIONS[key];
+  if (!entry) return [];
+  return entry[currentLang] || entry['en'] || [];
+}
+
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('gymtrack_lang', lang);
+  document.documentElement.lang = lang;
+  translateStaticHTML();
+  if (typeof renderHome === 'function' && document.getElementById('mainApp').style.display !== 'none') {
+    renderHome();
+    const activeView = document.querySelector('.view[style*="display: block"], .view:not([style*="display: none"])');
+    const activeTab = document.querySelector('.tab-btn.active');
+    if (activeTab) {
+      const view = activeTab.dataset.view;
+      if (view === 'history') { renderHistory(); renderCalendar(); }
+      else if (view === 'cardio') renderCardio();
+      else if (view === 'medals') renderMedals();
+      else if (view === 'progress') renderProgress();
+      else if (view === 'workout') renderWorkout();
+    }
+  }
+  renderSettingsProfile();
+}
+
+function translateStaticHTML() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    const val = t(key);
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.placeholder = val;
+    else el.textContent = val;
+  });
+}
 
 function initFirebase() {
   try {
@@ -2527,19 +2864,19 @@ const LEVELS = [
 ];
 
 const ACHIEVEMENTS = [
-  { id: 'first', icon: '🎯', title: 'Erstes Workout', check: (s) => s.totalWorkouts >= 1 },
-  { id: 'streak3', icon: '🔥', title: '3 Tage Streak', check: (s) => s.maxStreak >= 3 },
-  { id: 'streak7', icon: '⚡', title: '7 Tage Streak', check: (s) => s.maxStreak >= 7 },
-  { id: 'streak30', icon: '👑', title: '30 Tage Streak', check: (s) => s.maxStreak >= 30 },
-  { id: 'workouts10', icon: '💪', title: '10 Workouts', check: (s) => s.totalWorkouts >= 10 },
-  { id: 'workouts50', icon: '🏆', title: '50 Workouts', check: (s) => s.totalWorkouts >= 50 },
-  { id: 'workouts100', icon: '💎', title: '100 Workouts', check: (s) => s.totalWorkouts >= 100 },
-  { id: 'volume10k', icon: '🦾', title: '10.000kg Volumen', check: (s) => s.totalVolume >= 10000 },
-  { id: 'volume50k', icon: '🛡️', title: '50.000kg Volumen', check: (s) => s.totalVolume >= 50000 },
-  { id: 'points1k', icon: '⭐', title: '1.000 XP', check: (s) => s.totalPoints >= 1000 },
-  { id: 'points5k', icon: '🌟', title: '5.000 XP', check: (s) => s.totalPoints >= 5000 },
-  { id: 'gold5', icon: '🥇', title: '5x Gold', check: (s) => s.goldCount >= 5 },
-  { id: 'platinum1', icon: '💎', title: '1x Platin', check: (s) => s.platinumCount >= 1 },
+  { id: 'first', icon: '🎯', titleKey: 'achFirst', check: (s) => s.totalWorkouts >= 1 },
+  { id: 'streak3', icon: '🔥', titleKey: 'achStreak3', check: (s) => s.maxStreak >= 3 },
+  { id: 'streak7', icon: '⚡', titleKey: 'achStreak7', check: (s) => s.maxStreak >= 7 },
+  { id: 'streak30', icon: '👑', titleKey: 'achStreak30', check: (s) => s.maxStreak >= 30 },
+  { id: 'workouts10', icon: '💪', titleKey: 'achWorkouts10', check: (s) => s.totalWorkouts >= 10 },
+  { id: 'workouts50', icon: '🏆', titleKey: 'achWorkouts50', check: (s) => s.totalWorkouts >= 50 },
+  { id: 'workouts100', icon: '💎', titleKey: 'achWorkouts100', check: (s) => s.totalWorkouts >= 100 },
+  { id: 'volume10k', icon: '🦾', titleKey: 'achVolume10k', check: (s) => s.totalVolume >= 10000 },
+  { id: 'volume50k', icon: '🛡️', titleKey: 'achVolume50k', check: (s) => s.totalVolume >= 50000 },
+  { id: 'points1k', icon: '⭐', titleKey: 'achPoints1k', check: (s) => s.totalPoints >= 1000 },
+  { id: 'points5k', icon: '🌟', titleKey: 'achPoints5k', check: (s) => s.totalPoints >= 5000 },
+  { id: 'gold5', icon: '🥇', titleKey: 'achGold5', check: (s) => s.goldCount >= 5 },
+  { id: 'platinum1', icon: '💎', titleKey: 'achPlatinum1', check: (s) => s.platinumCount >= 1 },
 ];
 
 // 5-Tier Medaillen: [Holz, Bronze, Silber, Gold, Platin] in kg (tatsächliches Gewicht)
@@ -3132,7 +3469,7 @@ function renderHome() {
   }
   
   const h = new Date().getHours();
-  const greeting = h < 12 ? 'GUTEN MORGEN' : h < 18 ? 'NACHMITTAG' : 'ABEND-SESSION';
+  const greeting = h < 12 ? t('greetMorning') : h < 18 ? t('greetAfternoon') : t('greetEvening');
   document.getElementById('heroTitle').textContent = greeting;
   
   renderTemplates();
@@ -3147,31 +3484,33 @@ function renderTemplates() {
     my.innerHTML = `
       <div class="empty-state" style="padding: 24px;">
         <div class="icon">📋</div>
-        <div>Noch keine eigenen Templates</div>
-        <div style="font-size: 12px; margin-top: 8px;">Erstelle dein erstes Template oben mit "+ Neu erstellen"</div>
+        <div>${t('noTemplatesYet')}</div>
+        <div style="font-size: 12px; margin-top: 8px;">${t('createFirstTemplate')}</div>
       </div>
     `;
   } else {
-    my.innerHTML = state.myTemplates.map(t => `
+    const exWord = t('exercises');
+    my.innerHTML = state.myTemplates.map(tpl => `
       <div class="template-item">
-        <div onclick="startMyTemplate('${t.id}')" style="flex:1; min-width:0;">
-          <div class="template-name">${escapeHtml(t.name)}</div>
-          <div class="template-meta">${t.exercises.length} Übungen</div>
+        <div onclick="startMyTemplate('${tpl.id}')" style="flex:1; min-width:0;">
+          <div class="template-name">${escapeHtml(tpl.name)}</div>
+          <div class="template-meta">${tpl.exercises.length} ${exWord}</div>
         </div>
         <div class="template-actions">
-          <button class="template-edit-btn" onclick="event.stopPropagation(); openTemplateBuilder('${t.id}')">✎</button>
-          <div class="template-arrow" onclick="startMyTemplate('${t.id}')">→</div>
+          <button class="template-edit-btn" onclick="event.stopPropagation(); openTemplateBuilder('${tpl.id}')">✎</button>
+          <div class="template-arrow" onclick="startMyTemplate('${tpl.id}')">→</div>
         </div>
       </div>
     `).join('');
   }
   
   const def = document.getElementById('defaultTemplateList');
-  def.innerHTML = DEFAULT_TEMPLATES.map((t, i) => `
+  const exWord2 = t('exercises');
+  def.innerHTML = DEFAULT_TEMPLATES.map((tpl, i) => `
     <div class="template-item" onclick="startDefaultTemplate(${i})">
       <div style="flex:1;">
-        <div class="template-name">${t.name}</div>
-        <div class="template-meta">${t.exercises.length} Übungen</div>
+        <div class="template-name">${tpl.name}</div>
+        <div class="template-meta">${tpl.exercises.length} ${exWord2}</div>
       </div>
       <div class="template-arrow">→</div>
     </div>
@@ -3242,7 +3581,7 @@ function renderWorkout() {
     const medal = pr ? getMedalTier(ex.name, pr.weight) : null;
     const tierInfo = medal ? TIER_INFO.find(t => t.key === medal) : null;
     const medalIcon = tierInfo ? tierInfo.icon : '';
-    const prText = pr ? `${medalIcon} PR: ${pr.weight}kg × ${pr.reps}` : 'Noch kein PR';
+    const prText = pr ? `${medalIcon} PR: ${pr.weight}kg × ${pr.reps}` : t('noPrYet');
     return `
     <div class="exercise-block${isSkipped ? ' skipped' : ''}">
       <div class="exercise-header">
@@ -3267,7 +3606,7 @@ function renderWorkout() {
           </div>
         `).join('')}
       </div>
-      <button class="add-set-btn" onclick="addSet(${exIdx})">+ Satz</button>
+      <button class="add-set-btn" onclick="addSet(${exIdx})">${t('addSet')}</button>
     </div>
   `}).join('');
 }
@@ -3292,7 +3631,7 @@ function renderHistory() {
   const merged = [...workouts, ...cardios].sort((a,b) => b.timestamp - a.timestamp);
 
   if (merged.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="icon">📅</div><div>Noch keine Workouts</div></div>';
+    list.innerHTML = `<div class="empty-state"><div class="icon">📅</div><div>${t('noWorkoutsYet')}</div></div>`;
     return;
   }
 
@@ -3333,8 +3672,8 @@ function renderHistory() {
           ${cardioCount ? `<span class="pr-badge" style="background:var(--surface-2);color:var(--text-dim);">+${cardioCount} Cardio</span>` : ''}
         </div>
         <div class="history-meta">
-          <span><strong>${w.exercises.length}</strong> Übungen</span>
-          <span><strong>${totalSets}</strong> Sätze</span>
+          <span><strong>${w.exercises.length}</strong> ${t('exercises')}</span>
+          <span><strong>${totalSets}</strong> ${t('sets')}</span>
           <span><strong>${totalVolume.toLocaleString('de-CH')}</strong> kg</span>
           <span><strong>${dur}</strong></span>
           <span class="history-points">+${(w.points || 0).toLocaleString('de-CH')} XP</span>
@@ -3365,11 +3704,11 @@ function renderMedals() {
   });
 
   if (medals.length === 0 && cardioMedalsList.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="icon">🏅</div><div>Noch keine Medaillen</div><div style="font-size:12px;margin-top:8px;">Trainiere und stelle PRs auf um Medaillen zu sammeln</div></div>';
+    list.innerHTML = `<div class="empty-state"><div class="icon">🏅</div><div>${t('noMedalsYet')}</div><div style="font-size:12px;margin-top:8px;">${t('trainToCollect')}</div></div>`;
   } else {
     let strengthHtml = '';
     if (medals.length > 0) {
-      strengthHtml = '<div class="card-title" style="margin:4px 0 10px;font-size:13px;color:var(--text-dim);">💪 Krafttraining</div>';
+      strengthHtml = `<div class="card-title" style="margin:4px 0 10px;font-size:13px;color:var(--text-dim);">💪 ${t('strengthTraining')}</div>`;
     }
     let cardioHtml = '';
     if (cardioMedalsList.length > 0) {
@@ -3391,7 +3730,7 @@ function renderMedals() {
               </div>
             `;
           } else {
-            progressHtml = `<div class="medal-progress-row"><span style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">💎 MAX TIER ERREICHT</span></div>`;
+            progressHtml = `<div class="medal-progress-row"><span style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">💎 ${t('maxTierReached')}</span></div>`;
           }
           return `
             <div class="medal-item" style="flex-direction: column; align-items: stretch;">
@@ -3427,7 +3766,7 @@ function renderMedals() {
       } else {
         progressHtml = `
           <div class="medal-progress-row">
-            <span style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">💎 MAX TIER ERREICHT</span>
+            <span style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">💎 ${t('maxTierReached')}</span>
           </div>
         `;
       }
@@ -3454,7 +3793,7 @@ function renderMedals() {
     return `
       <div class="achievement ${unlocked ? 'unlocked' : ''}">
         <div class="achievement-icon">${a.icon}</div>
-        <div class="achievement-title">${a.title}</div>
+        <div class="achievement-title">${t(a.titleKey)}</div>
       </div>
     `;
   }).join('');
@@ -4162,7 +4501,7 @@ function renderCardio() {
           <span style="font-size:14px;">${next.icon}</span>
           <div class="medal-progress-bar"><div class="medal-progress-fill ${next.tier}" style="width:${(next.progress*100).toFixed(0)}%"></div></div>
           <span class="medal-progress-text">${next.current.toFixed(1)} / ${next.target} km</span>
-        </div>` : '<div style="font-size:11px;color:var(--text-dim);margin-top:6px;">💎 MAX TIER ERREICHT</div>';
+        </div>` : '<div style="font-size:11px;color:var(--text-dim);margin-top:6px;">💎 ${t('maxTierReached')}</div>';
       bestMedalEl.innerHTML = `
         <div class="medal-item" style="flex-direction:column;align-items:stretch;">
           <div style="display:flex;align-items:center;gap:12px;">
@@ -4972,7 +5311,7 @@ let calendarDate = new Date();
 function renderCalendar() {
   const year = calendarDate.getFullYear();
   const month = calendarDate.getMonth();
-  const months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+  const months = tArr('months');
   document.getElementById('calendarMonth').textContent = `${months[month]} ${year}`;
 
   const firstDay = new Date(year, month, 1);
@@ -5000,8 +5339,8 @@ function renderCalendar() {
   const today = new Date();
   const isThisMonth = today.getFullYear() === year && today.getMonth() === month;
 
-  const days = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
-  let html = days.map(d => `<div class="calendar-day-label">${d}</div>`).join('');
+  const dayLabels = tArr('days');
+  let html = dayLabels.map(d => `<div class="calendar-day-label">${d}</div>`).join('');
 
   for (let i = 0; i < startDow; i++) {
     html += '<div class="calendar-day empty"></div>';
@@ -5060,16 +5399,16 @@ function renderCalendar() {
 
   document.getElementById('calendarGrid').innerHTML = html;
   document.getElementById('calendarStats').innerHTML = `
-    <span>💪 <strong>${gymDays}</strong> Gym-Tage</span>
+    <span>💪 <strong>${gymDays}</strong> ${t('gymDays')}</span>
     <span><strong>${monthVolume.toLocaleString('de-CH')}</strong> kg</span>
-    <span>🏃 <strong>${cardioDays}</strong> Cardio-Tage</span>
+    <span>🏃 <strong>${cardioDays}</strong> ${t('cardioDays')}</span>
     <span><strong>${monthCardioKm.toFixed(1)}</strong> km</span>
   `;
   const legendEl = document.getElementById('calendarLegend');
   if (legendEl) legendEl.innerHTML = `
-    <span><span class="calendar-legend-dot gym"></span>Gym</span>
+    <span><span class="calendar-legend-dot gym"></span>${t('gym')}</span>
     <span><span class="calendar-legend-dot cardio"></span>Cardio</span>
-    <span><span class="calendar-legend-dot both"></span>Beides</span>
+    <span><span class="calendar-legend-dot both"></span>${t('both')}</span>
   `;
 }
 
@@ -5488,7 +5827,7 @@ function renderMuscleMap() {
     const ratio = vol / maxVol;
     el.style.fill = getMuscleColor(ratio);
     el.style.opacity = vol > 0 ? '1' : '0.5';
-    el.onclick = () => showToast(`${muscle}: ${vol > 0 ? Math.round(vol).toLocaleString('de-DE') + ' kg Volumen' : 'Kein Training'}`);
+    el.onclick = () => showToast(`${muscle}: ${vol > 0 ? Math.round(vol).toLocaleString('de-DE') + ' ' + t('kgVolume') : t('noTraining')}`);
   });
 
   const legend = document.getElementById('muscleMapLegend');
@@ -5497,7 +5836,8 @@ function renderMuscleMap() {
     const ratio = vol / maxVol;
     const color = getMuscleColor(ratio);
     const volStr = vol >= 1000 ? (vol / 1000).toFixed(1) + 'k' : Math.round(vol);
-    return `<div class="muscle-legend-item" onclick="showToast('${m}: ${vol > 0 ? Math.round(vol).toLocaleString() + ' kg' : 'Kein Training'}')">
+    const noTr = t('noTraining');
+    return `<div class="muscle-legend-item" onclick="showToast('${m}: ${vol > 0 ? Math.round(vol).toLocaleString() + ' kg' : noTr}')">
       <div class="muscle-legend-dot" style="background:${color};border:1px solid var(--border);"></div>
       <span>${m}</span>
       <span class="muscle-legend-vol">${volStr}</span>
@@ -5507,6 +5847,11 @@ function renderMuscleMap() {
 
 // Init app — MUST be after all let/const declarations to avoid TDZ
 (function initApp() {
+  document.documentElement.lang = currentLang;
+  const langSel = document.getElementById('langSelect');
+  if (langSel) langSel.value = currentLang;
+  translateStaticHTML();
+
   const fbReady = initFirebase();
 
   if (fbReady) {
