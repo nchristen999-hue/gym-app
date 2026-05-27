@@ -961,8 +961,17 @@
   .calendar-day.w1 { background: rgba(212, 255, 58, 0.15); color: var(--text); }
   .calendar-day.w2 { background: rgba(212, 255, 58, 0.3); color: var(--text); }
   .calendar-day.w3 { background: rgba(212, 255, 58, 0.5); color: #000; font-weight: 700; }
-  .calendar-stats { display: flex; gap: 12px; margin-top: 12px; font-size: 12px; color: var(--text-dim); }
+  .calendar-day.c1 { background: rgba(59, 130, 246, 0.25); color: var(--text); }
+  .calendar-day.c2 { background: rgba(59, 130, 246, 0.45); color: var(--text); }
+  .calendar-day.c3 { background: rgba(59, 130, 246, 0.65); color: #fff; font-weight: 700; }
+  .calendar-day.both { background: linear-gradient(135deg, rgba(212, 255, 58, 0.4) 50%, rgba(59, 130, 246, 0.45) 50%); color: var(--text); font-weight: 700; }
+  .calendar-stats { display: flex; gap: 12px; margin-top: 12px; font-size: 12px; color: var(--text-dim); flex-wrap: wrap; }
   .calendar-stats strong { color: var(--text); }
+  .calendar-legend { display: flex; gap: 12px; margin-top: 8px; font-size: 11px; color: var(--text-dim); }
+  .calendar-legend-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 4px; vertical-align: middle; }
+  .calendar-legend-dot.gym { background: rgba(212, 255, 58, 0.4); }
+  .calendar-legend-dot.cardio { background: rgba(59, 130, 246, 0.45); }
+  .calendar-legend-dot.both { background: linear-gradient(135deg, rgba(212, 255, 58, 0.4) 50%, rgba(59, 130, 246, 0.45) 50%); }
 
   /* ===== FEATURE 3: SETTINGS OVERLAY (for Body Weight + Backup + Rest Time Config) ===== */
   .settings-overlay {
@@ -1612,6 +1621,7 @@
         </div>
         <div class="calendar-grid" id="calendarGrid"></div>
         <div class="calendar-stats" id="calendarStats"></div>
+        <div class="calendar-legend" id="calendarLegend"></div>
       </div>
       <div id="historyList"></div>
     </div>
@@ -4814,6 +4824,15 @@ function renderCalendar() {
     }
   });
 
+  const cardioMap = {};
+  (state.cardioSessions || []).forEach(c => {
+    const d = new Date(c.timestamp || c.date);
+    if (d.getFullYear() === year && d.getMonth() === month) {
+      const key = d.getDate();
+      cardioMap[key] = (cardioMap[key] || 0) + 1;
+    }
+  });
+
   const today = new Date();
   const isThisMonth = today.getFullYear() === year && today.getMonth() === month;
 
@@ -4825,15 +4844,31 @@ function renderCalendar() {
   }
 
   let monthWorkouts = 0;
+  let monthCardios = 0;
   let monthVolume = 0;
+  let monthCardioKm = 0;
 
   for (let day = 1; day <= lastDay.getDate(); day++) {
-    const count = workoutMap[day] || 0;
+    const wCount = workoutMap[day] || 0;
+    const cCount = cardioMap[day] || 0;
     let cls = 'calendar-day';
-    if (count === 0) cls += '';
-    else if (count === 1) { cls += ' w1'; monthWorkouts++; }
-    else if (count === 2) { cls += ' w2'; monthWorkouts += count; }
-    else { cls += ' w3'; monthWorkouts += count; }
+
+    if (wCount > 0 && cCount > 0) {
+      cls += ' both';
+      monthWorkouts += wCount;
+      monthCardios += cCount;
+    } else if (wCount > 0) {
+      if (wCount === 1) cls += ' w1';
+      else if (wCount === 2) cls += ' w2';
+      else cls += ' w3';
+      monthWorkouts += wCount;
+    } else if (cCount > 0) {
+      if (cCount === 1) cls += ' c1';
+      else if (cCount === 2) cls += ' c2';
+      else cls += ' c3';
+      monthCardios += cCount;
+    }
+
     if (isThisMonth && day === today.getDate()) cls += ' today';
     html += `<div class="${cls}">${day}</div>`;
   }
@@ -4849,10 +4884,28 @@ function renderCalendar() {
     }
   });
 
+  (state.cardioSessions || []).forEach(c => {
+    const d = new Date(c.timestamp || c.date);
+    if (d.getFullYear() === year && d.getMonth() === month) {
+      monthCardioKm += (c.distance || 0);
+    }
+  });
+
+  const gymDays = Object.keys(workoutMap).length;
+  const cardioDays = Object.keys(cardioMap).length;
+
   document.getElementById('calendarGrid').innerHTML = html;
   document.getElementById('calendarStats').innerHTML = `
-    <span><strong>${Object.keys(workoutMap).length}</strong> Tage trainiert</span>
-    <span><strong>${monthVolume.toLocaleString('de-CH')}</strong> kg Volumen</span>
+    <span>💪 <strong>${gymDays}</strong> Gym-Tage</span>
+    <span><strong>${monthVolume.toLocaleString('de-CH')}</strong> kg</span>
+    <span>🏃 <strong>${cardioDays}</strong> Cardio-Tage</span>
+    <span><strong>${monthCardioKm.toFixed(1)}</strong> km</span>
+  `;
+  const legendEl = document.getElementById('calendarLegend');
+  if (legendEl) legendEl.innerHTML = `
+    <span><span class="calendar-legend-dot gym"></span>Gym</span>
+    <span><span class="calendar-legend-dot cardio"></span>Cardio</span>
+    <span><span class="calendar-legend-dot both"></span>Beides</span>
   `;
 }
 
