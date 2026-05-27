@@ -1505,9 +1505,12 @@
               <!-- Shoulders / Schultern (front) -->
               <path class="muscle-part" data-muscle="Schultern" d="M38,64 Q30,62 28,70 L30,86 Q34,82 40,78 L46,72 Q42,66 38,64 Z" />
               <path class="muscle-part" data-muscle="Schultern" d="M92,64 Q100,62 102,70 L100,86 Q96,82 90,78 L84,72 Q88,66 92,64 Z" />
-              <!-- Arms / Arme (front: biceps) -->
-              <path class="muscle-part" data-muscle="Arme" d="M28,88 Q24,86 22,92 L18,118 Q20,124 24,122 L30,100 Q32,92 30,88 Z" />
-              <path class="muscle-part" data-muscle="Arme" d="M102,88 Q106,86 108,92 L112,118 Q110,124 106,122 L100,100 Q98,92 100,88 Z" />
+              <!-- Bizeps (front) -->
+              <path class="muscle-part" data-muscle="Bizeps" d="M28,88 Q24,86 22,92 L20,110 Q22,116 26,114 L30,100 Q32,92 30,88 Z" />
+              <path class="muscle-part" data-muscle="Bizeps" d="M102,88 Q106,86 108,92 L110,110 Q108,116 104,114 L100,100 Q98,92 100,88 Z" />
+              <!-- Unterarm (front) -->
+              <path class="muscle-part" data-muscle="Unterarm" d="M20,112 Q18,124 18,140 Q19,148 22,146 L24,130 Q25,118 24,112 Z" />
+              <path class="muscle-part" data-muscle="Unterarm" d="M110,112 Q112,124 112,140 Q111,148 108,146 L106,130 Q105,118 106,112 Z" />
               <!-- Core / Core (abs) -->
               <path class="muscle-part" data-muscle="Core" d="M50,100 Q54,98 65,98 Q76,98 80,100 L80,138 Q76,142 65,142 Q54,142 50,138 Z" />
               <!-- Legs / Beine (quads front) -->
@@ -1537,9 +1540,12 @@
               <!-- Shoulders / Schultern (rear) -->
               <path class="muscle-part" data-muscle="Schultern" d="M38,64 Q30,62 28,70 L30,86 Q34,82 40,78 L46,72 Q42,66 38,64 Z" />
               <path class="muscle-part" data-muscle="Schultern" d="M92,64 Q100,62 102,70 L100,86 Q96,82 90,78 L84,72 Q88,66 92,64 Z" />
-              <!-- Arms / Arme (back: triceps) -->
-              <path class="muscle-part" data-muscle="Arme" d="M28,88 Q24,86 22,92 L18,118 Q20,124 24,122 L30,100 Q32,92 30,88 Z" />
-              <path class="muscle-part" data-muscle="Arme" d="M102,88 Q106,86 108,92 L112,118 Q110,124 106,122 L100,100 Q98,92 100,88 Z" />
+              <!-- Trizeps (back) -->
+              <path class="muscle-part" data-muscle="Trizeps" d="M28,88 Q24,86 22,92 L20,110 Q22,116 26,114 L30,100 Q32,92 30,88 Z" />
+              <path class="muscle-part" data-muscle="Trizeps" d="M102,88 Q106,86 108,92 L110,110 Q108,116 104,114 L100,100 Q98,92 100,88 Z" />
+              <!-- Unterarm (back) -->
+              <path class="muscle-part" data-muscle="Unterarm" d="M20,112 Q18,124 18,140 Q19,148 22,146 L24,130 Q25,118 24,112 Z" />
+              <path class="muscle-part" data-muscle="Unterarm" d="M110,112 Q112,124 112,140 Q111,148 108,146 L106,130 Q105,118 106,112 Z" />
               <!-- Lower back / Core (rear) -->
               <path class="muscle-part" data-muscle="Core" d="M48,108 Q54,106 65,106 Q76,106 82,108 L80,138 Q76,142 65,142 Q54,142 50,138 Z" />
               <!-- Legs / Beine (hamstrings + glutes) -->
@@ -1885,7 +1891,9 @@
             <option value="Rücken">Rücken</option>
             <option value="Beine">Beine</option>
             <option value="Schultern">Schultern</option>
-            <option value="Arme">Arme</option>
+            <option value="Bizeps">Bizeps</option>
+            <option value="Trizeps">Trizeps</option>
+            <option value="Unterarm">Unterarm</option>
             <option value="Core">Core</option>
             <option value="Cardio">Cardio</option>
             <option value="Sonstiges">Sonstiges</option>
@@ -2374,48 +2382,130 @@ function toggleProGate(el, pro) {
 // EXERCISES & DATA
 // =============================================
 const EXERCISES = [
+  // === BRUST (14) ===
   { name: 'Bankdrücken', muscle: 'Brust' },
   { name: 'Schrägbankdrücken', muscle: 'Brust' },
+  { name: 'Negativ-Bankdrücken', muscle: 'Brust' },
   { name: 'Kurzhantel-Bankdrücken', muscle: 'Brust' },
+  { name: 'KH Schrägbankdrücken', muscle: 'Brust' },
   { name: 'Butterfly', muscle: 'Brust' },
+  { name: 'Cable Crossover', muscle: 'Brust' },
   { name: 'Dips', muscle: 'Brust' },
   { name: 'Liegestütze', muscle: 'Brust' },
+  { name: 'Chest Press (Maschine)', muscle: 'Brust' },
+  { name: 'Incline Chest Press (Maschine)', muscle: 'Brust' },
+  { name: 'KH Flys flach', muscle: 'Brust' },
+  { name: 'KH Flys schräg', muscle: 'Brust' },
+  { name: 'Pullover', muscle: 'Brust' },
+
+  // === RÜCKEN (16) ===
   { name: 'Kreuzheben', muscle: 'Rücken' },
   { name: 'Klimmzüge', muscle: 'Rücken' },
-  { name: 'Latzug', muscle: 'Rücken' },
+  { name: 'Latzug breit', muscle: 'Rücken' },
+  { name: 'Latzug eng', muscle: 'Rücken' },
   { name: 'Rudern (Kabel)', muscle: 'Rücken' },
   { name: 'Langhantelrudern', muscle: 'Rücken' },
   { name: 'T-Bar Rudern', muscle: 'Rücken' },
+  { name: 'KH Rudern einarmig', muscle: 'Rücken' },
+  { name: 'Seated Row (Maschine)', muscle: 'Rücken' },
+  { name: 'Chest Supported Row', muscle: 'Rücken' },
+  { name: 'Latzug V-Griff', muscle: 'Rücken' },
+  { name: 'Hyperextensions', muscle: 'Rücken' },
+  { name: 'Face Pulls', muscle: 'Rücken' },
+  { name: 'Meadows Row', muscle: 'Rücken' },
+  { name: 'Pendlay Row', muscle: 'Rücken' },
+  { name: 'Shrugs', muscle: 'Rücken' },
+
+  // === BEINE (18) ===
   { name: 'Kniebeugen', muscle: 'Beine' },
+  { name: 'Frontkniebeugen', muscle: 'Beine' },
   { name: 'Beinpresse', muscle: 'Beine' },
+  { name: 'Hack Squat', muscle: 'Beine' },
   { name: 'Rumänisches Kreuzheben', muscle: 'Beine' },
   { name: 'Beinstrecker', muscle: 'Beine' },
   { name: 'Beinbeuger', muscle: 'Beine' },
-  { name: 'Wadenheben', muscle: 'Beine' },
+  { name: 'Beinbeuger sitzend', muscle: 'Beine' },
+  { name: 'Wadenheben stehend', muscle: 'Beine' },
+  { name: 'Wadenheben sitzend', muscle: 'Beine' },
   { name: 'Ausfallschritte', muscle: 'Beine' },
+  { name: 'Bulgarische Kniebeugen', muscle: 'Beine' },
   { name: 'Hip Thrust', muscle: 'Beine' },
+  { name: 'Sumo Kreuzheben', muscle: 'Beine' },
+  { name: 'Goblet Squat', muscle: 'Beine' },
+  { name: 'Beinpresse einbeinig', muscle: 'Beine' },
+  { name: 'Adduktoren', muscle: 'Beine' },
+  { name: 'Abduktoren', muscle: 'Beine' },
+
+  // === SCHULTERN (10) ===
   { name: 'Schulterdrücken', muscle: 'Schultern' },
+  { name: 'KH Schulterdrücken', muscle: 'Schultern' },
+  { name: 'Arnold Press', muscle: 'Schultern' },
   { name: 'Seitheben', muscle: 'Schultern' },
+  { name: 'Seitheben (Kabel)', muscle: 'Schultern' },
   { name: 'Frontheben', muscle: 'Schultern' },
   { name: 'Reverse Fly', muscle: 'Schultern' },
-  { name: 'Arnold Press', muscle: 'Schultern' },
-  { name: 'Bizeps Curls', muscle: 'Arme' },
-  { name: 'Hammer Curls', muscle: 'Arme' },
-  { name: 'Trizeps Drücken', muscle: 'Arme' },
-  { name: 'French Press', muscle: 'Arme' },
-  { name: 'Konzentrations-Curls', muscle: 'Arme' },
+  { name: 'Reverse Fly (Kabel)', muscle: 'Schultern' },
+  { name: 'Schulterdrücken (Maschine)', muscle: 'Schultern' },
+  { name: 'Upright Row', muscle: 'Schultern' },
+
+  // === BIZEPS (12) ===
+  { name: 'Bizeps Curls', muscle: 'Bizeps' },
+  { name: 'Bizeps Curls (SZ-Stange)', muscle: 'Bizeps' },
+  { name: 'KH Bizeps Curls', muscle: 'Bizeps' },
+  { name: 'Hammer Curls', muscle: 'Bizeps' },
+  { name: 'Konzentrations-Curls', muscle: 'Bizeps' },
+  { name: 'Preacher Curls', muscle: 'Bizeps' },
+  { name: 'Scott Curls', muscle: 'Bizeps' },
+  { name: 'Kabel Curls', muscle: 'Bizeps' },
+  { name: 'Incline Curls', muscle: 'Bizeps' },
+  { name: 'Spider Curls', muscle: 'Bizeps' },
+  { name: 'Drag Curls', muscle: 'Bizeps' },
+  { name: 'Bizepsmaschine', muscle: 'Bizeps' },
+
+  // === TRIZEPS (12) ===
+  { name: 'Trizeps Drücken', muscle: 'Trizeps' },
+  { name: 'Trizeps Seil', muscle: 'Trizeps' },
+  { name: 'French Press', muscle: 'Trizeps' },
+  { name: 'Trizeps Dips', muscle: 'Trizeps' },
+  { name: 'Kickbacks', muscle: 'Trizeps' },
+  { name: 'Overhead Trizeps Extension', muscle: 'Trizeps' },
+  { name: 'Skull Crushers', muscle: 'Trizeps' },
+  { name: 'Close Grip Bankdrücken', muscle: 'Trizeps' },
+  { name: 'Trizeps Maschine', muscle: 'Trizeps' },
+  { name: 'KH Trizeps Extension', muscle: 'Trizeps' },
+  { name: 'Diamond Liegestütze', muscle: 'Trizeps' },
+  { name: 'JM Press', muscle: 'Trizeps' },
+
+  // === UNTERARM (6) ===
+  { name: 'Handgelenk-Curls', muscle: 'Unterarm' },
+  { name: 'Reverse Curls', muscle: 'Unterarm' },
+  { name: 'Wrist Roller', muscle: 'Unterarm' },
+  { name: 'Farmer Walks', muscle: 'Unterarm' },
+  { name: 'Reverse Wrist Curls', muscle: 'Unterarm' },
+  { name: 'Gripper', muscle: 'Unterarm' },
+
+  // === CORE (12) ===
   { name: 'Plank', muscle: 'Core' },
   { name: 'Crunches', muscle: 'Core' },
   { name: 'Beinheben', muscle: 'Core' },
+  { name: 'Beinheben hängend', muscle: 'Core' },
   { name: 'Russian Twists', muscle: 'Core' },
+  { name: 'Cable Crunches', muscle: 'Core' },
+  { name: 'Ab Wheel Rollout', muscle: 'Core' },
+  { name: 'Woodchoppers', muscle: 'Core' },
+  { name: 'Side Plank', muscle: 'Core' },
+  { name: 'Sit-Ups', muscle: 'Core' },
+  { name: 'Mountain Climbers', muscle: 'Core' },
+  { name: 'Toe Touches', muscle: 'Core' },
 ];
 
 const DEFAULT_TEMPLATES = [
   { name: 'Push (Brust/Schulter/Trizeps)', exercises: ['Bankdrücken', 'Schulterdrücken', 'Schrägbankdrücken', 'Seitheben', 'Trizeps Drücken'] },
-  { name: 'Pull (Rücken/Bizeps)', exercises: ['Kreuzheben', 'Klimmzüge', 'Langhantelrudern', 'Latzug', 'Bizeps Curls'] },
-  { name: 'Legs (Beine)', exercises: ['Kniebeugen', 'Rumänisches Kreuzheben', 'Beinpresse', 'Beinbeuger', 'Wadenheben'] },
+  { name: 'Pull (Rücken/Bizeps)', exercises: ['Kreuzheben', 'Klimmzüge', 'Langhantelrudern', 'Latzug breit', 'Bizeps Curls'] },
+  { name: 'Legs (Beine)', exercises: ['Kniebeugen', 'Rumänisches Kreuzheben', 'Beinpresse', 'Beinbeuger', 'Wadenheben stehend'] },
   { name: 'Upper Body', exercises: ['Bankdrücken', 'Langhantelrudern', 'Schulterdrücken', 'Klimmzüge', 'Bizeps Curls', 'Trizeps Drücken'] },
-  { name: 'Lower Body', exercises: ['Kniebeugen', 'Rumänisches Kreuzheben', 'Beinpresse', 'Wadenheben', 'Plank'] },
+  { name: 'Lower Body', exercises: ['Kniebeugen', 'Rumänisches Kreuzheben', 'Beinpresse', 'Wadenheben stehend', 'Plank'] },
+  { name: 'Arms Day', exercises: ['Bizeps Curls', 'Hammer Curls', 'Trizeps Drücken', 'Skull Crushers', 'Handgelenk-Curls'] },
 ];
 
 const LEVELS = [
@@ -2454,40 +2544,114 @@ const ACHIEVEMENTS = [
 
 // 5-Tier Medaillen: [Holz, Bronze, Silber, Gold, Platin] in kg (tatsächliches Gewicht)
 const DEFAULT_MEDAL_THRESHOLDS = {
+  // Brust
   'Bankdrücken':            [30, 50, 70, 100, 130],
   'Schrägbankdrücken':      [25, 40, 60, 80, 110],
+  'Negativ-Bankdrücken':    [30, 50, 70, 100, 130],
   'Kurzhantel-Bankdrücken': [12, 20, 30, 40, 55],
+  'KH Schrägbankdrücken':   [10, 18, 28, 38, 52],
   'Butterfly':              [20, 35, 50, 70, 95],
+  'Cable Crossover':        [10, 20, 30, 45, 60],
   'Dips':                   [0, 5, 15, 30, 50],
   'Liegestütze':            [0, 0, 0, 0, 0],
+  'Chest Press (Maschine)': [25, 45, 65, 90, 120],
+  'Incline Chest Press (Maschine)': [20, 40, 60, 80, 105],
+  'KH Flys flach':          [6, 12, 18, 26, 36],
+  'KH Flys schräg':         [6, 12, 18, 26, 36],
+  'Pullover':               [10, 20, 30, 42, 55],
+  // Rücken
   'Kreuzheben':             [50, 80, 120, 160, 200],
   'Klimmzüge':              [0, 3, 8, 15, 25],
-  'Latzug':                 [30, 50, 70, 95, 120],
+  'Latzug breit':           [30, 50, 70, 95, 120],
+  'Latzug eng':             [30, 50, 70, 95, 120],
   'Rudern (Kabel)':         [30, 50, 70, 95, 120],
   'Langhantelrudern':       [30, 50, 70, 95, 120],
   'T-Bar Rudern':           [30, 50, 70, 95, 120],
+  'KH Rudern einarmig':     [14, 24, 36, 50, 65],
+  'Seated Row (Maschine)':  [30, 50, 70, 95, 120],
+  'Chest Supported Row':    [20, 35, 50, 70, 90],
+  'Latzug V-Griff':         [30, 50, 70, 95, 120],
+  'Hyperextensions':        [0, 5, 15, 25, 40],
+  'Face Pulls':             [10, 20, 30, 42, 55],
+  'Meadows Row':            [15, 25, 40, 55, 70],
+  'Pendlay Row':            [30, 50, 70, 95, 120],
+  'Shrugs':                 [20, 40, 60, 80, 110],
+  // Beine
   'Kniebeugen':             [40, 70, 100, 140, 180],
+  'Frontkniebeugen':        [30, 55, 80, 110, 145],
   'Beinpresse':             [60, 110, 160, 220, 280],
+  'Hack Squat':             [40, 70, 100, 140, 180],
   'Rumänisches Kreuzheben': [40, 65, 90, 120, 160],
   'Beinstrecker':           [30, 50, 70, 90, 115],
   'Beinbeuger':             [30, 50, 70, 90, 115],
-  'Wadenheben':             [40, 70, 100, 140, 180],
+  'Beinbeuger sitzend':     [25, 45, 65, 85, 110],
+  'Wadenheben stehend':     [40, 70, 100, 140, 180],
+  'Wadenheben sitzend':     [30, 55, 80, 110, 145],
   'Ausfallschritte':        [8, 15, 25, 40, 60],
+  'Bulgarische Kniebeugen': [8, 16, 26, 40, 55],
   'Hip Thrust':             [40, 70, 100, 140, 180],
+  'Sumo Kreuzheben':        [50, 80, 120, 160, 200],
+  'Goblet Squat':           [10, 20, 32, 44, 60],
+  'Beinpresse einbeinig':   [30, 55, 80, 110, 140],
+  'Adduktoren':             [30, 50, 70, 90, 115],
+  'Abduktoren':             [25, 45, 65, 85, 110],
+  // Schultern
   'Schulterdrücken':        [20, 35, 50, 70, 95],
+  'KH Schulterdrücken':     [10, 18, 28, 40, 55],
+  'Arnold Press':           [10, 16, 24, 34, 48],
   'Seitheben':              [4, 8, 14, 20, 28],
+  'Seitheben (Kabel)':      [4, 8, 14, 20, 28],
   'Frontheben':             [4, 8, 14, 20, 28],
   'Reverse Fly':            [4, 8, 14, 20, 28],
-  'Arnold Press':           [10, 16, 24, 34, 48],
+  'Reverse Fly (Kabel)':    [4, 8, 14, 20, 28],
+  'Schulterdrücken (Maschine)': [20, 35, 50, 70, 95],
+  'Upright Row':            [15, 25, 40, 55, 70],
+  // Bizeps
   'Bizeps Curls':           [8, 14, 22, 32, 45],
+  'Bizeps Curls (SZ-Stange)': [10, 18, 28, 40, 55],
+  'KH Bizeps Curls':        [6, 12, 20, 30, 42],
   'Hammer Curls':           [8, 14, 22, 32, 45],
-  'Trizeps Drücken':        [16, 28, 40, 55, 75],
-  'French Press':           [12, 20, 30, 42, 58],
   'Konzentrations-Curls':   [6, 11, 18, 26, 36],
+  'Preacher Curls':         [8, 14, 22, 32, 45],
+  'Scott Curls':            [8, 14, 22, 32, 45],
+  'Kabel Curls':            [10, 18, 28, 40, 55],
+  'Incline Curls':          [5, 10, 16, 24, 34],
+  'Spider Curls':           [5, 10, 16, 24, 34],
+  'Drag Curls':             [8, 14, 22, 32, 45],
+  'Bizepsmaschine':         [10, 18, 28, 40, 55],
+  // Trizeps
+  'Trizeps Drücken':        [16, 28, 40, 55, 75],
+  'Trizeps Seil':           [14, 24, 36, 50, 68],
+  'French Press':           [12, 20, 30, 42, 58],
+  'Trizeps Dips':           [0, 5, 15, 30, 50],
+  'Kickbacks':              [4, 8, 14, 22, 32],
+  'Overhead Trizeps Extension': [10, 18, 28, 40, 55],
+  'Skull Crushers':         [10, 18, 28, 40, 55],
+  'Close Grip Bankdrücken': [25, 40, 60, 80, 110],
+  'Trizeps Maschine':       [16, 28, 40, 55, 75],
+  'KH Trizeps Extension':   [6, 12, 20, 30, 42],
+  'Diamond Liegestütze':    [0, 0, 0, 0, 0],
+  'JM Press':               [15, 25, 40, 55, 75],
+  // Unterarm
+  'Handgelenk-Curls':       [5, 12, 20, 30, 42],
+  'Reverse Curls':          [6, 12, 20, 30, 42],
+  'Wrist Roller':           [3, 8, 14, 22, 32],
+  'Farmer Walks':           [16, 28, 40, 55, 75],
+  'Reverse Wrist Curls':    [3, 8, 14, 22, 32],
+  'Gripper':                [0, 0, 0, 0, 0],
+  // Core
   'Plank':                  [0, 0, 0, 0, 0],
   'Crunches':               [0, 3, 8, 15, 25],
   'Beinheben':              [0, 3, 8, 15, 25],
+  'Beinheben hängend':      [0, 3, 10, 18, 28],
   'Russian Twists':         [0, 3, 8, 15, 25],
+  'Cable Crunches':         [15, 30, 45, 65, 85],
+  'Ab Wheel Rollout':       [0, 0, 0, 0, 0],
+  'Woodchoppers':           [10, 20, 30, 42, 55],
+  'Side Plank':             [0, 0, 0, 0, 0],
+  'Sit-Ups':                [0, 0, 0, 0, 0],
+  'Mountain Climbers':      [0, 0, 0, 0, 0],
+  'Toe Touches':            [0, 0, 0, 0, 0],
 };
 
 const TIER_INFO = [
@@ -5211,7 +5375,7 @@ function renderMuscleWeekWidget() {
   const muscleMap = {};
   allEx.forEach(e => { muscleMap[e.name] = e.muscle; });
 
-  const muscles = ['Brust', 'Rücken', 'Beine', 'Schultern', 'Arme', 'Core'];
+  const muscles = ['Brust', 'Rücken', 'Beine', 'Schultern', 'Bizeps', 'Trizeps', 'Unterarm', 'Core'];
   const data = {};
   muscles.forEach(m => { data[m] = { vol: 0, sets: 0 }; });
 
@@ -5316,7 +5480,7 @@ function getMuscleColor(ratio) {
 function renderMuscleMap() {
   const volumes = getMuscleVolumes(muscleMapPeriod);
   const maxVol = Math.max(...Object.values(volumes), 1);
-  const muscles = ['Brust', 'Rücken', 'Beine', 'Schultern', 'Arme', 'Core'];
+  const muscles = ['Brust', 'Rücken', 'Beine', 'Schultern', 'Bizeps', 'Trizeps', 'Unterarm', 'Core'];
 
   document.querySelectorAll('.muscle-part').forEach(el => {
     const muscle = el.dataset.muscle;
