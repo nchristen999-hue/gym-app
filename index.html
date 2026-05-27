@@ -4248,7 +4248,7 @@ function createExerciseEntry(name) {
   const lastEntry = findLastEntry(name);
   const sets = [];
   const setCount = lastEntry ? lastEntry.sets.length : 3;
-  for (let i = 0; i < Math.max(setCount, 3); i++) {
+  for (let i = 0; i < setCount; i++) {
     const prevWeight = lastEntry?.sets[i]?.weight || '';
     const prevReps = lastEntry?.sets[i]?.reps || '';
     sets.push({
