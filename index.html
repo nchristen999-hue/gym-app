@@ -4501,7 +4501,7 @@ function renderCardio() {
           <span style="font-size:14px;">${next.icon}</span>
           <div class="medal-progress-bar"><div class="medal-progress-fill ${next.tier}" style="width:${(next.progress*100).toFixed(0)}%"></div></div>
           <span class="medal-progress-text">${next.current.toFixed(1)} / ${next.target} km</span>
-        </div>` : '<div style="font-size:11px;color:var(--text-dim);margin-top:6px;">💎 ${t('maxTierReached')}</div>';
+        </div>` : `<div style="font-size:11px;color:var(--text-dim);margin-top:6px;">💎 ${t('maxTierReached')}</div>`;
       bestMedalEl.innerHTML = `
         <div class="medal-item" style="flex-direction:column;align-items:stretch;">
           <div style="display:flex;align-items:center;gap:12px;">
