@@ -108,9 +108,9 @@
     background: transparent;
     border: none;
     color: var(--text-dim);
-    padding: 10px 6px;
+    padding: 10px 2px;
     font-family: 'Inter', sans-serif;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 600;
     cursor: pointer;
     display: flex;
@@ -119,7 +119,11 @@
     gap: 4px;
     transition: color 0.2s;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
   }
   .tab-btn .icon { font-size: 22px; }
   .tab-btn.active { color: var(--accent); }
@@ -1401,7 +1405,7 @@
       </div>
       <div class="auth-input-group">
         <label>Passwort</label>
-        <input type="password" id="regPassword" placeholder="Min. 6 Zeichen" autocomplete="new-password" />
+        <input type="password" id="regPassword" placeholder="Min. 6 chars" autocomplete="new-password" />
       </div>
       <div class="auth-input-group">
         <label>Passwort bestätigen</label>
@@ -1432,9 +1436,9 @@
   <main>
     <div class="view active" id="view-home">
       <div class="hero">
-        <div class="hero-greeting">Bereit für heute?</div>
+        <div class="hero-greeting" data-i18n="readyForToday">Ready for today?</div>
         <div class="hero-title" id="heroTitle">LET'S GO</div>
-        <button class="start-workout-btn" onclick="startEmptyWorkout()">+ Neues Workout</button>
+        <button class="start-workout-btn" onclick="startEmptyWorkout()" data-i18n="newWorkout">+ New Workout</button>
       </div>
 
       <div class="level-card" onclick="openLevelPath()">
@@ -1636,12 +1640,12 @@
       <div class="card-title" style="margin-bottom:16px;" data-i18n="cardioTracking">Cardio Tracking</div>
 
       <div class="cardio-type-pills" id="cardioFilterPills" style="margin-bottom:14px;">
-        <div class="cardio-type-pill active" data-filter="all" onclick="setCardioFilter('all')">🏅 Alle</div>
-        <div class="cardio-type-pill" data-filter="Laufen" onclick="setCardioFilter('Laufen')">🏃 Laufen</div>
-        <div class="cardio-type-pill" data-filter="Radfahren" onclick="setCardioFilter('Radfahren')">🚴 Radfahren</div>
-        <div class="cardio-type-pill" data-filter="Schwimmen" onclick="setCardioFilter('Schwimmen')">🏊 Schwimmen</div>
-        <div class="cardio-type-pill" data-filter="Wandern" onclick="setCardioFilter('Wandern')">🥾 Wandern</div>
-        <div class="cardio-type-pill" data-filter="Sonstiges" onclick="setCardioFilter('Sonstiges')">⚡ Sonstiges</div>
+        <div class="cardio-type-pill active" data-filter="all" onclick="setCardioFilter('all')">🏅 <span data-i18n="all">All</span></div>
+        <div class="cardio-type-pill" data-filter="Laufen" onclick="setCardioFilter('Laufen')">🏃 <span data-i18n="running">Running</span></div>
+        <div class="cardio-type-pill" data-filter="Radfahren" onclick="setCardioFilter('Radfahren')">🚴 <span data-i18n="cycling">Cycling</span></div>
+        <div class="cardio-type-pill" data-filter="Schwimmen" onclick="setCardioFilter('Schwimmen')">🏊 <span data-i18n="swimming">Swimming</span></div>
+        <div class="cardio-type-pill" data-filter="Wandern" onclick="setCardioFilter('Wandern')">🥾 <span data-i18n="hiking">Hiking</span></div>
+        <div class="cardio-type-pill" data-filter="Sonstiges" onclick="setCardioFilter('Sonstiges')">⚡ <span data-i18n="other">Other</span></div>
       </div>
 
       <div class="cardio-summary">
@@ -1678,44 +1682,44 @@
       <div class="cardio-form" id="cardioForm" style="display:none;">
         <div class="card-title" style="margin-bottom:10px;" data-i18n="sport">Sport</div>
         <div class="cardio-type-pills" id="cardioTypePills">
-          <div class="cardio-type-pill active" data-type="Laufen" onclick="selectCardioType('Laufen')">🏃 Laufen</div>
-          <div class="cardio-type-pill" data-type="Radfahren" onclick="selectCardioType('Radfahren')">🚴 Radfahren</div>
-          <div class="cardio-type-pill" data-type="Schwimmen" onclick="selectCardioType('Schwimmen')">🏊 Schwimmen</div>
-          <div class="cardio-type-pill" data-type="Wandern" onclick="selectCardioType('Wandern')">🥾 Wandern</div>
-          <div class="cardio-type-pill" data-type="Sonstiges" onclick="selectCardioType('Sonstiges')">⚡ Sonstiges</div>
+          <div class="cardio-type-pill active" data-type="Laufen" onclick="selectCardioType('Laufen')">🏃 <span data-i18n="running">Running</span></div>
+          <div class="cardio-type-pill" data-type="Radfahren" onclick="selectCardioType('Radfahren')">🚴 <span data-i18n="cycling">Cycling</span></div>
+          <div class="cardio-type-pill" data-type="Schwimmen" onclick="selectCardioType('Schwimmen')">🏊 <span data-i18n="swimming">Swimming</span></div>
+          <div class="cardio-type-pill" data-type="Wandern" onclick="selectCardioType('Wandern')">🥾 <span data-i18n="hiking">Hiking</span></div>
+          <div class="cardio-type-pill" data-type="Sonstiges" onclick="selectCardioType('Sonstiges')">⚡ <span data-i18n="other">Other</span></div>
         </div>
 
         <div class="cardio-mode-tabs">
-          <button class="cardio-mode-tab active" data-mode="gps" onclick="setCardioMode('gps')">📡 GPS Live</button>
-          <button class="cardio-mode-tab" data-mode="gpx" onclick="setCardioMode('gpx')">📂 GPX Import</button>
-          <button class="cardio-mode-tab" data-mode="manual" onclick="setCardioMode('manual')">✏️ Manuell</button>
+          <button class="cardio-mode-tab active" data-mode="gps" onclick="setCardioMode('gps')" data-i18n="gpsLive">📡 GPS Live</button>
+          <button class="cardio-mode-tab" data-mode="gpx" onclick="setCardioMode('gpx')" data-i18n="gpxImport">📂 GPX Import</button>
+          <button class="cardio-mode-tab" data-mode="manual" onclick="setCardioMode('manual')" data-i18n="manual">✏️ Manual</button>
         </div>
 
         <!-- GPS LIVE MODE -->
         <div class="cardio-mode-panel active" id="cardioModeGps">
-          <div class="gps-status" id="gpsStatus"><span class="pulse red"></span> GPS bereit</div>
+          <div class="gps-status" id="gpsStatus"><span class="pulse red"></span> <span data-i18n="gpsReady">GPS ready</span></div>
           <div class="gps-map-container" id="gpsLiveMap"></div>
           <div class="gps-live-stats">
             <div class="gps-stat">
-              <div class="gps-stat-label">Dauer</div>
+              <div class="gps-stat-label" data-i18n="duration">Duration</div>
               <div class="gps-stat-val" id="gpsLiveDuration">00:00</div>
             </div>
             <div class="gps-stat">
-              <div class="gps-stat-label">Distanz</div>
+              <div class="gps-stat-label" data-i18n="distance">Distance</div>
               <div class="gps-stat-val" id="gpsLiveDistance">0.00<span style="font-size:11px;color:var(--text-dim);"> km</span></div>
             </div>
             <div class="gps-stat">
-              <div class="gps-stat-label">Pace</div>
+              <div class="gps-stat-label" data-i18n="pace">Pace</div>
               <div class="gps-stat-val" id="gpsLivePace">--:--<span style="font-size:11px;color:var(--text-dim);"> /km</span></div>
             </div>
           </div>
           <div class="gps-live-stats" style="grid-template-columns:1fr 1fr;">
             <div class="gps-stat">
-              <div class="gps-stat-label">Höhenmeter</div>
+              <div class="gps-stat-label" data-i18n="elevation">Elevation</div>
               <div class="gps-stat-val" id="gpsLiveElevation">0<span style="font-size:11px;color:var(--text-dim);"> m</span></div>
             </div>
             <div class="gps-stat">
-              <div class="gps-stat-label">Geschw.</div>
+              <div class="gps-stat-label" data-i18n="speed">Speed</div>
               <div class="gps-stat-val" id="gpsLiveSpeed">0.0<span style="font-size:11px;color:var(--text-dim);"> km/h</span></div>
             </div>
           </div>
@@ -1724,8 +1728,8 @@
           </div>
           <div class="cardio-form-grid" style="margin-top:8px;">
             <div class="cardio-field">
-              <label>Ø Puls (bpm)</label>
-              <input type="number" inputmode="numeric" id="gpsHR" placeholder="optional" />
+              <label data-i18n="avgHR">Avg HR (bpm)</label>
+              <input type="number" inputmode="numeric" id="gpsHR" data-i18n="optional" placeholder="optional" />
             </div>
           </div>
         </div>
@@ -1734,77 +1738,77 @@
         <div class="cardio-mode-panel" id="cardioModeGpx">
           <div class="gpx-upload-zone" id="gpxUploadZone" onclick="document.getElementById('gpxFileInput').click()">
             <div class="icon">📂</div>
-            <div class="label">GPX-Datei hochladen</div>
-            <div class="hint">Tippe oder ziehe eine .gpx Datei hierher</div>
+            <div class="label" data-i18n="uploadGpx">Upload GPX file</div>
+            <div class="hint" data-i18n="dragGpx">Tap or drag a .gpx file here</div>
           </div>
           <input type="file" id="gpxFileInput" accept=".gpx" style="display:none;" onchange="handleGpxUpload(event)" />
           <div id="gpxPreviewContainer" style="display:none;">
             <div class="gpx-preview-map" id="gpxPreviewMap"></div>
             <div class="gps-live-stats" style="margin-bottom:12px;">
-              <div class="gps-stat"><div class="gps-stat-label">Dauer</div><div class="gps-stat-val" id="gpxPreDuration">--</div></div>
-              <div class="gps-stat"><div class="gps-stat-label">Distanz</div><div class="gps-stat-val" id="gpxPreDistance">--</div></div>
-              <div class="gps-stat"><div class="gps-stat-label">Höhenmeter</div><div class="gps-stat-val" id="gpxPreElevation">--</div></div>
+              <div class="gps-stat"><div class="gps-stat-label" data-i18n="duration">Duration</div><div class="gps-stat-val" id="gpxPreDuration">--</div></div>
+              <div class="gps-stat"><div class="gps-stat-label" data-i18n="distance">Distance</div><div class="gps-stat-val" id="gpxPreDistance">--</div></div>
+              <div class="gps-stat"><div class="gps-stat-label" data-i18n="elevation">Elevation</div><div class="gps-stat-val" id="gpxPreElevation">--</div></div>
             </div>
           </div>
           <div class="cardio-form-grid">
             <div class="cardio-field">
-              <label>Dauer (Min)</label>
-              <input type="number" inputmode="numeric" id="gpxDuration" placeholder="aus GPX" oninput="autoFillKcal('gpx')" />
+              <label data-i18n="durationMin">Duration (min)</label>
+              <input type="number" inputmode="numeric" id="gpxDuration" data-i18n="fromGpx" placeholder="from GPX" oninput="autoFillKcal('gpx')" />
             </div>
             <div class="cardio-field">
-              <label>Distanz (km)</label>
-              <input type="number" inputmode="decimal" step="0.1" id="gpxDistance" placeholder="aus GPX" oninput="autoFillKcal('gpx')" />
+              <label data-i18n="distanceKm">Distance (km)</label>
+              <input type="number" inputmode="decimal" step="0.1" id="gpxDistance" data-i18n="fromGpx" placeholder="from GPX" oninput="autoFillKcal('gpx')" />
             </div>
             <div class="cardio-field">
-              <label>Höhenmeter (m)</label>
-              <input type="number" inputmode="numeric" id="gpxElevation" placeholder="aus GPX" oninput="autoFillKcal('gpx')" />
+              <label data-i18n="elevationM">Elevation (m)</label>
+              <input type="number" inputmode="numeric" id="gpxElevation" data-i18n="fromGpx" placeholder="from GPX" oninput="autoFillKcal('gpx')" />
             </div>
             <div class="cardio-field">
-              <label>Ø Pace (min/km)</label>
-              <input type="text" id="gpxPace" placeholder="aus GPX" />
+              <label data-i18n="avgPace">Avg Pace (min/km)</label>
+              <input type="text" id="gpxPace" data-i18n="fromGpx" placeholder="from GPX" />
             </div>
             <div class="cardio-field">
-              <label>Ø Puls (bpm)</label>
-              <input type="number" inputmode="numeric" id="gpxHR" placeholder="optional" />
+              <label data-i18n="avgHR">Avg HR (bpm)</label>
+              <input type="number" inputmode="numeric" id="gpxHR" data-i18n="optional" placeholder="optional" />
             </div>
             <div class="cardio-field">
-              <label>kcal (berechnet)</label>
+              <label data-i18n="kcalCalc">kcal (calculated)</label>
               <input type="number" inputmode="numeric" id="gpxKcal" placeholder="auto" />
             </div>
           </div>
-          <button class="cardio-save-btn" onclick="saveGpxSession()">Speichern</button>
+          <button class="cardio-save-btn" onclick="saveGpxSession()" data-i18n="save">Save</button>
         </div>
 
         <!-- MANUAL MODE -->
         <div class="cardio-mode-panel" id="cardioModeManual">
           <div class="cardio-form-grid">
             <div class="cardio-field">
-              <label>Dauer (Min)</label>
-              <input type="number" inputmode="numeric" id="cardioDuration" placeholder="z.B. 45" oninput="autoFillKcal('cardio')" />
+              <label data-i18n="durationMin">Duration (min)</label>
+              <input type="number" inputmode="numeric" id="cardioDuration" placeholder="45" oninput="autoFillKcal('cardio')" />
             </div>
             <div class="cardio-field">
-              <label>Distanz (km)</label>
-              <input type="number" inputmode="decimal" step="0.1" id="cardioDistance" placeholder="z.B. 5.2" oninput="autoFillKcal('cardio')" />
+              <label data-i18n="distanceKm">Distance (km)</label>
+              <input type="number" inputmode="decimal" step="0.1" id="cardioDistance" placeholder="5.2" oninput="autoFillKcal('cardio')" />
             </div>
             <div class="cardio-field">
-              <label>Höhenmeter (m)</label>
-              <input type="number" inputmode="numeric" id="cardioElevation" placeholder="z.B. 320" oninput="autoFillKcal('cardio')" />
+              <label data-i18n="elevationM">Elevation (m)</label>
+              <input type="number" inputmode="numeric" id="cardioElevation" placeholder="320" oninput="autoFillKcal('cardio')" />
             </div>
             <div class="cardio-field">
-              <label>Ø Pace (min/km)</label>
-              <input type="text" id="cardioPace" placeholder="z.B. 5:30" />
+              <label data-i18n="avgPace">Avg Pace (min/km)</label>
+              <input type="text" id="cardioPace" placeholder="5:30" />
             </div>
             <div class="cardio-field">
-              <label>Ø Puls (bpm)</label>
-              <input type="number" inputmode="numeric" id="cardioHR" placeholder="z.B. 155" />
+              <label data-i18n="avgHR">Avg HR (bpm)</label>
+              <input type="number" inputmode="numeric" id="cardioHR" placeholder="155" />
             </div>
             <div class="cardio-field">
-              <label>kcal (berechnet)</label>
+              <label data-i18n="kcalCalc">kcal (calculated)</label>
               <input type="number" inputmode="numeric" id="cardioKcal" placeholder="auto" />
             </div>
           </div>
-          <button class="cardio-save-btn" onclick="saveCardioSession()">Speichern</button>
-          <button class="save-template-btn" onclick="saveCardioAsTemplate()">★ Als Template speichern</button>
+          <button class="cardio-save-btn" onclick="saveCardioSession()" data-i18n="save">Save</button>
+          <button class="save-template-btn" onclick="saveCardioAsTemplate()" data-i18n="saveAsTemplate">★ Save as template</button>
         </div>
       </div>
 
@@ -1872,9 +1876,9 @@
       <button class="tab-btn active" data-view="home"><span class="icon">🏠</span><span data-i18n="home">Home</span></button>
       <button class="tab-btn" data-view="workout"><span class="icon">💪</span><span data-i18n="training">Training</span></button>
       <button class="tab-btn" data-view="history" data-pro="true"><span class="icon">📅</span><span><span data-i18n="history">History</span><span class="tab-lock" id="lockHistory">🔒</span></span></button>
-      <button class="tab-btn" data-view="cardio" data-pro="true"><span class="icon">🏃</span><span>Cardio<span class="tab-lock" id="lockCardio">🔒</span></span></button>
+      <button class="tab-btn" data-view="cardio" data-pro="true"><span class="icon">🏃</span><span><span data-i18n="cardio">Cardio</span><span class="tab-lock" id="lockCardio">🔒</span></span></button>
       <button class="tab-btn" data-view="medals" data-pro="true"><span class="icon">🏆</span><span><span data-i18n="medals">Medals</span><span class="tab-lock" id="lockMedals">🔒</span></span></button>
-      <button class="tab-btn" data-view="progress" data-pro="true"><span class="icon">📈</span><span>Stats<span class="tab-lock" id="lockProgress">🔒</span></span></button>
+      <button class="tab-btn" data-view="progress" data-pro="true"><span class="icon">📈</span><span><span data-i18n="stats">Stats</span><span class="tab-lock" id="lockProgress">🔒</span></span></button>
     </div>
   </nav>
 
@@ -2031,7 +2035,7 @@
       <div class="settings-section-title">⚖ <span data-i18n="bodyWeight">Body Weight</span></div>
       <div class="bw-entry-row">
         <input type="number" inputmode="decimal" id="bwInput" data-i18n="weightInKg" placeholder="Weight in kg" step="0.1" />
-        <button onclick="addBodyWeight()">Speichern</button>
+        <button onclick="addBodyWeight()" data-i18n="save">Save</button>
       </div>
       <div class="bw-chart-container">
         <canvas id="bwChart" width="400" height="180"></canvas>
@@ -2133,11 +2137,11 @@ let currentLang = localStorage.getItem('gymtrack_lang') || 'en';
 const TRANSLATIONS = {
   // ── NAV TABS ──
   home: { en:'Home', de:'Home', es:'Inicio', fr:'Accueil', it:'Home' },
-  training: { en:'Training', de:'Training', es:'Entreno', fr:'Entraîn.', it:'Allenamento' },
+  training: { en:'Training', de:'Training', es:'Entreno', fr:'Entraîn.', it:'Allen.' },
   history: { en:'History', de:'Historie', es:'Historial', fr:'Historique', it:'Storico' },
   cardio: { en:'Cardio', de:'Cardio', es:'Cardio', fr:'Cardio', it:'Cardio' },
-  medals: { en:'Medals', de:'Medaillen', es:'Medallas', fr:'Médailles', it:'Medaglie' },
-  stats: { en:'Stats', de:'Stats', es:'Estadíst.', fr:'Stats', it:'Stats' },
+  medals: { en:'Medals', de:'Medaillen', es:'Medallas', fr:'Médailles', it:'Medagl.' },
+  stats: { en:'Stats', de:'Stats', es:'Estadíst.', fr:'Stats', it:'Statist.' },
 
   // ── GREETINGS ──
   greetMorning: { en:'GOOD MORNING', de:'GUTEN MORGEN', es:'BUENOS DÍAS', fr:'BONJOUR', it:'BUONGIORNO' },
@@ -2409,6 +2413,55 @@ const TRANSLATIONS = {
   achPoints5k: { en:'5,000 XP', de:'5.000 XP', es:'5.000 XP', fr:'5.000 XP', it:'5.000 XP' },
   achGold5: { en:'5× Gold', de:'5× Gold', es:'5× Oro', fr:'5× Or', it:'5× Oro' },
   achPlatinum1: { en:'1× Platinum', de:'1× Platin', es:'1× Platino', fr:'1× Platine', it:'1× Platino' },
+
+  // ── MUSCLE GROUPS ──
+  muscleBrust: { en:'Chest', de:'Brust', es:'Pecho', fr:'Poitrine', it:'Petto' },
+  muscleRuecken: { en:'Back', de:'Rücken', es:'Espalda', fr:'Dos', it:'Schiena' },
+  muscleBeine: { en:'Legs', de:'Beine', es:'Piernas', fr:'Jambes', it:'Gambe' },
+  muscleSchultern: { en:'Shoulders', de:'Schultern', es:'Hombros', fr:'Épaules', it:'Spalle' },
+  muscleBizeps: { en:'Biceps', de:'Bizeps', es:'Bíceps', fr:'Biceps', it:'Bicipiti' },
+  muscleTrizeps: { en:'Triceps', de:'Trizeps', es:'Tríceps', fr:'Triceps', it:'Tricipiti' },
+  muscleUnterarm: { en:'Forearms', de:'Unterarm', es:'Antebrazos', fr:'Avant-bras', it:'Avambracci' },
+  muscleCore: { en:'Core', de:'Core', es:'Core', fr:'Core', it:'Core' },
+
+  // ── MISC UI ──
+  readyForToday: { en:'Ready for today?', de:'Bereit für heute?', es:'¿Listo para hoy?', fr:'Prêt pour aujourd\'hui ?', it:'Pronto per oggi?' },
+  noDataYet: { en:'No data yet', de:'Noch keine Daten', es:'Sin datos aún', fr:'Pas encore de données', it:'Nessun dato' },
+  minEntriesChart: { en:'Min. 2 entries for chart', de:'Mind. 2 Einträge für Chart', es:'Mín. 2 entradas para gráfico', fr:'Min. 2 entrées pour graphique', it:'Min. 2 voci per grafico' },
+  gpsStopped: { en:'Stopped — Save or discard', de:'Gestoppt — Speichern oder verwerfen', es:'Detenido — Guardar o descartar', fr:'Arrêté — Sauver ou abandonner', it:'Fermato — Salva o annulla' },
+  gpsStartBtn: { en:'Start', de:'Start', es:'Iniciar', fr:'Démarrer', it:'Avvia' },
+  gpsPauseBtn: { en:'Pause', de:'Pause', es:'Pausa', fr:'Pause', it:'Pausa' },
+  gpsStopBtn: { en:'Stop', de:'Stop', es:'Detener', fr:'Arrêter', it:'Ferma' },
+  gpsResumeBtn: { en:'Resume', de:'Weiter', es:'Reanudar', fr:'Reprendre', it:'Riprendi' },
+  gpsSaveBtn: { en:'Save', de:'Speichern', es:'Guardar', fr:'Sauvegarder', it:'Salva' },
+  gpsDiscardBtn: { en:'Discard', de:'Verwerfen', es:'Descartar', fr:'Abandonner', it:'Annulla' },
+  bestPerformance: { en:'Best performance', de:'Bestleistung', es:'Mejor marca', fr:'Meilleur résultat', it:'Miglior prestazione' },
+  longestDist: { en:'Longest distance', de:'Längste Distanz', es:'Mayor distancia', fr:'Plus longue distance', it:'Distanza più lunga' },
+  noCardioInSport: { en:'No sessions in this sport yet', de:'Noch keine Einheit in dieser Sportart', es:'Sin sesiones en este deporte', fr:'Pas encore de session dans ce sport', it:'Nessuna sessione in questo sport' },
+  noCardioYet: { en:'No cardio sessions yet', de:'Noch keine Cardio-Einheiten', es:'Sin sesiones de cardio', fr:'Pas encore de sessions cardio', it:'Nessuna sessione cardio' },
+  noCardioTemplates: { en:'No cardio templates yet. Create one with "+ New" or in Manual mode.', de:'Noch keine Cardio-Templates. Erstelle eines mit "+ Neu" oder im Manuell-Modus.', es:'Sin plantillas de cardio. Crea una con "+ Nuevo" o en modo Manual.', fr:'Pas de modèles cardio. Créez-en un avec "+ Nouveau" ou en mode Manuel.', it:'Nessun modello cardio. Creane uno con "+ Nuovo" o in modalità Manuale.' },
+  noPresets: { en:'No presets', de:'Keine Vorgaben', es:'Sin valores', fr:'Pas de valeurs', it:'Nessun valore' },
+  sportPrompt: { en:'Sport (Running, Cycling, Swimming, Hiking, Other)?', de:'Sportart (Laufen, Radfahren, Schwimmen, Wandern, Sonstiges)?', es:'Deporte (Correr, Ciclismo, Natación, Senderismo, Otro)?', fr:'Sport (Course, Cyclisme, Natation, Randonnée, Autre)?', it:'Sport (Corsa, Ciclismo, Nuoto, Escursionismo, Altro)?' },
+
+  // ── AUTH MESSAGES ──
+  authCreating: { en:'Creating...', de:'Wird erstellt...', es:'Creando...', fr:'Création...', it:'Creazione...' },
+  authCreateAccount: { en:'Create account', de:'Konto erstellen', es:'Crear cuenta', fr:'Créer un compte', it:'Crea account' },
+  authLoggingIn: { en:'Logging in...', de:'Wird angemeldet...', es:'Conectando...', fr:'Connexion...', it:'Accesso...' },
+  authLogin: { en:'Log in', de:'Anmelden', es:'Conectar', fr:'Se connecter', it:'Accedi' },
+  authEnterEmail: { en:'Enter email.', de:'E-Mail eingeben.', es:'Ingresa el correo.', fr:'Entrez l\'e-mail.', it:'Inserisci l\'email.' },
+  authEnterPassword: { en:'Enter password.', de:'Passwort eingeben.', es:'Ingresa la contraseña.', fr:'Entrez le mot de passe.', it:'Inserisci la password.' },
+  authEnterUsername: { en:'Enter username.', de:'Benutzername eingeben.', es:'Ingresa el nombre.', fr:'Entrez le nom.', it:'Inserisci il nome.' },
+  authUsernameTaken: { en:'Username already taken.', de:'Benutzername bereits vergeben.', es:'Nombre ya en uso.', fr:'Nom déjà pris.', it:'Nome già in uso.' },
+  authEmailInUse: { en:'Email already registered.', de:'E-Mail bereits registriert.', es:'Correo ya registrado.', fr:'E-mail déjà enregistré.', it:'Email già registrata.' },
+  authInvalidEmail: { en:'Invalid email.', de:'Ungültige E-Mail.', es:'Correo inválido.', fr:'E-mail invalide.', it:'Email non valida.' },
+  authWeakPassword: { en:'Password too weak (min. 6 chars).', de:'Passwort zu schwach (min. 6 Zeichen).', es:'Contraseña débil (mín. 6 car.).', fr:'Mot de passe faible (min. 6 car.).', it:'Password debole (min. 6 car.).' },
+  authUserNotFound: { en:'No account with this email.', de:'Kein Konto mit dieser E-Mail.', es:'No hay cuenta con este correo.', fr:'Pas de compte avec cet e-mail.', it:'Nessun account con questa email.' },
+  authWrongPassword: { en:'Wrong password.', de:'Falsches Passwort.', es:'Contraseña incorrecta.', fr:'Mot de passe incorrect.', it:'Password errata.' },
+  authInvalidCredential: { en:'Email or password wrong.', de:'E-Mail oder Passwort falsch.', es:'Correo o contraseña incorrectos.', fr:'E-mail ou mot de passe incorrect.', it:'Email o password errati.' },
+  authTooManyRequests: { en:'Too many attempts. Please wait.', de:'Zu viele Versuche. Bitte warte.', es:'Demasiados intentos. Espera.', fr:'Trop de tentatives. Patientez.', it:'Troppi tentativi. Attendi.' },
+  authFirebaseNotReady: { en:'Firebase not configured. Register locally first.', de:'Firebase nicht konfiguriert. Registriere dich zuerst lokal.', es:'Firebase no configurado. Regístrate localmente.', fr:'Firebase non configuré. Inscrivez-vous localement.', it:'Firebase non configurato. Registrati localmente.' },
+  authResetSent: { en:'Password reset email sent! Check your inbox.', de:'Passwort-Reset E-Mail gesendet! Prüfe dein Postfach.', es:'Email de recuperación enviado. Revisa tu bandeja.', fr:'E-mail de réinitialisation envoyé ! Vérifiez votre boîte.', it:'Email di reset inviata! Controlla la posta.' },
+  authEnterEmailFirst: { en:'Enter your email first.', de:'Gib zuerst deine E-Mail ein.', es:'Ingresa tu correo primero.', fr:'Entrez d\'abord votre e-mail.', it:'Inserisci prima la tua email.' },
 };
 
 function t(key) {
@@ -2422,6 +2475,12 @@ function tArr(key) {
   if (!entry) return [];
   return entry[currentLang] || entry['en'] || [];
 }
+
+const MUSCLE_KEYS = { 'Brust':'muscleBrust', 'Rücken':'muscleRuecken', 'Beine':'muscleBeine', 'Schultern':'muscleSchultern', 'Bizeps':'muscleBizeps', 'Trizeps':'muscleTrizeps', 'Unterarm':'muscleUnterarm', 'Core':'muscleCore' };
+const SPORT_KEYS = { 'Laufen':'running', 'Radfahren':'cycling', 'Schwimmen':'swimming', 'Wandern':'hiking', 'Sonstiges':'other' };
+function tMuscle(m) { return t(MUSCLE_KEYS[m] || m); }
+function tSport(type) { return t(SPORT_KEYS[type] || 'other'); }
+function getLoc() { return { de:'de-CH', es:'es', fr:'fr', it:'it' }[currentLang] || 'en'; }
 
 function setLanguage(lang) {
   currentLang = lang;
@@ -2497,21 +2556,20 @@ async function doRegister() {
   const password = document.getElementById('regPassword').value;
   const confirm = document.getElementById('regPasswordConfirm').value;
 
-  if (!username) return showAuthError('Benutzername eingeben.');
-  if (!email) return showAuthError('E-Mail eingeben.');
-  if (password.length < 6) return showAuthError('Passwort muss min. 6 Zeichen haben.');
-  if (password !== confirm) return showAuthError('Passwörter stimmen nicht überein.');
+  if (!username) return showAuthError(t('authEnterUsername'));
+  if (!email) return showAuthError(t('authEnterEmail'));
+  if (password.length < 6) return showAuthError(t('authWeakPassword'));
+  if (password !== confirm) return showAuthError(t('authWrongPassword'));
 
   const btn = document.getElementById('registerBtn');
   btn.disabled = true;
-  btn.textContent = 'Wird erstellt...';
+  btn.textContent = t('authCreating');
 
   if (!isFirebaseReady()) {
-    // Offline/local mode fallback
     const profiles = getProfiles();
     if (profiles.some(p => p.toLowerCase() === username.toLowerCase())) {
-      btn.disabled = false; btn.textContent = 'Konto erstellen';
-      return showAuthError('Benutzername bereits vergeben.');
+      btn.disabled = false; btn.textContent = t('authCreateAccount');
+      return showAuthError(t('authUsernameTaken'));
     }
     profiles.push(username);
     saveProfiles(profiles);
@@ -2519,7 +2577,7 @@ async function doRegister() {
     localStorage.setItem('gymtrack_user_name', username);
     userIsPro = ADMIN_EMAILS.includes(email.toLowerCase());
     selectProfile(username);
-    btn.disabled = false; btn.textContent = 'Konto erstellen';
+    btn.disabled = false; btn.textContent = t('authCreateAccount');
     return;
   }
 
@@ -2539,13 +2597,13 @@ async function doRegister() {
     selectProfile(username);
   } catch(e) {
     const msgs = {
-      'auth/email-already-in-use': 'Diese E-Mail ist bereits registriert.',
-      'auth/invalid-email': 'Ungültige E-Mail-Adresse.',
-      'auth/weak-password': 'Passwort zu schwach (min. 6 Zeichen).',
+      'auth/email-already-in-use': t('authEmailInUse'),
+      'auth/invalid-email': t('authInvalidEmail'),
+      'auth/weak-password': t('authWeakPassword'),
     };
     showAuthError(msgs[e.code] || e.message);
   }
-  btn.disabled = false; btn.textContent = 'Konto erstellen';
+  btn.disabled = false; btn.textContent = t('authCreateAccount');
 }
 
 async function doLogin() {
@@ -2553,12 +2611,12 @@ async function doLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
 
-  if (!email) return showAuthError('E-Mail eingeben.');
-  if (!password) return showAuthError('Passwort eingeben.');
+  if (!email) return showAuthError(t('authEnterEmail'));
+  if (!password) return showAuthError(t('authEnterPassword'));
 
   const btn = document.getElementById('loginBtn');
   btn.disabled = true;
-  btn.textContent = 'Wird angemeldet...';
+  btn.textContent = t('authLoggingIn');
 
   if (!isFirebaseReady()) {
     // Offline/local mode fallback
@@ -2568,9 +2626,9 @@ async function doLogin() {
       userIsPro = ADMIN_EMAILS.includes(email.toLowerCase());
       selectProfile(storedName);
     } else {
-      showAuthError('Firebase nicht konfiguriert. Registriere dich zuerst lokal.');
+      showAuthError(t('authFirebaseNotReady'));
     }
-    btn.disabled = false; btn.textContent = 'Anmelden';
+    btn.disabled = false; btn.textContent = t('authLogin');
     return;
   }
 
@@ -2584,25 +2642,25 @@ async function doLogin() {
     selectProfile(name);
   } catch(e) {
     const msgs = {
-      'auth/user-not-found': 'Kein Konto mit dieser E-Mail.',
-      'auth/wrong-password': 'Falsches Passwort.',
-      'auth/invalid-credential': 'E-Mail oder Passwort falsch.',
-      'auth/too-many-requests': 'Zu viele Versuche. Bitte warte.',
-      'auth/invalid-email': 'Ungültige E-Mail-Adresse.',
+      'auth/user-not-found': t('authUserNotFound'),
+      'auth/wrong-password': t('authWrongPassword'),
+      'auth/invalid-credential': t('authInvalidCredential'),
+      'auth/too-many-requests': t('authTooManyRequests'),
+      'auth/invalid-email': t('authInvalidEmail'),
     };
     showAuthError(msgs[e.code] || e.message);
   }
-  btn.disabled = false; btn.textContent = 'Anmelden';
+  btn.disabled = false; btn.textContent = t('authLogin');
 }
 
 async function doPasswordReset() {
   const email = document.getElementById('loginEmail').value.trim();
-  if (!email) return showAuthError('Gib zuerst deine E-Mail ein.');
-  if (!isFirebaseReady()) return showAuthError('Firebase nicht konfiguriert.');
+  if (!email) return showAuthError(t('authEnterEmailFirst'));
+  if (!isFirebaseReady()) return showAuthError(t('authFirebaseNotReady'));
   try {
     await firebaseAuth.sendPasswordResetEmail(email);
     const info = document.getElementById('authInfo');
-    info.textContent = 'Passwort-Reset E-Mail gesendet! Prüfe dein Postfach.';
+    info.textContent = t('authResetSent');
     info.style.color = 'var(--accent)';
   } catch(e) {
     showAuthError('Konnte keine Reset-E-Mail senden.');
@@ -2669,9 +2727,9 @@ function restorePurchase() {
     if (userIsPro) {
       closePaywall();
       updateProUI();
-      showToast('Pro-Status wiederhergestellt!');
+      showToast(t('proRestored'));
     } else {
-      alert('Kein aktives Abo gefunden.');
+      alert(t('noActiveSub'));
     }
   });
 }
@@ -3098,7 +3156,7 @@ function logoutProfile() {
 
 function deleteProfile() {
   if (!activeProfile) return;
-  if (!confirm('Profil "' + activeProfile + '" und alle Daten löschen?')) return;
+  if (!confirm(t('confirmDeleteProfile'))) return;
   const profiles = getProfiles().filter(p => p !== activeProfile);
   saveProfiles(profiles);
   localStorage.removeItem(storageKey());
@@ -3210,14 +3268,14 @@ function getLevel(points) {
 function openLevelPath() {
   const pts = state.totalPoints;
   const lvl = getLevel(pts);
-  document.getElementById('levelPathSub').textContent = `Du hast ${pts.toLocaleString('de-CH')} XP`;
+  document.getElementById('levelPathSub').textContent = `${pts.toLocaleString(getLoc())} XP`;
   const list = document.getElementById('levelPathList');
   list.innerHTML = LEVELS.map((l, i) => {
     const reached = pts >= l.xp;
     const isCurrent = l.num === lvl.num;
     const cls = isCurrent ? 'current' : reached ? 'reached' : 'locked';
     const nextL = LEVELS[i + 1];
-    const xpLabel = nextL ? `${l.xp.toLocaleString('de-CH')} XP` : `${l.xp.toLocaleString('de-CH')} XP (MAX)`;
+    const xpLabel = nextL ? `${l.xp.toLocaleString(getLoc())} XP` : `${l.xp.toLocaleString(getLoc())} XP (MAX)`;
     return `
       <div class="level-path-item ${cls}">
         ${i > 0 ? '<div class="level-path-line"></div>' : ''}
@@ -3442,13 +3500,13 @@ function renderHome() {
   const stats = calculateStats();
   document.getElementById('totalWorkouts').textContent = stats.totalWorkouts;
   document.getElementById('weekWorkouts').textContent = stats.weekWorkouts;
-  document.getElementById('totalVolume').innerHTML = stats.totalVolume.toLocaleString('de-CH') + '<span class="unit">kg</span>';
+  document.getElementById('totalVolume').innerHTML = stats.totalVolume.toLocaleString(getLoc()) + '<span class="unit">kg</span>';
   document.getElementById('totalMedals').textContent = stats.totalMedals;
-  document.getElementById('totalPoints').textContent = state.totalPoints.toLocaleString('de-CH');
+  document.getElementById('totalPoints').textContent = state.totalPoints.toLocaleString(getLoc());
 
   const cardioSessions = state.cardioSessions || [];
   const cardioKcal = cardioSessions.reduce((s, c) => s + (c.kcal || 0), 0);
-  document.getElementById('homeCardioKcal').innerHTML = cardioKcal.toLocaleString('de-CH') + '<span class="unit">kcal</span>';
+  document.getElementById('homeCardioKcal').innerHTML = cardioKcal.toLocaleString(getLoc()) + '<span class="unit">kcal</span>';
   document.getElementById('homeCardioCount').textContent = cardioSessions.length;
   
   document.getElementById('streakCount').textContent = stats.streak;
@@ -3462,10 +3520,10 @@ function renderHome() {
   if (lvl.next) {
     const progress = ((state.totalPoints - lvl.xp) / (lvl.next.xp - lvl.xp)) * 100;
     document.getElementById('levelProgress').style.width = Math.min(100, progress) + '%';
-    document.getElementById('levelPointsText').textContent = `${state.totalPoints.toLocaleString('de-CH')} / ${lvl.next.xp.toLocaleString('de-CH')} XP`;
+    document.getElementById('levelPointsText').textContent = `${state.totalPoints.toLocaleString(getLoc())} / ${lvl.next.xp.toLocaleString(getLoc())} XP`;
   } else {
     document.getElementById('levelProgress').style.width = '100%';
-    document.getElementById('levelPointsText').textContent = `${state.totalPoints.toLocaleString('de-CH')} XP (MAX)`;
+    document.getElementById('levelPointsText').textContent = `${state.totalPoints.toLocaleString(getLoc())} XP (MAX)`;
   }
   
   const h = new Date().getHours();
@@ -3550,7 +3608,7 @@ function renderWorkout() {
       return `
         <div class="exercise-block${isSkipped ? ' skipped' : ''}">
           <div class="exercise-header">
-            <button class="skip-toggle${isSkipped ? '' : ' active'}" onclick="toggleSkipExercise(${exIdx})" title="${isSkipped ? 'Übung aktivieren' : 'Übung überspringen'}">${isSkipped ? '—' : '✓'}</button>
+            <button class="skip-toggle${isSkipped ? '' : ' active'}" onclick="toggleSkipExercise(${exIdx})">${isSkipped ? '—' : '✓'}</button>
             <div style="flex:1;margin-left:10px;">
               <div class="exercise-name">🏃 ${escapeHtml(ex.name)}</div>
               <div class="exercise-pr" style="color:var(--text-dim);">Cardio</div>
@@ -3559,19 +3617,19 @@ function renderWorkout() {
           </div>
           <div class="cardio-form-grid" style="margin-top:8px;">
             <div class="cardio-field">
-              <label>Dauer (min)</label>
-              <input type="number" inputmode="numeric" value="${ex.duration || ''}" oninput="updateCardioEx(${exIdx},'duration',this.value)" placeholder="z.B. 30" />
+              <label>${t('durationMin')}</label>
+              <input type="number" inputmode="numeric" value="${ex.duration || ''}" oninput="updateCardioEx(${exIdx},'duration',this.value)" placeholder="30" />
             </div>
             <div class="cardio-field">
-              <label>Distanz (km)</label>
-              <input type="number" inputmode="decimal" step="0.1" value="${ex.distance || ''}" oninput="updateCardioEx(${exIdx},'distance',this.value)" placeholder="z.B. 5.0" />
+              <label>${t('distanceKm')}</label>
+              <input type="number" inputmode="decimal" step="0.1" value="${ex.distance || ''}" oninput="updateCardioEx(${exIdx},'distance',this.value)" placeholder="5.0" />
             </div>
             <div class="cardio-field">
               <label>kcal</label>
-              <input type="number" inputmode="numeric" value="${ex.kcal || ''}" oninput="updateCardioEx(${exIdx},'kcal',this.value)" placeholder="optional" />
+              <input type="number" inputmode="numeric" value="${ex.kcal || ''}" oninput="updateCardioEx(${exIdx},'kcal',this.value)" placeholder="${t('optional')}" />
             </div>
             <div class="cardio-field" style="display:flex;align-items:flex-end;">
-              <div class="set-check ${ex.done ? 'done' : ''}" style="margin:0;" onclick="toggleCardioEx(${exIdx})">${ex.done ? '✓ Erledigt' : 'Erledigt?'}</div>
+              <div class="set-check ${ex.done ? 'done' : ''}" style="margin:0;" onclick="toggleCardioEx(${exIdx})">${ex.done ? `✓ ${t('done')}` : `${t('doneQ')}`}</div>
             </div>
           </div>
         </div>
@@ -3585,7 +3643,7 @@ function renderWorkout() {
     return `
     <div class="exercise-block${isSkipped ? ' skipped' : ''}">
       <div class="exercise-header">
-        <button class="skip-toggle${isSkipped ? '' : ' active'}" onclick="toggleSkipExercise(${exIdx})" title="${isSkipped ? 'Übung aktivieren' : 'Übung überspringen'}">${isSkipped ? '—' : '✓'}</button>
+        <button class="skip-toggle${isSkipped ? '' : ' active'}" onclick="toggleSkipExercise(${exIdx})">${isSkipped ? '—' : '✓'}</button>
         <div style="flex:1;margin-left:10px;">
           <div class="exercise-name">${escapeHtml(ex.name)}</div>
           <div class="exercise-pr">${prText}</div>
@@ -3637,17 +3695,17 @@ function renderHistory() {
 
   list.innerHTML = merged.map(item => {
     const d = new Date(item.timestamp);
-    const dateStr = d.toLocaleDateString('de-CH', { weekday: 'short', day: '2-digit', month: 'short' });
-    const timeStr = d.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' });
+    const dateStr = d.toLocaleDateString(getLoc(), { weekday: 'short', day: '2-digit', month: 'short' });
+    const timeStr = d.toLocaleTimeString(getLoc(), { hour: '2-digit', minute: '2-digit' });
 
     if (item.kind === 'cardio') {
       const c = item.data;
       const icon = (typeof CARDIO_ICONS !== 'undefined' && CARDIO_ICONS[c.type]) || '🏃';
-      const dur = c.duration ? `${Math.round(c.duration)} Min` : '-';
+      const dur = c.duration ? `${Math.round(c.duration)} ${t('min')}` : '-';
       return `
         <div class="history-item">
           <div class="history-date">${dateStr} • ${timeStr}</div>
-          <div class="history-name">${icon} ${escapeHtml(c.type || 'Cardio')} <span class="pr-badge" style="background:var(--surface-2);color:var(--text-dim);">CARDIO</span></div>
+          <div class="history-name">${icon} ${tSport(c.type || 'Sonstiges')} <span class="pr-badge" style="background:var(--surface-2);color:var(--text-dim);">CARDIO</span></div>
           <div class="history-meta">
             <span><strong>${dur}</strong></span>
             ${c.distance ? `<span><strong>${(+c.distance).toFixed(1)}</strong> km</span>` : ''}
@@ -3662,7 +3720,7 @@ function renderHistory() {
     const totalSets = w.exercises.reduce((sum, ex) => sum + (ex.isCardio ? 0 : ex.sets.filter(s => s.done).length), 0);
     const totalVolume = w.exercises.reduce((sum, ex) => sum + (ex.isCardio ? 0 : ex.sets.reduce((s2, st) => s2 + (st.done ? (st.weight||0)*(st.reps||0) : 0), 0)), 0);
     const cardioCount = w.exercises.filter(ex => ex.isCardio).length;
-    const dur = w.duration ? `${Math.round(w.duration/60)} Min` : '-';
+    const dur = w.duration ? `${Math.round(w.duration/60)} ${t('min')}` : '-';
     return `
       <div class="history-item">
         <div class="history-date">${dateStr} • ${timeStr}</div>
@@ -3674,9 +3732,9 @@ function renderHistory() {
         <div class="history-meta">
           <span><strong>${w.exercises.length}</strong> ${t('exercises')}</span>
           <span><strong>${totalSets}</strong> ${t('sets')}</span>
-          <span><strong>${totalVolume.toLocaleString('de-CH')}</strong> kg</span>
+          <span><strong>${totalVolume.toLocaleString(getLoc())}</strong> kg</span>
           <span><strong>${dur}</strong></span>
-          <span class="history-points">+${(w.points || 0).toLocaleString('de-CH')} XP</span>
+          <span class="history-points">+${(w.points || 0).toLocaleString(getLoc())} XP</span>
         </div>
       </div>
     `;
@@ -3847,7 +3905,7 @@ function toggleCardioForm() {
     if (cardioMode === 'gps') setTimeout(initGpsMap, 100);
   } else {
     if (gpsState === 'tracking' || gpsState === 'paused') {
-      if (!confirm('GPS-Aufzeichnung läuft. Wirklich abbrechen?')) return;
+      if (!confirm(t('confirmGpsCancel'))) return;
       gpsReset();
     }
     form.style.display = 'none';
@@ -3925,7 +3983,7 @@ function initGpsMap() {
 }
 
 function gpsStart() {
-  if (!navigator.geolocation) { alert('GPS nicht verfügbar auf diesem Gerät.'); return; }
+  if (!navigator.geolocation) { alert(t('gpsNotAvailable')); return; }
   gpsTrackpoints = [];
   gpsStartTime = Date.now();
   gpsPausedTime = 0;
@@ -3999,7 +4057,7 @@ function gpsStop() {
   gpsState = 'stopped';
   if (gpsWatchId !== null) { navigator.geolocation.clearWatch(gpsWatchId); gpsWatchId = null; }
   if (gpsTimerInterval) { clearInterval(gpsTimerInterval); gpsTimerInterval = null; }
-  document.getElementById('gpsStatus').innerHTML = '<span class="pulse red"></span> Gestoppt — Speichern oder verwerfen';
+  document.getElementById('gpsStatus').innerHTML = `<span class="pulse red"></span> ${t('gpsStopped')}`;
   updateGpsControls();
   updateGpsLiveStats();
 }
@@ -4014,7 +4072,7 @@ function gpsReset() {
   gpsPauseStart = null;
   if (gpsPolyline) gpsPolyline.setLatLngs([]);
   if (gpsMarker && gpsLiveMap) { gpsLiveMap.removeLayer(gpsMarker); gpsMarker = null; }
-  document.getElementById('gpsStatus').innerHTML = '<span class="pulse red"></span> GPS bereit';
+  document.getElementById('gpsStatus').innerHTML = `<span class="pulse red"></span> ${t('gpsReady')}`;
   document.getElementById('gpsLiveDuration').textContent = '00:00';
   document.getElementById('gpsLiveDistance').innerHTML = '0.00<span style="font-size:11px;color:var(--text-dim);"> km</span>';
   document.getElementById('gpsLivePace').innerHTML = '--:--<span style="font-size:11px;color:var(--text-dim);"> /km</span>';
@@ -4026,13 +4084,13 @@ function gpsReset() {
 function updateGpsControls() {
   const c = document.getElementById('gpsControls');
   if (gpsState === 'idle') {
-    c.innerHTML = '<button class="gps-btn gps-btn-start" onclick="gpsStart()">▶ Start</button>';
+    c.innerHTML = `<button class="gps-btn gps-btn-start" onclick="gpsStart()">▶ ${t('gpsStartBtn')}</button>`;
   } else if (gpsState === 'tracking') {
-    c.innerHTML = '<button class="gps-btn gps-btn-pause" onclick="gpsPause()">⏸ Pause</button><button class="gps-btn gps-btn-stop" onclick="gpsStop()">⏹ Stop</button>';
+    c.innerHTML = `<button class="gps-btn gps-btn-pause" onclick="gpsPause()">⏸ ${t('gpsPauseBtn')}</button><button class="gps-btn gps-btn-stop" onclick="gpsStop()">⏹ ${t('gpsStopBtn')}</button>`;
   } else if (gpsState === 'paused') {
-    c.innerHTML = '<button class="gps-btn gps-btn-resume" onclick="gpsResume()">▶ Weiter</button><button class="gps-btn gps-btn-stop" onclick="gpsStop()">⏹ Stop</button>';
+    c.innerHTML = `<button class="gps-btn gps-btn-resume" onclick="gpsResume()">▶ ${t('gpsResumeBtn')}</button><button class="gps-btn gps-btn-stop" onclick="gpsStop()">⏹ ${t('gpsStopBtn')}</button>`;
   } else if (gpsState === 'stopped') {
-    c.innerHTML = '<button class="gps-btn gps-btn-start" onclick="saveGpsSession()">💾 Speichern</button><button class="gps-btn gps-btn-discard" onclick="gpsReset()">✕ Verwerfen</button>';
+    c.innerHTML = `<button class="gps-btn gps-btn-start" onclick="saveGpsSession()">💾 ${t('gpsSaveBtn')}</button><button class="gps-btn gps-btn-discard" onclick="gpsReset()">✕ ${t('gpsDiscardBtn')}</button>`;
   }
 }
 
@@ -4063,7 +4121,7 @@ function updateGpsLiveStats() {
 }
 
 function saveGpsSession() {
-  if (gpsTrackpoints.length < 2) { alert('Zu wenig GPS-Punkte.'); return; }
+  if (gpsTrackpoints.length < 2) { alert(t('tooFewGpsPoints')); return; }
   const stats = calcTrackStats(gpsTrackpoints);
   let elapsedSec = (Date.now() - gpsStartTime - gpsPausedTime) / 1000;
   if (gpsPauseStart) elapsedSec = (gpsPauseStart - gpsStartTime - gpsPausedTime) / 1000;
@@ -4105,7 +4163,7 @@ function saveGpsSession() {
   gpsReset();
   toggleCardioForm();
   renderCardio();
-  showToast('📡 GPS-Cardio gespeichert! +' + xp + ' XP');
+  showToast(t('gpsSaved') + ' +' + xp + ' XP');
 }
 
 function downsampleTrack(pts, maxPts) {
@@ -4146,7 +4204,7 @@ function processGpxFile(file) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(xml, 'text/xml');
     const trkpts = doc.querySelectorAll('trkpt');
-    if (trkpts.length === 0) { alert('Keine Trackpunkte in GPX gefunden.'); return; }
+    if (trkpts.length === 0) { alert(t('noTrackpointsGpx')); return; }
 
     gpxTrackpoints = [];
     trkpts.forEach(pt => {
@@ -4178,7 +4236,7 @@ function processGpxFile(file) {
 
     const preview = document.getElementById('gpxPreviewContainer');
     preview.style.display = '';
-    document.getElementById('gpxPreDuration').textContent = stats.durationMin + ' Min';
+    document.getElementById('gpxPreDuration').textContent = stats.durationMin + ' ' + t('min');
     document.getElementById('gpxPreDistance').textContent = stats.distance.toFixed(2) + ' km';
     document.getElementById('gpxPreElevation').textContent = stats.elevGain + ' m';
 
@@ -4192,7 +4250,7 @@ function processGpxFile(file) {
       gpxPreviewMap.fitBounds(line.getBounds(), { padding: [20, 20] });
     }, 100);
 
-    showToast('📂 GPX geladen: ' + gpxTrackpoints.length + ' Punkte');
+    showToast('📂 GPX: ' + gpxTrackpoints.length + ' pts');
   };
   reader.readAsText(file);
 }
@@ -4207,7 +4265,7 @@ function saveGpxSession() {
   if (kcal <= 0) kcal = calculateKcal(selectedCardioType, duration, distance, elevation);
 
   if (duration <= 0 && distance <= 0) {
-    alert('Bitte mindestens Dauer oder Distanz eingeben.');
+    alert(t('enterDurationOrDist'));
     return;
   }
 
@@ -4233,7 +4291,7 @@ function saveGpxSession() {
   gpxTrackpoints = [];
   toggleCardioForm();
   renderCardio();
-  showToast('📂 GPX-Cardio gespeichert! +' + xp + ' XP');
+  showToast(t('gpxSaved') + ' +' + xp + ' XP');
 }
 
 // --- MANUAL SAVE ---
@@ -4247,7 +4305,7 @@ function saveCardioSession() {
   if (kcal <= 0) kcal = calculateKcal(selectedCardioType, duration, distance, elevation);
 
   if (duration <= 0 && distance <= 0) {
-    alert('Bitte mindestens Dauer oder Distanz eingeben.');
+    alert(t('enterDurationOrDist'));
     return;
   }
 
@@ -4267,7 +4325,7 @@ function saveCardioSession() {
   saveState();
   toggleCardioForm();
   renderCardio();
-  showToast('✏️ Cardio gespeichert! +' + xp + ' XP');
+  showToast(t('cardioSaved') + ' +' + xp + ' XP');
 }
 
 function calculateCardioXP(s) {
@@ -4310,7 +4368,7 @@ function autoFillKcal(prefix) {
 }
 
 function deleteCardioSession(id) {
-  if (!confirm('Cardio-Einheit löschen?')) return;
+  if (!confirm(t('confirmDeleteCardio'))) return;
   const idx = state.cardioSessions.findIndex(s => s.id === id);
   if (idx === -1) return;
   const s = state.cardioSessions[idx];
@@ -4326,7 +4384,7 @@ function openCardioDetail(id) {
   if (!s) return;
   const icon = CARDIO_ICONS[s.type] || '⚡';
   const d = new Date(s.timestamp);
-  const dateStr = d.toLocaleDateString('de-CH', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+  const dateStr = d.toLocaleDateString(getLoc(), { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
   document.getElementById('cardioDetailTitle').textContent = icon + ' ' + (s.type || 'Cardio') + ' — ' + dateStr;
 
   const mapEl = document.getElementById('cardioDetailMap');
@@ -4341,7 +4399,7 @@ function openCardioDetail(id) {
       const latlngs = s.trackpoints.map(p => [p.lat, p.lon]);
       const line = L.polyline(latlngs, { color: '#d4ff3a', weight: 3.5 }).addTo(cardioDetailMapInstance);
       L.circleMarker(latlngs[0], { radius: 6, color: '#4ade80', fillColor: '#4ade80', fillOpacity: 1 }).addTo(cardioDetailMapInstance).bindPopup('Start');
-      L.circleMarker(latlngs[latlngs.length-1], { radius: 6, color: '#ff4444', fillColor: '#ff4444', fillOpacity: 1 }).addTo(cardioDetailMapInstance).bindPopup('Ziel');
+      L.circleMarker(latlngs[latlngs.length-1], { radius: 6, color: '#ff4444', fillColor: '#ff4444', fillOpacity: 1 }).addTo(cardioDetailMapInstance).bindPopup('Finish');
       cardioDetailMapInstance.fitBounds(line.getBounds(), { padding: [30, 30] });
     }, 150);
   } else {
@@ -4350,13 +4408,13 @@ function openCardioDetail(id) {
 
   let statsHtml = '';
   const addStat = (label, val, unit) => { if (val) statsHtml += `<div class="detail-stat"><div class="detail-stat-label">${label}</div><div class="detail-stat-val">${val}<span class="unit"> ${unit}</span></div></div>`; };
-  addStat('Dauer', s.duration, 'Min');
-  addStat('Distanz', s.distance, 'km');
-  addStat('Höhenmeter', s.elevation, 'm');
-  addStat('Pace', s.pace, '/km');
-  addStat('Ø Puls', s.hr, 'bpm');
+  addStat(t('duration'), s.duration, t('min'));
+  addStat(t('distance'), s.distance, 'km');
+  addStat(t('elevation'), s.elevation, 'm');
+  addStat(t('pace'), s.pace, '/km');
+  addStat(t('avgHR'), s.hr, 'bpm');
   addStat('kcal', s.kcal, '');
-  if (s.source && s.source !== 'manual') addStat('Quelle', s.source === 'gps' ? '📡 GPS' : '📂 GPX', '');
+  if (s.source && s.source !== 'manual') addStat('Source', s.source === 'gps' ? '📡 GPS' : '📂 GPX', '');
   if (s.points) addStat('XP', '+' + s.points, '');
   statsEl.innerHTML = statsHtml;
 
@@ -4374,24 +4432,24 @@ function renderCardioTemplates() {
   if (!list) return;
   const tpls = state.cardioTemplates || [];
   if (tpls.length === 0) {
-    list.innerHTML = '<div class="empty-state" style="padding:14px;font-size:13px;">Noch keine Cardio-Templates. Erstelle eines mit "+ Neu" oder im Manuell-Modus.</div>';
+    list.innerHTML = `<div class="empty-state" style="padding:14px;font-size:13px;">${t('noCardioTemplates')}</div>`;
     return;
   }
-  list.innerHTML = tpls.map(t => {
-    const icon = (typeof CARDIO_ICONS !== 'undefined' && CARDIO_ICONS[t.type]) || '🏃';
+  list.innerHTML = tpls.map(ct => {
+    const icon = (typeof CARDIO_ICONS !== 'undefined' && CARDIO_ICONS[ct.type]) || '🏃';
     const meta = [
-      t.duration ? `${t.duration} Min` : null,
-      t.distance ? `${(+t.distance).toFixed(1)} km` : null
-    ].filter(Boolean).join(' • ') || 'Keine Vorgaben';
+      ct.duration ? `${ct.duration} ${t('min')}` : null,
+      ct.distance ? `${(+ct.distance).toFixed(1)} km` : null
+    ].filter(Boolean).join(' • ') || t('noPresets');
     return `
       <div class="template-item">
-        <div onclick="startCardioTemplate('${t.id}')" style="flex:1;min-width:0;">
-          <div class="template-name">${icon} ${escapeHtml(t.name)}</div>
-          <div class="template-meta">${escapeHtml(t.type)} • ${meta}</div>
+        <div onclick="startCardioTemplate('${ct.id}')" style="flex:1;min-width:0;">
+          <div class="template-name">${icon} ${escapeHtml(ct.name)}</div>
+          <div class="template-meta">${tSport(ct.type)} • ${meta}</div>
         </div>
         <div class="template-actions">
-          <button class="template-edit-btn" onclick="event.stopPropagation(); deleteCardioTemplate('${t.id}')">✕</button>
-          <div class="template-arrow" onclick="startCardioTemplate('${t.id}')">→</div>
+          <button class="template-edit-btn" onclick="event.stopPropagation(); deleteCardioTemplate('${ct.id}')">✕</button>
+          <div class="template-arrow" onclick="startCardioTemplate('${ct.id}')">→</div>
         </div>
       </div>
     `;
@@ -4399,11 +4457,11 @@ function renderCardioTemplates() {
 }
 
 function openCardioTemplateBuilder() {
-  const name = prompt('Name für das Cardio-Template?');
+  const name = prompt(t('templateNamePh'));
   if (!name || !name.trim()) return;
-  const type = prompt('Sportart (Laufen, Radfahren, Schwimmen, Wandern, Sonstiges)?', 'Laufen') || 'Laufen';
-  const duration = parseFloat(prompt('Dauer in Min (optional, leer lassen für 0):', '') || '0') || 0;
-  const distance = parseFloat(prompt('Distanz in km (optional, leer lassen für 0):', '') || '0') || 0;
+  const type = prompt(t('sportPrompt'), 'Laufen') || 'Laufen';
+  const duration = parseFloat(prompt(`${t('duration')} (${t('min')}):`, '') || '0') || 0;
+  const distance = parseFloat(prompt(`${t('distance')} (km):`, '') || '0') || 0;
   if (!state.cardioTemplates) state.cardioTemplates = [];
   state.cardioTemplates.push({
     id: 'ctpl_' + Date.now(),
@@ -4412,7 +4470,7 @@ function openCardioTemplateBuilder() {
   });
   saveState();
   renderCardioTemplates();
-  showToast('★ Cardio-Template gespeichert');
+  showToast(t('cardioTemplateSaved'));
 }
 
 function saveCardioAsTemplate() {
@@ -4429,7 +4487,7 @@ function saveCardioAsTemplate() {
   });
   saveState();
   renderCardioTemplates();
-  showToast('★ Cardio-Template gespeichert');
+  showToast(t('cardioTemplateSaved'));
 }
 
 function startCardioTemplate(id) {
@@ -4450,11 +4508,11 @@ function startCardioTemplate(id) {
   document.getElementById('cardioHR').value = '';
   document.getElementById('cardioKcal').value = '';
   autoFillKcal('cardio');
-  showToast('📋 Template geladen — Werte anpassen & speichern');
+  showToast(t('templateLoaded'));
 }
 
 function deleteCardioTemplate(id) {
-  if (!confirm('Cardio-Template löschen?')) return;
+  if (!confirm(t('confirmDeleteCardioTpl'))) return;
   state.cardioTemplates = (state.cardioTemplates || []).filter(t => t.id !== id);
   saveState();
   renderCardioTemplates();
@@ -4482,7 +4540,7 @@ function renderCardio() {
   const weekCount = sessions.filter(c => c.timestamp > oneWeekAgo).length;
 
   document.getElementById('cardioTotalCount').textContent = sessions.length;
-  document.getElementById('cardioTotalKcal').innerHTML = totalKcal.toLocaleString('de-CH') + '<span class="unit">kcal</span>';
+  document.getElementById('cardioTotalKcal').innerHTML = totalKcal.toLocaleString(getLoc()) + '<span class="unit">kcal</span>';
   document.getElementById('cardioTotalDist').innerHTML = totalDist.toFixed(1) + '<span class="unit">km</span>';
   document.getElementById('cardioWeekCount').textContent = weekCount;
 
@@ -4507,8 +4565,8 @@ function renderCardio() {
           <div style="display:flex;align-items:center;gap:12px;">
             <div class="medal-icon-big">${tierInfo ? tierInfo.icon : '🏅'}</div>
             <div class="medal-info">
-              <div class="medal-exercise">Bestleistung</div>
-              <div class="medal-detail">Längste Distanz: <strong>${best.distance.toFixed(1)} km</strong></div>
+              <div class="medal-exercise">${t('bestPerformance')}</div>
+              <div class="medal-detail">${t('longestDist')}: <strong>${best.distance.toFixed(1)} km</strong></div>
             </div>
             ${tierBadge}
           </div>
@@ -4516,7 +4574,7 @@ function renderCardio() {
         </div>
       `;
     } else {
-      bestMedalEl.innerHTML = '<div class="empty-state" style="padding:14px;font-size:13px;">Noch keine Einheit in dieser Sportart</div>';
+      bestMedalEl.innerHTML = `<div class="empty-state" style="padding:14px;font-size:13px;">${t('noCardioInSport')}</div>`;
     }
   } else {
     bestMedalEl.innerHTML = '';
@@ -4524,20 +4582,20 @@ function renderCardio() {
 
   const list = document.getElementById('cardioHistoryList');
   if (sessions.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="icon">🏃</div><div>Noch keine Cardio-Einheiten</div></div>';
+    list.innerHTML = `<div class="empty-state"><div class="icon">🏃</div><div>${t('noCardioYet')}</div></div>`;
     return;
   }
 
   const sorted = [...sessions].sort((a, b) => b.timestamp - a.timestamp);
   list.innerHTML = sorted.map(s => {
     const d = new Date(s.timestamp);
-    const dateStr = d.toLocaleDateString('de-CH', { weekday: 'short', day: '2-digit', month: 'short' });
-    const timeStr = d.toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' });
+    const dateStr = d.toLocaleDateString(getLoc(), { weekday: 'short', day: '2-digit', month: 'short' });
+    const timeStr = d.toLocaleTimeString(getLoc(), { hour: '2-digit', minute: '2-digit' });
     const icon = CARDIO_ICONS[s.type] || '⚡';
     const hasTrack = s.trackpoints && s.trackpoints.length >= 2;
     const srcBadge = s.source === 'gps' ? '📡' : s.source === 'gpx' ? '📂' : '';
     const parts = [];
-    if (s.duration > 0) parts.push(`<span><strong>${s.duration}</strong> Min</span>`);
+    if (s.duration > 0) parts.push(`<span><strong>${s.duration}</strong> ${t('min')}</span>`);
     if (s.distance > 0) parts.push(`<span><strong>${s.distance}</strong> km</span>`);
     if (s.elevation > 0) parts.push(`<span><strong>${s.elevation}</strong> hm</span>`);
     if (s.pace) parts.push(`<span><strong>${escapeHtml(s.pace)}</strong> /km</span>`);
@@ -4548,7 +4606,7 @@ function renderCardio() {
       <div class="cardio-item${hasTrack ? ' has-track' : ''}" onclick="openCardioDetail('${s.id}')">
         <button class="cardio-delete" onclick="event.stopPropagation(); deleteCardioSession('${s.id}')">✕</button>
         <div class="cardio-item-date">${dateStr} • ${timeStr} ${srcBadge}</div>
-        <div class="cardio-item-type">${icon} ${escapeHtml(s.type)}</div>
+        <div class="cardio-item-type">${icon} ${tSport(s.type)}</div>
         <div class="cardio-item-stats">${parts.join('')}</div>
       </div>
     `;
@@ -4560,7 +4618,7 @@ function renderProgress() {
   state.workouts.forEach(w => w.exercises.forEach(ex => allExercises.add(ex.name)));
   const select = document.getElementById('progressSelect');
   const current = select.value;
-  select.innerHTML = '<option value="">Übung wählen...</option>' + 
+  select.innerHTML = `<option value="">${t('selectExercise')}</option>` +
     [...allExercises].sort().map(e => `<option value="${escapeHtml(e)}" ${e===current?'selected':''}>${escapeHtml(e)}</option>`).join('');
   
   renderChart();
@@ -4609,7 +4667,7 @@ function drawChart(canvas, data) {
     ctx.fillStyle = '#888';
     ctx.font = '14px Inter, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Noch keine Daten für diese Übung', rect.width/2, rect.height/2);
+    ctx.fillText(t('noDataYet'), rect.width/2, rect.height/2);
     return;
   }
   
@@ -4704,7 +4762,7 @@ function showView(name) {
 
 function startEmptyWorkout() {
   if (state.currentWorkout) {
-    if (!confirm('Du hast bereits ein aktives Workout. Verwerfen?')) return;
+    if (!confirm(t('confirmActiveWorkout'))) return;
   }
   state.currentWorkout = { name: '', exercises: [] };
   state.workoutStartTime = Date.now();
@@ -4725,7 +4783,7 @@ function startMyTemplate(id) {
 
 function startFromTemplate(name, exercises) {
   if (state.currentWorkout) {
-    if (!confirm('Du hast bereits ein aktives Workout. Verwerfen?')) return;
+    if (!confirm(t('confirmActiveWorkout'))) return;
   }
   state.currentWorkout = {
     name: name,
@@ -4774,7 +4832,7 @@ function findLastEntry(exerciseName) {
 
 function openExerciseModal() {
   exercisePickerMode = 'workout';
-  document.getElementById('exerciseModalTitle').textContent = 'Übung wählen';
+  document.getElementById('exerciseModalTitle').textContent = t('chooseExercise');
   document.getElementById('exerciseModalActions').style.display = 'none';
   document.getElementById('exerciseModal').classList.add('active');
   document.getElementById('exerciseSearch').value = '';
@@ -4782,7 +4840,7 @@ function openExerciseModal() {
 }
 function openExercisePickerForTemplate() {
   exercisePickerMode = 'template';
-  document.getElementById('exerciseModalTitle').textContent = 'Übungen wählen';
+  document.getElementById('exerciseModalTitle').textContent = t('chooseExercises');
   document.getElementById('exerciseModalActions').style.display = 'flex';
   document.getElementById('exerciseModal').classList.add('active');
   document.getElementById('exerciseSearch').value = '';
@@ -4800,10 +4858,10 @@ function filterExercises() {
     return `
       <div class="exercise-option ${isSelected ? 'selected' : ''}" onclick="pickExercise('${e.name.replace(/'/g, "\\'")}')">
         <span>${escapeHtml(e.name)}${isSelected ? ' ✓' : ''}</span>
-        <span class="muscle">${e.muscle}</span>
+        <span class="muscle">${tMuscle(e.muscle)}</span>
       </div>
     `;
-  }).join('') || '<div class="empty-state">Keine Übung gefunden</div>';
+  }).join('') || `<div class="empty-state">${t('noExFound')}</div>`;
 }
 function pickExercise(name) {
   if (exercisePickerMode === 'workout') {
@@ -4819,7 +4877,7 @@ function pickExercise(name) {
   }
 }
 function removeExercise(idx) {
-  if (!confirm('Übung entfernen?')) return;
+  if (!confirm(t('confirmRemoveEx'))) return;
   state.currentWorkout.exercises.splice(idx, 1);
   renderWorkout();
 }
@@ -4890,7 +4948,7 @@ function finishWorkout() {
     return ex.sets.some(s => s.done);
   });
   if (w.exercises.length === 0) {
-    if (!confirm('Keine Sätze als erledigt markiert. Trotzdem speichern?')) return;
+    if (!confirm(t('confirmNoSets'))) return;
   }
   w.exercises.forEach(ex => {
     if (!ex.isCardio) ex.sets = ex.sets.filter(s => s.done);
@@ -4988,7 +5046,7 @@ function closeCelebration() {
 }
 
 function cancelWorkout() {
-  if (!confirm('Workout wirklich verwerfen? Alle Daten gehen verloren.')) return;
+  if (!confirm(t('confirmDiscardWorkout'))) return;
   state.currentWorkout = null;
   state.workoutStartTime = null;
   if (timerInterval) clearInterval(timerInterval);
@@ -4997,7 +5055,7 @@ function cancelWorkout() {
 
 function saveAsTemplate() {
   if (!state.currentWorkout || state.currentWorkout.exercises.length === 0) {
-    showToast('⚠️ Erst Übungen hinzufügen');
+    showToast(t('addExFirst'));
     return;
   }
   const name = document.getElementById('workoutName').value || prompt('Template-Name:');
@@ -5008,7 +5066,7 @@ function saveAsTemplate() {
     exercises: state.currentWorkout.exercises.map(e => e.name)
   });
   saveState();
-  showToast('★ Als Template gespeichert');
+  showToast(t('savedAsTemplate'));
 }
 
 function openTemplateBuilder(id) {
@@ -5053,8 +5111,8 @@ function removeTemplateExercise(i) {
 }
 function saveTemplate() {
   const name = document.getElementById('templateNameInput').value.trim();
-  if (!name) { showToast('⚠️ Name fehlt'); return; }
-  if (templateBuilder.exercises.length === 0) { showToast('⚠️ Mindestens 1 Übung'); return; }
+  if (!name) { showToast(t('nameMissing')); return; }
+  if (templateBuilder.exercises.length === 0) { showToast(t('minOneExercise')); return; }
   
   if (templateBuilder.editingId) {
     const t = state.myTemplates.find(t => t.id === templateBuilder.editingId);
@@ -5072,16 +5130,16 @@ function saveTemplate() {
   saveState();
   closeTemplateModal();
   renderHome();
-  showToast('★ Template gespeichert');
+  showToast(t('templateSaved'));
 }
 function deleteTemplate() {
   if (!templateBuilder.editingId) return;
-  if (!confirm('Template wirklich löschen?')) return;
+  if (!confirm(t('confirmDeleteTemplate'))) return;
   state.myTemplates = state.myTemplates.filter(t => t.id !== templateBuilder.editingId);
   saveState();
   closeTemplateModal();
   renderHome();
-  showToast('Template gelöscht');
+  showToast(t('templateDeleted'));
 }
 
 function openThresholdsModal() {
@@ -5134,10 +5192,10 @@ function updateThreshold(exerciseName, idx, value) {
   // No re-render needed - inputs hold their own state, save happens on close
 }
 function resetThresholds() {
-  if (!confirm('Alle Schwellen auf Standardwerte zurücksetzen?')) return;
+  if (!confirm(t('confirmResetThresholds'))) return;
   state.customThresholds = {};
   renderThresholdsList();
-  showToast('Schwellen zurückgesetzt');
+  showToast(t('thresholdsReset'));
 }
 
 function showToast(msg) {
@@ -5400,14 +5458,14 @@ function renderCalendar() {
   document.getElementById('calendarGrid').innerHTML = html;
   document.getElementById('calendarStats').innerHTML = `
     <span>💪 <strong>${gymDays}</strong> ${t('gymDays')}</span>
-    <span><strong>${monthVolume.toLocaleString('de-CH')}</strong> kg</span>
+    <span><strong>${monthVolume.toLocaleString(getLoc())}</strong> kg</span>
     <span>🏃 <strong>${cardioDays}</strong> ${t('cardioDays')}</span>
     <span><strong>${monthCardioKm.toFixed(1)}</strong> km</span>
   `;
   const legendEl = document.getElementById('calendarLegend');
   if (legendEl) legendEl.innerHTML = `
     <span><span class="calendar-legend-dot gym"></span>${t('gym')}</span>
-    <span><span class="calendar-legend-dot cardio"></span>Cardio</span>
+    <span><span class="calendar-legend-dot cardio"></span>${t('cardio')}</span>
     <span><span class="calendar-legend-dot both"></span>${t('both')}</span>
   `;
 }
@@ -5435,11 +5493,11 @@ function toggleCustomExForm() {
 function saveCustomExercise() {
   const name = document.getElementById('customExName').value.trim();
   const muscle = document.getElementById('customExMuscle').value;
-  if (!name) { showToast('⚠️ Name eingeben'); return; }
+  if (!name) { showToast(t('enterName')); return; }
 
   const all = getAllExercises();
   if (all.some(e => e.name.toLowerCase() === name.toLowerCase())) {
-    showToast('⚠️ Übung existiert bereits');
+    showToast(t('exAlreadyExists'));
     return;
   }
 
@@ -5449,7 +5507,7 @@ function saveCustomExercise() {
   document.getElementById('customExName').value = '';
   document.getElementById('customExForm').classList.remove('active');
   filterExercises();
-  showToast('✓ ' + name + ' hinzugefügt');
+  showToast('✓ ' + name + ' ' + t('exAdded'));
 }
 
 // =====================================================
@@ -5459,7 +5517,7 @@ function addBodyWeight() {
   const input = document.getElementById('bwInput');
   const weight = parseFloat(input.value);
   if (!weight || weight < 20 || weight > 300) {
-    showToast('⚠️ Gültiges Gewicht eingeben (20-300 kg)');
+    showToast(t('validWeight'));
     return;
   }
 
@@ -5468,7 +5526,7 @@ function addBodyWeight() {
   saveState();
   input.value = '';
   renderBodyWeight();
-  showToast('⚖ ' + weight.toFixed(1) + ' kg gespeichert');
+  showToast('⚖ ' + weight.toFixed(1) + ' ' + t('kgSaved'));
 }
 
 function deleteBodyWeight(idx) {
@@ -5484,7 +5542,7 @@ function renderBodyWeight() {
   } else {
     list.innerHTML = state.bodyWeights.map((entry, i) => {
       const d = new Date(entry.timestamp);
-      const dateStr = d.toLocaleDateString('de-CH', { day: '2-digit', month: 'short', year: 'numeric' });
+      const dateStr = d.toLocaleDateString(getLoc(), { day: '2-digit', month: 'short', year: 'numeric' });
       let diffHtml = '';
       if (i < state.bodyWeights.length - 1) {
         const diff = entry.weight - state.bodyWeights[i + 1].weight;
@@ -5534,7 +5592,7 @@ function renderBodyWeightChart() {
     ctx.fillStyle = '#888';
     ctx.font = '13px Inter, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(data.length === 0 ? 'Noch keine Daten' : 'Mind. 2 Einträge für Chart', rect.width / 2, rect.height / 2);
+    ctx.fillText(data.length === 0 ? t('noDataYet') : t('minEntriesChart'), rect.width / 2, rect.height / 2);
     return;
   }
 
@@ -5625,7 +5683,7 @@ function exportData() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast('📥 Backup heruntergeladen');
+  showToast(t('backupDownloaded'));
 }
 
 function importData(event) {
@@ -5637,11 +5695,11 @@ function importData(event) {
     try {
       const data = JSON.parse(e.target.result);
       if (!data.workouts || !Array.isArray(data.workouts)) {
-        showToast('⚠️ Ungültige Datei');
+        showToast(t('invalidFile'));
         return;
       }
 
-      if (!confirm(`Backup vom ${data.exportDate ? new Date(data.exportDate).toLocaleDateString('de-CH') : 'unbekannt'} laden?\n\nDas überschreibt alle aktuellen Daten!`)) return;
+      if (!confirm(t('confirmLoadBackup'))) return;
 
       state.workouts = data.workouts || [];
       state.prs = data.prs || {};
@@ -5654,10 +5712,10 @@ function importData(event) {
 
       saveState();
       renderHome();
-      showToast('✓ Daten wiederhergestellt');
+      showToast(t('dataRestored'));
       closeSettings();
     } catch (err) {
-      showToast('⚠️ Fehler beim Lesen der Datei');
+      showToast(t('fileReadError'));
     }
   };
   reader.readAsText(file);
@@ -5665,8 +5723,8 @@ function importData(event) {
 }
 
 function clearAllData() {
-  if (!confirm('ALLE Daten für "' + activeProfile + '" unwiderruflich löschen?\n\nDies kann nicht rückgängig gemacht werden!')) return;
-  if (!confirm('Wirklich sicher? Exportiere zuerst ein Backup!')) return;
+  if (!confirm(t('confirmDeleteAll'))) return;
+  if (!confirm(t('confirmDeleteAll2'))) return;
 
   localStorage.removeItem(storageKey());
   location.reload();
@@ -5739,12 +5797,12 @@ function renderMuscleWeekWidget() {
   document.getElementById('muscleWeekCount').innerHTML =
     weekWorkoutCount > 0
       ? `<strong>${weekWorkoutCount}</strong> Workout${weekWorkoutCount !== 1 ? 's' : ''}`
-      : 'Noch kein Training';
+      : t('noTraining');
 
   const container = document.getElementById('muscleWeekBars');
 
   if (weekWorkoutCount === 0) {
-    container.innerHTML = '<div class="muscle-week-empty">Starte ein Workout um deine Muskel-Aktivität zu sehen</div>';
+    container.innerHTML = `<div class="muscle-week-empty">${t('startWorkoutHere')}</div>`;
     return;
   }
 
@@ -5758,7 +5816,7 @@ function renderMuscleWeekWidget() {
       : pct < 80 ? 4 : 5;
     const volStr = d.vol >= 1000 ? (d.vol / 1000).toFixed(1) + 'k' : Math.round(d.vol);
     return `<div class="muscle-week-row">
-      <div class="muscle-week-name">${m}</div>
+      <div class="muscle-week-name">${tMuscle(m)}</div>
       <div class="muscle-week-bar-bg">
         <div class="muscle-week-bar-fill intensity-${intensity}" style="width:${pct}%"></div>
         ${d.sets > 0 ? `<span class="muscle-week-sets">${d.sets} Sets</span>` : ''}
@@ -5837,9 +5895,10 @@ function renderMuscleMap() {
     const color = getMuscleColor(ratio);
     const volStr = vol >= 1000 ? (vol / 1000).toFixed(1) + 'k' : Math.round(vol);
     const noTr = t('noTraining');
-    return `<div class="muscle-legend-item" onclick="showToast('${m}: ${vol > 0 ? Math.round(vol).toLocaleString() + ' kg' : noTr}')">
+    const mLabel = tMuscle(m);
+    return `<div class="muscle-legend-item" onclick="showToast('${mLabel}: ${vol > 0 ? Math.round(vol).toLocaleString() + ' kg' : noTr}')">
       <div class="muscle-legend-dot" style="background:${color};border:1px solid var(--border);"></div>
-      <span>${m}</span>
+      <span>${mLabel}</span>
       <span class="muscle-legend-vol">${volStr}</span>
     </div>`;
   }).join('');
