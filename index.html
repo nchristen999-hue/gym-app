@@ -2021,6 +2021,7 @@
         <span id="settingsProBadge" style="display:inline-block;background:var(--accent);color:#000;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:1px;"></span>
       </div>
       <button class="settings-action-btn" id="settingsUpgradeBtn" onclick="openPaywall()" style="display:none;border-color:var(--accent);color:var(--accent);" data-i18n="upgradeToPro">⚡ Upgrade to PRO</button>
+      <button class="settings-action-btn" id="settingsManageSubBtn" onclick="openManageSubscription()" style="display:none;border-color:var(--accent);color:var(--accent);" data-i18n="manageSubscription">📋 Manage Subscription</button>
       <button class="settings-action-btn" onclick="logoutProfile()" data-i18n="logout">🔄 Logout</button>
       <button class="settings-action-btn danger" onclick="deleteProfile()" data-i18n="deleteProfile">🗑 Delete profile</button>
     </div>
@@ -2116,12 +2117,24 @@ const FIREBASE_CONFIG = {
 };
 
 const ADMIN_EMAILS = [
-  'nchristen656@gmail.com', 
+  'nchristen656@gmail.com',
   'nevio.christen@gmx.ch',
   'testuserlager384@gmail.com'
-  // Füge hier die Email deines Kollegen hinzu:
-  // 'kollege@email.com',
 ];
+
+// =============================================
+// REVENUECAT CONFIG
+// Setup: https://app.revenuecat.com
+// 1. Create project → connect Stripe (for web billing)
+// 2. Products: gymtrack_pro_monthly + gymtrack_pro_yearly
+// 3. Entitlement: "pro" → attach both products
+// 4. Offering: "default" → monthly + annual packages
+// 5. API Keys → copy Web key below
+// =============================================
+const RC_WEB_API_KEY = ''; // Paste your RevenueCat Web API key here
+const RC_ENTITLEMENT = 'pro';
+let rcInstance = null;
+let rcOfferings = null;
 
 let firebaseApp = null;
 let firebaseAuth = null;
@@ -2373,6 +2386,15 @@ const TRANSLATIONS = {
   thresholdsReset: { en:'Thresholds reset', de:'Schwellen zurückgesetzt', es:'Umbrales reiniciados', fr:'Seuils réinitialisés', it:'Soglie ripristinate' },
   proRestored: { en:'Pro status restored!', de:'Pro-Status wiederhergestellt!', es:'¡Estado Pro restaurado!', fr:'Statut Pro restauré !', it:'Stato Pro ripristinato!' },
   noActiveSub: { en:'No active subscription found.', de:'Kein aktives Abo gefunden.', es:'No se encontró suscripción activa.', fr:'Aucun abonnement actif trouvé.', it:'Nessun abbonamento attivo trovato.' },
+  purchaseSuccess: { en:'🎉 Welcome to PRO!', de:'🎉 Willkommen bei PRO!', es:'🎉 ¡Bienvenido a PRO!', fr:'🎉 Bienvenue dans PRO !', it:'🎉 Benvenuto in PRO!' },
+  purchaseError: { en:'Purchase failed. Try again.', de:'Kauf fehlgeschlagen. Nochmal versuchen.', es:'Error en la compra. Inténtalo de nuevo.', fr:'Achat échoué. Réessayez.', it:'Acquisto fallito. Riprova.' },
+  purchaseNotReady: { en:'Payment system not ready. Please try again later.', de:'Zahlungssystem nicht bereit. Bitte später erneut versuchen.', es:'Sistema de pago no listo. Inténtalo más tarde.', fr:'Système de paiement non prêt. Réessayez plus tard.', it:'Sistema di pagamento non pronto. Riprova più tardi.' },
+  noOfferingsAvailable: { en:'No subscription plans available.', de:'Keine Abo-Pläne verfügbar.', es:'No hay planes disponibles.', fr:'Aucun plan disponible.', it:'Nessun piano disponibile.' },
+  purchasePending: { en:'Processing purchase...', de:'Kauf wird verarbeitet...', es:'Procesando compra...', fr:'Traitement de l\'achat...', it:'Elaborazione acquisto...' },
+  manageSubscription: { en:'Manage Subscription', de:'Abo verwalten', es:'Gestionar suscripción', fr:'Gérer l\'abonnement', it:'Gestisci abbonamento' },
+  cancelSubscription: { en:'Cancel Subscription', de:'Abo kündigen', es:'Cancelar suscripción', fr:'Annuler l\'abonnement', it:'Annulla abbonamento' },
+  subActiveUntil: { en:'Active until', de:'Aktiv bis', es:'Activo hasta', fr:'Actif jusqu\'au', it:'Attivo fino al' },
+  upgradeForCHF: { en:'Upgrade for', de:'Upgrade für', es:'Mejora por', fr:'Passez pour', it:'Aggiorna per' },
   gpsNotAvailable: { en:'GPS not available on this device.', de:'GPS nicht verfügbar auf diesem Gerät.', es:'GPS no disponible en este dispositivo.', fr:'GPS non disponible sur cet appareil.', it:'GPS non disponibile su questo dispositivo.' },
   tooFewGpsPoints: { en:'Too few GPS points.', de:'Zu wenig GPS-Punkte.', es:'Muy pocos puntos GPS.', fr:'Trop peu de points GPS.', it:'Troppo pochi punti GPS.' },
   noTrackpointsGpx: { en:'No trackpoints found in GPX.', de:'Keine Trackpunkte in GPX gefunden.', es:'No se encontraron puntos en GPX.', fr:'Aucun point dans le GPX.', it:'Nessun punto trovato nel GPX.' },
@@ -2775,7 +2797,7 @@ async function doPasswordReset() {
     info.textContent = t('authResetSent');
     info.style.color = 'var(--accent)';
   } catch(e) {
-    showAuthError('Konnte keine Reset-E-Mail senden.');
+    showAuthError(e.message);
   }
 }
 
@@ -2794,25 +2816,84 @@ async function checkProStatus() {
 function isPro() { return userIsPro; }
 
 // =============================================
-// PAYWALL
+// REVENUECAT SDK + PAYWALL
 // =============================================
 let paywallBilling = 'yearly';
 
 const PAYWALL_PRICES = {
-  yearly:  { original: 'CHF 34',   amount: 'CHF 17',    period: 'pro Jahr',  save: 'SPARE CHF 17 / Jahr' },
-  monthly: { original: 'CHF 4.60', amount: 'CHF 2.30',  period: 'pro Monat', save: 'SPARE CHF 2.30 / Monat' }
+  yearly:  { original: 'CHF 34',   amount: 'CHF 17',    period: 'perYear',  save: 'CHF 17' },
+  monthly: { original: 'CHF 4.60', amount: 'CHF 2.30',  period: 'perMonth', save: 'CHF 2.30' }
 };
+
+async function initRevenueCat(userId) {
+  if (!RC_WEB_API_KEY || !userId) return;
+  try {
+    const mod = await import('https://esm.sh/@revenuecat/purchases-js@6');
+    const Purchases = mod.Purchases || mod.default;
+    rcInstance = Purchases.configure(RC_WEB_API_KEY, userId);
+    rcOfferings = await rcInstance.getOfferings();
+    await syncRCEntitlements();
+    updatePaywallPricesFromRC();
+  } catch(e) {
+    console.warn('RevenueCat init:', e.message);
+  }
+}
+
+function updatePaywallPricesFromRC() {
+  if (!rcOfferings || !rcOfferings.current) return;
+  const annual = rcOfferings.current.annual;
+  const mo = rcOfferings.current.monthly;
+  if (annual) {
+    const p = annual.rcBillingProduct;
+    const price = p.currentPrice;
+    const orig = p.normalPrice || price;
+    PAYWALL_PRICES.yearly = {
+      original: orig.formattedPrice || `CHF ${orig.amountMicros / 1000000}`,
+      amount: price.formattedPrice || `CHF ${price.amountMicros / 1000000}`,
+      period: 'perYear',
+      save: price.formattedPrice || ''
+    };
+  }
+  if (mo) {
+    const p = mo.rcBillingProduct;
+    const price = p.currentPrice;
+    const orig = p.normalPrice || price;
+    PAYWALL_PRICES.monthly = {
+      original: orig.formattedPrice || `CHF ${orig.amountMicros / 1000000}`,
+      amount: price.formattedPrice || `CHF ${price.amountMicros / 1000000}`,
+      period: 'perMonth',
+      save: price.formattedPrice || ''
+    };
+  }
+}
+
+async function syncRCEntitlements() {
+  if (!rcInstance) return;
+  try {
+    const info = await rcInstance.getCustomerInfo();
+    const hasEnt = info.entitlements.active[RC_ENTITLEMENT] !== undefined;
+    if (hasEnt) {
+      userIsPro = true;
+      if (isFirebaseReady() && currentUser) {
+        firebaseDb.collection('users').doc(currentUser.uid).set({ plan: 'pro' }, { merge: true }).catch(() => {});
+      }
+    }
+    updateProUI();
+  } catch(e) {
+    console.warn('RC entitlement check:', e.message);
+  }
+}
 
 function setPaywallBilling(billing) {
   paywallBilling = billing;
-  document.querySelectorAll('.paywall-billing-tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.billing === billing);
+  document.querySelectorAll('.paywall-billing-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.billing === billing);
   });
   const p = PAYWALL_PRICES[billing];
   document.getElementById('paywallPriceOriginal').textContent = p.original;
   document.getElementById('paywallPriceAmount').textContent = p.amount;
-  document.getElementById('paywallPricePeriod').textContent = p.period;
-  document.getElementById('paywallDiscountBadge').textContent = p.save;
+  document.getElementById('paywallPricePeriod').textContent = t(p.period);
+  document.getElementById('paywallDiscountBadge').textContent = `${t('saveAmount')} ${p.save} / ${billing === 'yearly' ? t('perYear') : t('perMonth')}`;
 }
 
 function openPaywall() {
@@ -2824,26 +2905,86 @@ function closePaywall() {
   document.getElementById('paywallOverlay').classList.remove('active');
 }
 
-function handlePurchase() {
-  // In-App Purchase happens here in native app (Capacitor/StoreKit)
-  // For web: placeholder
-  alert('In-App Purchase wird in der App Store Version aktiviert.\n\nFür Test-Zwecke: Füge deine E-Mail zu ADMIN_EMAILS im Code hinzu.');
-}
-
-function restorePurchase() {
-  if (!isFirebaseReady()) {
-    alert('Firebase nicht konfiguriert.');
+async function handlePurchase() {
+  if (!rcInstance || !rcOfferings || !rcOfferings.current) {
+    showToast(t('purchaseNotReady'));
     return;
   }
-  checkProStatus().then(() => {
+  const pkg = paywallBilling === 'yearly'
+    ? rcOfferings.current.annual
+    : rcOfferings.current.monthly;
+  if (!pkg) {
+    showToast(t('noOfferingsAvailable'));
+    return;
+  }
+  const buyBtn = document.querySelector('.paywall-buy-btn');
+  buyBtn.disabled = true;
+  buyBtn.textContent = t('purchasePending');
+  try {
+    const { customerInfo } = await rcInstance.purchase({ rcPackage: pkg });
+    if (customerInfo.entitlements.active[RC_ENTITLEMENT]) {
+      userIsPro = true;
+      closePaywall();
+      updateProUI();
+      showToast(t('purchaseSuccess'));
+      if (isFirebaseReady() && currentUser) {
+        firebaseDb.collection('users').doc(currentUser.uid).set({ plan: 'pro' }, { merge: true }).catch(() => {});
+      }
+    }
+  } catch(e) {
+    if (!e.userCancelled) {
+      console.error('Purchase error:', e);
+      showToast(t('purchaseError'));
+    }
+  }
+  buyBtn.disabled = false;
+  buyBtn.textContent = t('upgradeNow');
+}
+
+async function restorePurchase() {
+  if (rcInstance) {
+    try {
+      const info = await rcInstance.restorePurchases();
+      if (info.entitlements.active[RC_ENTITLEMENT]) {
+        userIsPro = true;
+        closePaywall();
+        updateProUI();
+        showToast(t('proRestored'));
+        if (isFirebaseReady() && currentUser) {
+          firebaseDb.collection('users').doc(currentUser.uid).set({ plan: 'pro' }, { merge: true }).catch(() => {});
+        }
+        return;
+      }
+    } catch(e) {
+      console.warn('RC restore:', e.message);
+    }
+  }
+  if (isFirebaseReady()) {
+    await checkProStatus();
     if (userIsPro) {
       closePaywall();
       updateProUI();
       showToast(t('proRestored'));
     } else {
-      alert(t('noActiveSub'));
+      showToast(t('noActiveSub'));
     }
-  });
+  } else {
+    showToast(t('noActiveSub'));
+  }
+}
+
+async function openManageSubscription() {
+  if (rcInstance) {
+    try {
+      const info = await rcInstance.getCustomerInfo();
+      const mgmtUrl = info.managementURL;
+      if (mgmtUrl) {
+        window.open(mgmtUrl, '_blank');
+        return;
+      }
+    } catch(e) { /* fall through */ }
+  }
+  window.open('https://billing.stripe.com/p/login/test', '_blank');
 }
 
 function updateProUI() {
@@ -2878,7 +3019,7 @@ function toggleProGate(el, pro) {
       el.classList.add('pro-gated');
       const badge = document.createElement('div');
       badge.className = 'pro-lock-badge';
-      badge.innerHTML = '<span class="lock-icon">🔒</span><div><div class="lock-text">PRO Feature</div><div class="lock-sub">Upgrade für CHF 17/Jahr</div></div>';
+      badge.innerHTML = `<span class="lock-icon">🔒</span><div><div class="lock-text">PRO Feature</div><div class="lock-sub">${t('upgradeForCHF')} ${PAYWALL_PRICES.yearly.amount}/${t('perYear')}</div></div>`;
       badge.onclick = (e) => { e.stopPropagation(); openPaywall(); };
       el.appendChild(badge);
     }
@@ -3254,6 +3395,8 @@ function logoutProfile() {
   activeProfile = null;
   currentUser = null;
   userIsPro = false;
+  rcInstance = null;
+  rcOfferings = null;
   localStorage.removeItem('gymtrack_active');
   state = {
     workouts: [], prs: {}, myTemplates: [], customThresholds: {},
@@ -3288,6 +3431,8 @@ function renderSettingsProfile() {
   }
   const upgradeBtn = document.getElementById('settingsUpgradeBtn');
   if (upgradeBtn) upgradeBtn.style.display = isPro() ? 'none' : '';
+  const manageBtn = document.getElementById('settingsManageSubBtn');
+  if (manageBtn) manageBtn.style.display = isPro() ? '' : 'none';
 }
 
 function loadState() {
@@ -6034,6 +6179,7 @@ function renderMuscleMap() {
       if (user) {
         currentUser = user;
         await checkProStatus();
+        initRevenueCat(user.uid);
         const name = user.displayName || user.email.split('@')[0];
         const profiles = getProfiles();
         if (!profiles.includes(name)) { profiles.push(name); saveProfiles(profiles); }
