@@ -2385,13 +2385,22 @@
         </select>
       </div>
       <div class="cardio-field">
-        <label>Gewichtsverlust/Woche</label>
-        <select id="profWeeklyLoss" class="exercise-select" style="margin:0;">
-          <option value="0">Halten</option>
-          <option value="0.25">-0.25 kg/Woche</option>
-          <option value="0.5" selected>-0.5 kg/Woche</option>
-          <option value="0.75">-0.75 kg/Woche</option>
-          <option value="1">-1.0 kg/Woche (max)</option>
+        <label>Ziel</label>
+        <select id="profGoalType" class="exercise-select" style="margin:0;" onchange="updateProfilePreview()">
+          <option value="lose">Abnehmen</option>
+          <option value="maintain" selected>Gewicht halten</option>
+          <option value="gain">Zunehmen</option>
+        </select>
+      </div>
+      <div class="cardio-field" id="profWeeklyField">
+        <label>Veränderung/Woche</label>
+        <select id="profWeeklyLoss" class="exercise-select" style="margin:0;" onchange="updateProfilePreview()">
+          <option value="0.25">0.25 kg/Woche</option>
+          <option value="0.5" selected>0.5 kg/Woche</option>
+          <option value="0.75">0.75 kg/Woche</option>
+          <option value="1">1.0 kg/Woche</option>
+          <option value="1.25">1.25 kg/Woche</option>
+          <option value="1.5">1.5 kg/Woche</option>
         </select>
       </div>
     </div>
@@ -7191,8 +7200,10 @@ function calcTDEE(profile) {
 function calcTargetKcal(profile) {
   const tdee = calcTDEE(profile);
   if (!tdee) return 2000;
-  const deficit = (parseFloat(profile.weeklyLoss) || 0) * 1100;
-  return Math.max(1200, Math.round(tdee - deficit));
+  const change = (parseFloat(profile.weeklyLoss) || 0) * 1100;
+  if (profile.goalType === 'gain') return Math.round(tdee + change);
+  if (profile.goalType === 'maintain' || !profile.goalType) return tdee;
+  return Math.max(1200, Math.round(tdee - change));
 }
 
 function openNutProfileModal() {
@@ -7202,9 +7213,16 @@ function openNutProfileModal() {
   document.getElementById('profAge').value = p.age || '';
   document.getElementById('profGender').value = p.gender || 'm';
   document.getElementById('profActivity').value = p.activity || '1.55';
+  document.getElementById('profGoalType').value = p.goalType || 'maintain';
   document.getElementById('profWeeklyLoss').value = p.weeklyLoss || '0.5';
+  toggleWeeklyField();
   updateProfilePreview();
   document.getElementById('nutProfileModal').classList.add('active');
+}
+
+function toggleWeeklyField() {
+  const gt = document.getElementById('profGoalType').value;
+  document.getElementById('profWeeklyField').style.display = gt === 'maintain' ? 'none' : 'block';
 }
 
 function closeNutProfileModal() { document.getElementById('nutProfileModal').classList.remove('active'); }
@@ -7218,13 +7236,16 @@ function updateProfilePreview() {
   const loss = document.getElementById('profWeeklyLoss').value;
   const el = document.getElementById('profCalcPreview');
   if (!w || !h || !a) { el.textContent = 'Alle Felder ausfüllen für Berechnung'; return; }
-  const p = { weight: w, height: h, age: a, gender: g, activity: act, weeklyLoss: loss };
+  const goalType = document.getElementById('profGoalType').value;
+  toggleWeeklyField();
+  const p = { weight: w, height: h, age: a, gender: g, activity: act, weeklyLoss: loss, goalType: goalType };
   const tdee = calcTDEE(p);
   const target = calcTargetKcal(p);
-  const proteinG = Math.round(w * 2);
+  const proteinG = Math.round(w * (goalType === 'gain' ? 2.2 : 2));
   const fatG = Math.round(target * 0.25 / 9);
   const carbsG = Math.round((target - proteinG * 4 - fatG * 9) / 4);
-  el.innerHTML = `TDEE: <b>${tdee}</b> kcal/Tag<br>Ziel: <b>${target}</b> kcal/Tag<br>Protein: <b>${proteinG}g</b> • Carbs: <b>${carbsG}g</b> • Fett: <b>${fatG}g</b>`;
+  const label = goalType === 'gain' ? 'Überschuss' : goalType === 'lose' ? 'Defizit' : 'Erhalt';
+  el.innerHTML = `TDEE: <b>${tdee}</b> kcal/Tag<br>Modus: <b>${label}</b><br>Ziel: <b>${target}</b> kcal/Tag<br>Protein: <b>${proteinG}g</b> • Carbs: <b>${carbsG}g</b> • Fett: <b>${fatG}g</b>`;
 }
 
 function saveNutProfile() {
@@ -7232,16 +7253,18 @@ function saveNutProfile() {
   const h = parseFloat(document.getElementById('profHeight').value);
   const a = parseInt(document.getElementById('profAge').value);
   if (!w || !h || !a) { showToast('Alle Felder ausfüllen'); return; }
+  const goalType = document.getElementById('profGoalType').value;
   const profile = {
     weight: w, height: h, age: a,
     gender: document.getElementById('profGender').value,
     activity: document.getElementById('profActivity').value,
-    weeklyLoss: document.getElementById('profWeeklyLoss').value,
+    weeklyLoss: goalType === 'maintain' ? '0' : document.getElementById('profWeeklyLoss').value,
+    goalType: goalType,
   };
   state.nutProfile = profile;
 
   const target = calcTargetKcal(profile);
-  const proteinG = Math.round(w * 2);
+  const proteinG = Math.round(w * (goalType === 'gain' ? 2.2 : 2));
   const fatG = Math.round(target * 0.25 / 9);
   const carbsG = Math.round((target - proteinG * 4 - fatG * 9) / 4);
   state.nutritionGoals = { kcal: target, protein: proteinG, carbs: Math.max(50, carbsG), fat: fatG };
@@ -7272,7 +7295,8 @@ function renderNutProfileBar() {
     dEl.textContent = '--';
     return;
   }
-  wEl.textContent = p.weight;
+  const modeLabel = p.goalType === 'gain' ? '↑' : p.goalType === 'lose' ? '↓' : '=';
+  wEl.textContent = p.weight + 'kg ' + modeLabel;
   tEl.textContent = calcTDEE(p);
   dEl.textContent = calcTargetKcal(p);
 }
