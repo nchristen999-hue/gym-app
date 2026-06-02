@@ -1334,6 +1334,25 @@
   .pro-lock-badge .lock-sub { font-size: 10px; color: var(--accent); font-weight: 600; }
   .tab-lock { font-size: 10px; margin-left: 2px; opacity: 0.6; }
 
+  /* Nutrition Tracker */
+  .nut-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .nut-macro-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px; }
+  .nut-macro-card.nut-kcal { grid-column: 1 / -1; text-align: center; }
+  .nut-macro-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); font-weight: 700; }
+  .nut-macro-val { font-family: 'Bebas Neue', sans-serif; font-size: 32px; line-height: 1; margin-top: 6px; letter-spacing: 1px; }
+  .nut-macro-card.nut-kcal .nut-macro-val { font-size: 48px; color: var(--accent); }
+  .nut-macro-goal { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+  .nut-bar-protein { background: linear-gradient(90deg, #4ade80, #22c55e) !important; box-shadow: 0 0 8px rgba(74,222,128,0.4) !important; }
+  .nut-bar-carbs { background: linear-gradient(90deg, #fbbf24, #f59e0b) !important; box-shadow: 0 0 8px rgba(251,191,36,0.4) !important; }
+  .nut-bar-fat { background: linear-gradient(90deg, #f87171, #ef4444) !important; box-shadow: 0 0 8px rgba(248,113,113,0.4) !important; }
+  .nut-log-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+  .nut-log-name { font-weight: 600; font-size: 14px; }
+  .nut-log-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  .nut-log-kcal { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--accent); text-align: right; }
+  .nut-log-amount { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); text-align: right; }
+  .food-cat-pill { background: var(--surface-2); border: 1px solid var(--border); color: var(--text-dim); padding: 5px 10px; border-radius: 999px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.2s; }
+  .food-cat-pill.active { border-color: var(--accent); color: var(--accent); background: rgba(212,255,58,0.1); }
+
   /* Paywall Modal */
   .paywall-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(12px);
@@ -1814,6 +1833,35 @@
 
       <div class="card-title" style="margin:16px 0 12px;" data-i18n="pastSessions">Past Sessions</div>
       <div id="cardioHistoryList"></div>
+
+      <!-- ROUTES SECTION -->
+      <div style="margin-top:24px;border-top:1px solid var(--border);padding-top:20px;">
+        <div class="card-title" style="margin-bottom:12px;" data-i18n="routes">Routen</div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px;">
+          <div style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">Distanz wählen:</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;" id="routeDistPills">
+            <div class="cardio-type-pill" onclick="selectRouteDist(3)">3 km</div>
+            <div class="cardio-type-pill active" onclick="selectRouteDist(5)">5 km</div>
+            <div class="cardio-type-pill" onclick="selectRouteDist(10)">10 km</div>
+            <div class="cardio-type-pill" onclick="selectRouteDist(15)">15 km</div>
+            <div class="cardio-type-pill" onclick="selectRouteDist(20)">20 km</div>
+          </div>
+          <button class="gps-btn gps-btn-start" style="width:100%;border-radius:12px;" onclick="generateRoute()" id="genRouteBtn" data-i18n="generateRoute">Route generieren</button>
+          <div id="routeStatus" style="font-size:12px;color:var(--text-dim);text-align:center;margin-top:8px;display:none;"></div>
+          <div id="routeGenMap" style="width:100%;height:250px;border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-top:12px;display:none;"></div>
+          <div id="routeGenInfo" style="display:none;margin-top:10px;">
+            <div class="gps-live-stats" style="margin-bottom:10px;" id="routeGenStats"></div>
+            <div style="display:flex;gap:8px;">
+              <input type="text" class="input-field" id="routeNameInput" placeholder="Routen-Name" style="margin:0;flex:1;" />
+              <button class="btn-primary" style="white-space:nowrap;" onclick="saveGeneratedRoute()">Speichern</button>
+            </div>
+            <button class="gps-btn gps-btn-start" style="width:100%;border-radius:12px;margin-top:8px;" onclick="generateRoute()">Neue Route</button>
+          </div>
+        </div>
+
+        <div class="card-title" style="margin-bottom:8px;" data-i18n="savedRoutes">Gespeicherte Routen</div>
+        <div id="savedRoutesList"></div>
+      </div>
     </div>
 
     <div class="view" id="view-medals">
@@ -1869,6 +1917,54 @@
         </div>
       </div>
     </div>
+
+    <!-- NUTRITION VIEW -->
+    <div class="view" id="view-nutrition">
+      <div class="card-title" style="margin-bottom:16px;" data-i18n="nutritionTracking">Ernährungs-Tracker</div>
+
+      <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;">
+        <button class="calendar-nav-btn" onclick="nutDatePrev()">‹</button>
+        <div style="flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;" id="nutDateLabel"></div>
+        <button class="calendar-nav-btn" onclick="nutDateNext()">›</button>
+      </div>
+
+      <!-- Daily Summary -->
+      <div class="nut-summary" id="nutSummary">
+        <div class="nut-macro-card nut-kcal">
+          <div class="nut-macro-label">kcal</div>
+          <div class="nut-macro-val" id="nutKcalVal">0</div>
+          <div class="progress-bar" style="height:6px;margin-top:6px;"><div class="progress-bar-fill" id="nutKcalBar" style="width:0%"></div></div>
+          <div class="nut-macro-goal" id="nutKcalGoal">/ 2000</div>
+        </div>
+        <div class="nut-macro-card">
+          <div class="nut-macro-label" data-i18n="protein">Protein</div>
+          <div class="nut-macro-val" id="nutProteinVal">0<span class="unit">g</span></div>
+          <div class="progress-bar" style="height:6px;margin-top:6px;"><div class="progress-bar-fill nut-bar-protein" id="nutProteinBar" style="width:0%"></div></div>
+          <div class="nut-macro-goal" id="nutProteinGoal">/ 150g</div>
+        </div>
+        <div class="nut-macro-card">
+          <div class="nut-macro-label" data-i18n="carbs">Carbs</div>
+          <div class="nut-macro-val" id="nutCarbsVal">0<span class="unit">g</span></div>
+          <div class="progress-bar" style="height:6px;margin-top:6px;"><div class="progress-bar-fill nut-bar-carbs" id="nutCarbsBar" style="width:0%"></div></div>
+          <div class="nut-macro-goal" id="nutCarbsGoal">/ 250g</div>
+        </div>
+        <div class="nut-macro-card">
+          <div class="nut-macro-label" data-i18n="fat">Fat</div>
+          <div class="nut-macro-val" id="nutFatVal">0<span class="unit">g</span></div>
+          <div class="progress-bar" style="height:6px;margin-top:6px;"><div class="progress-bar-fill nut-bar-fat" id="nutFatBar" style="width:0%"></div></div>
+          <div class="nut-macro-goal" id="nutFatGoal">/ 65g</div>
+        </div>
+      </div>
+
+      <button class="cardio-toggle-btn" onclick="openFoodModal()" data-i18n="addFood">+ Essen hinzufügen</button>
+
+      <div class="card-title" style="margin:16px 0 12px;">
+        <span data-i18n="foodLog">Essen-Log</span>
+        <span class="card-title-action" onclick="openNutGoalsModal()">⚙</span>
+      </div>
+      <div id="nutLogList"></div>
+    </div>
+
   </main>
 
   <nav class="tabs">
@@ -1877,6 +1973,7 @@
       <button class="tab-btn" data-view="workout"><span class="icon">💪</span><span data-i18n="training">Training</span></button>
       <button class="tab-btn" data-view="history" data-pro="true"><span class="icon">📅</span><span><span data-i18n="history">History</span><span class="tab-lock" id="lockHistory">🔒</span></span></button>
       <button class="tab-btn" data-view="cardio" data-pro="true"><span class="icon">🏃</span><span><span data-i18n="cardio">Cardio</span><span class="tab-lock" id="lockCardio">🔒</span></span></button>
+      <button class="tab-btn" data-view="nutrition" data-pro="true"><span class="icon">🍎</span><span><span data-i18n="nutrition">Ernährung</span><span class="tab-lock" id="lockNutrition">🔒</span></span></button>
       <button class="tab-btn" data-view="medals" data-pro="true"><span class="icon">🏆</span><span><span data-i18n="medals">Medals</span><span class="tab-lock" id="lockMedals">🔒</span></span></button>
       <button class="tab-btn" data-view="progress" data-pro="true"><span class="icon">📈</span><span><span data-i18n="stats">Stats</span><span class="tab-lock" id="lockProgress">🔒</span></span></button>
     </div>
@@ -2066,6 +2163,87 @@
     <div class="celebration-subtitle" id="celSubtitle"></div>
     <div class="celebration-points" id="celPoints">+0 XP</div>
     <button class="celebration-btn" onclick="closeCelebration()" data-i18n="continue">Continue</button>
+  </div>
+</div>
+
+<!-- FOOD PICKER MODAL -->
+<div class="modal-overlay" id="foodModal" style="z-index:210;" onclick="if(event.target===this) closeFoodModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" data-i18n="addFood">Essen hinzufügen</div>
+    <button class="custom-ex-btn" onclick="toggleCustomFoodForm()" data-i18n="customFood">+ Eigenes Essen</button>
+    <div class="custom-ex-form" id="customFoodForm">
+      <div class="row">
+        <input type="text" class="input-field" id="cfName" placeholder="Name" style="margin:0;flex:1;" />
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0;">
+        <input type="number" class="input-field" id="cfKcal" placeholder="kcal/100g" style="margin:0;" inputmode="numeric" />
+        <input type="number" class="input-field" id="cfProtein" placeholder="Protein/100g" style="margin:0;" inputmode="decimal" />
+        <input type="number" class="input-field" id="cfCarbs" placeholder="Carbs/100g" style="margin:0;" inputmode="decimal" />
+        <input type="number" class="input-field" id="cfFat" placeholder="Fett/100g" style="margin:0;" inputmode="decimal" />
+      </div>
+      <button class="save-btn" onclick="saveCustomFood()" style="width:100%;background:var(--accent);color:#000;border:none;padding:10px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;text-transform:uppercase;letter-spacing:1px;">Speichern</button>
+    </div>
+    <input type="text" class="input-field" id="foodSearch" placeholder="Essen suchen..." oninput="filterFoods()" />
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;" id="foodCatPills"></div>
+    <div class="exercise-list-modal" id="foodListModal" style="max-height:40vh;overflow-y:auto;"></div>
+  </div>
+</div>
+
+<!-- FOOD AMOUNT MODAL -->
+<div class="modal-overlay" id="foodAmountModal" style="z-index:220;" onclick="if(event.target===this) closeFoodAmountModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="foodAmountTitle">Menge</div>
+    <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;" id="foodAmountInfo"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+      <button class="cardio-type-pill" onclick="setFoodAmount(25)">25g</button>
+      <button class="cardio-type-pill" onclick="setFoodAmount(50)">50g</button>
+      <button class="cardio-type-pill active" onclick="setFoodAmount(100)">100g</button>
+      <button class="cardio-type-pill" onclick="setFoodAmount(150)">150g</button>
+      <button class="cardio-type-pill" onclick="setFoodAmount(200)">200g</button>
+      <button class="cardio-type-pill" onclick="setFoodAmount(250)">250g</button>
+      <button class="cardio-type-pill" onclick="setFoodAmount(500)">500g</button>
+    </div>
+    <div class="cardio-form-grid">
+      <div class="cardio-field"><label>Menge (g)</label><input type="number" inputmode="numeric" id="foodAmountInput" value="100" oninput="updateFoodPreview()" /></div>
+    </div>
+    <div style="background:var(--surface-2);border-radius:10px;padding:12px;margin:12px 0;" id="foodAmountPreview"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeFoodAmountModal()">Abbruch</button>
+      <button class="btn-primary" onclick="confirmAddFood()">Hinzufügen</button>
+    </div>
+  </div>
+</div>
+
+<!-- NUTRITION GOALS MODAL -->
+<div class="modal-overlay" id="nutGoalsModal" onclick="if(event.target===this) closeNutGoalsModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" data-i18n="nutritionGoals">Ziele</div>
+    <div class="cardio-form-grid">
+      <div class="cardio-field"><label>kcal</label><input type="number" id="goalKcal" inputmode="numeric" /></div>
+      <div class="cardio-field"><label>Protein (g)</label><input type="number" id="goalProtein" inputmode="numeric" /></div>
+      <div class="cardio-field"><label>Carbs (g)</label><input type="number" id="goalCarbs" inputmode="numeric" /></div>
+      <div class="cardio-field"><label>Fett (g)</label><input type="number" id="goalFat" inputmode="numeric" /></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeNutGoalsModal()">Abbruch</button>
+      <button class="btn-primary" onclick="saveNutGoals()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- ROUTE DETAIL MODAL -->
+<div class="modal-overlay" id="routeDetailModal" onclick="if(event.target===this) closeRouteDetail()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="routeDetailTitle">Route</div>
+    <div class="detail-map" id="routeDetailMap"></div>
+    <div class="detail-stats-grid" id="routeDetailStats"></div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="closeRouteDetail()">Schliessen</button>
+    </div>
   </div>
 </div>
 
@@ -2493,6 +2671,38 @@ const TRANSLATIONS = {
   authFirebaseNotReady: { en:'Firebase not configured. Register locally first.', de:'Firebase nicht konfiguriert. Registriere dich zuerst lokal.', es:'Firebase no configurado. Regístrate localmente.', fr:'Firebase non configuré. Inscrivez-vous localement.', it:'Firebase non configurato. Registrati localmente.' },
   authResetSent: { en:'Password reset email sent! Check your inbox.', de:'Passwort-Reset E-Mail gesendet! Prüfe dein Postfach.', es:'Email de recuperación enviado. Revisa tu bandeja.', fr:'E-mail de réinitialisation envoyé ! Vérifiez votre boîte.', it:'Email di reset inviata! Controlla la posta.' },
   authEnterEmailFirst: { en:'Enter your email first.', de:'Gib zuerst deine E-Mail ein.', es:'Ingresa tu correo primero.', fr:'Entrez d\'abord votre e-mail.', it:'Inserisci prima la tua email.' },
+  emailVerifSent: { en:'Verification email sent! Check your inbox.', de:'Bestätigungs-Email gesendet! Prüfe dein Postfach.', es:'Email de verificación enviado.', fr:'Email de vérification envoyé.', it:'Email di verifica inviata.' },
+
+  // ── NUTRITION ──
+  nutrition: { en:'Nutrition', de:'Ernährung', es:'Nutrición', fr:'Nutrition', it:'Nutrizione' },
+  nutritionTracking: { en:'Nutrition Tracking', de:'Ernährungs-Tracker', es:'Seguimiento Nutricional', fr:'Suivi Nutritionnel', it:'Tracker Nutrizionale' },
+  todaysSummary: { en:"Today's Summary", de:'Tages-Übersicht', es:'Resumen del día', fr:"Résumé du jour", it:'Riepilogo giornaliero' },
+  addFood: { en:'+ Add Food', de:'+ Essen hinzufügen', es:'+ Añadir alimento', fr:'+ Ajouter aliment', it:'+ Aggiungi cibo' },
+  searchFood: { en:'Search food...', de:'Essen suchen...', es:'Buscar alimento...', fr:'Chercher aliment...', it:'Cerca cibo...' },
+  customFood: { en:'+ Custom Food', de:'+ Eigenes Essen', es:'+ Alimento personalizado', fr:'+ Aliment perso.', it:'+ Cibo personalizzato' },
+  amount: { en:'Amount (g)', de:'Menge (g)', es:'Cantidad (g)', fr:'Quantité (g)', it:'Quantità (g)' },
+  protein: { en:'Protein', de:'Protein', es:'Proteína', fr:'Protéines', it:'Proteine' },
+  carbs: { en:'Carbs', de:'Kohlenhydrate', es:'Carbohidratos', fr:'Glucides', it:'Carboidrati' },
+  fat: { en:'Fat', de:'Fett', es:'Grasa', fr:'Lipides', it:'Grassi' },
+  foodLog: { en:'Food Log', de:'Essen-Log', es:'Registro', fr:'Journal', it:'Registro' },
+  noFoodYet: { en:'No food logged yet', de:'Noch kein Essen eingetragen', es:'Sin alimentos registrados', fr:'Aucun aliment enregistré', it:'Nessun cibo registrato' },
+  goal: { en:'Goal', de:'Ziel', es:'Objetivo', fr:'Objectif', it:'Obiettivo' },
+  nutritionGoals: { en:'Goals', de:'Ziele', es:'Objetivos', fr:'Objectifs', it:'Obiettivi' },
+  perHundredG: { en:'per 100g', de:'pro 100g', es:'por 100g', fr:'pour 100g', it:'per 100g' },
+  foodName: { en:'Food name', de:'Name des Essens', es:'Nombre', fr:'Nom de l\'aliment', it:'Nome del cibo' },
+  saveFood: { en:'Save Food', de:'Essen speichern', es:'Guardar', fr:'Enregistrer', it:'Salva' },
+  addToLog: { en:'Add', de:'Hinzufügen', es:'Añadir', fr:'Ajouter', it:'Aggiungi' },
+
+  // ── ROUTES ──
+  routes: { en:'Routes', de:'Routen', es:'Rutas', fr:'Itinéraires', it:'Percorsi' },
+  generateRoute: { en:'Generate Route', de:'Route generieren', es:'Generar ruta', fr:'Générer itinéraire', it:'Genera percorso' },
+  savedRoutes: { en:'Saved Routes', de:'Gespeicherte Routen', es:'Rutas guardadas', fr:'Itinéraires sauvés', it:'Percorsi salvati' },
+  saveRoute: { en:'Save Route', de:'Route speichern', es:'Guardar ruta', fr:'Sauver itinéraire', it:'Salva percorso' },
+  generating: { en:'Generating route...', de:'Route wird generiert...', es:'Generando ruta...', fr:'Génération...', it:'Generazione...' },
+  noRoutes: { en:'No saved routes yet', de:'Noch keine gespeicherten Routen', es:'Sin rutas guardadas', fr:'Aucun itinéraire sauvé', it:'Nessun percorso salvato' },
+  routeName: { en:'Route name', de:'Routen-Name', es:'Nombre de ruta', fr:'Nom de l\'itinéraire', it:'Nome del percorso' },
+  locating: { en:'Getting location...', de:'Standort wird ermittelt...', es:'Obteniendo ubicación...', fr:'Localisation...', it:'Localizzazione...' },
+  locationError: { en:'Could not get location', de:'Standort konnte nicht ermittelt werden', es:'No se pudo obtener ubicación', fr:'Impossible de localiser', it:'Impossibile localizzare' },
 };
 
 function t(key) {
@@ -2725,11 +2935,13 @@ async function doRegister() {
       plan: ADMIN_EMAILS.includes(email.toLowerCase()) ? 'pro' : 'free',
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
+    try { await cred.user.sendEmailVerification(); } catch(ev) {}
     currentUser = cred.user;
     await checkProStatus();
     const profiles = getProfiles();
     if (!profiles.includes(username)) { profiles.push(username); saveProfiles(profiles); }
     selectProfile(username);
+    showToast(t('emailVerifSent'));
   } catch(e) {
     const msgs = {
       'auth/email-already-in-use': t('authEmailInUse'),
@@ -3334,6 +3546,10 @@ let state = {
   restTimeDuration: 90,
   cardioSessions: [],
   cardioTemplates: [],
+  nutritionLog: [],
+  customFoods: [],
+  nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 },
+  savedRoutes: [],
 };
 let timerInterval = null;
 let templateBuilder = { editingId: null, name: '', exercises: [] };
@@ -3403,6 +3619,7 @@ function logoutProfile() {
     workouts: [], prs: {}, myTemplates: [], customThresholds: {},
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
     customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [], cardioTemplates: [],
+    nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, savedRoutes: [],
   };
   if (isFirebaseReady()) firebaseAuth.signOut().catch(() => {});
   document.getElementById('mainApp').style.display = 'none';
@@ -3441,6 +3658,7 @@ function loadState() {
     workouts: [], prs: {}, myTemplates: [], customThresholds: {},
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
     customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [], cardioTemplates: [],
+    nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, savedRoutes: [],
   };
   const saved = localStorage.getItem(storageKey());
   if (saved) {
@@ -3476,6 +3694,10 @@ function saveState() {
     restTimeDuration: state.restTimeDuration,
     cardioSessions: state.cardioSessions,
     cardioTemplates: state.cardioTemplates,
+    nutritionLog: state.nutritionLog,
+    customFoods: state.customFoods,
+    nutritionGoals: state.nutritionGoals,
+    savedRoutes: state.savedRoutes,
   }));
 }
 
@@ -5013,7 +5235,8 @@ function showView(name) {
   if (name === 'home') renderHome();
   if (name === 'workout') renderWorkout();
   if (name === 'history') { renderHistory(); if (typeof renderCalendar === 'function') renderCalendar(); }
-  if (name === 'cardio') renderCardio();
+  if (name === 'cardio') { renderCardio(); renderSavedRoutes(); }
+  if (name === 'nutrition') renderNutrition();
   if (name === 'medals') renderMedals();
   if (name === 'progress') renderProgress();
 }
@@ -6160,6 +6383,553 @@ function renderMuscleMap() {
       <span class="muscle-legend-vol">${volStr}</span>
     </div>`;
   }).join('');
+}
+
+// =====================================================
+// FEATURE: NUTRITION / KCAL TRACKER
+// =====================================================
+const FOOD_DATABASE = [
+  // Fleisch & Wurst
+  {name:'Pouletbrust',cat:'Fleisch',kcal:165,protein:31,carbs:0,fat:3.6},
+  {name:'Rindfleisch mager',cat:'Fleisch',kcal:158,protein:26,carbs:0,fat:6},
+  {name:'Schweinefleisch mager',cat:'Fleisch',kcal:143,protein:26,carbs:0,fat:4},
+  {name:'Hackfleisch (gemischt)',cat:'Fleisch',kcal:212,protein:18,carbs:0,fat:15},
+  {name:'Hackfleisch (Rind)',cat:'Fleisch',kcal:176,protein:20,carbs:0,fat:10},
+  {name:'Pouletschenkel',cat:'Fleisch',kcal:209,protein:18,carbs:0,fat:15},
+  {name:'Truthahn',cat:'Fleisch',kcal:135,protein:30,carbs:0,fat:1},
+  {name:'Lamm',cat:'Fleisch',kcal:258,protein:25,carbs:0,fat:17},
+  {name:'Schweinefilet',cat:'Fleisch',kcal:109,protein:22,carbs:0,fat:2},
+  {name:'Cervelat',cat:'Fleisch',kcal:290,protein:13,carbs:1,fat:26},
+  {name:'Wienerli',cat:'Fleisch',kcal:280,protein:12,carbs:2,fat:25},
+  {name:'Salami',cat:'Fleisch',kcal:336,protein:26,carbs:1,fat:26},
+  {name:'Schinken gekocht',cat:'Fleisch',kcal:107,protein:18,carbs:1,fat:3},
+  {name:'Trockenfleisch (Bündnerfleisch)',cat:'Fleisch',kcal:156,protein:37,carbs:0,fat:2},
+  {name:'Poulet Nuggets',cat:'Fleisch',kcal:296,protein:15,carbs:18,fat:18},
+  // Fisch
+  {name:'Lachs',cat:'Fisch',kcal:208,protein:20,carbs:0,fat:13},
+  {name:'Thunfisch (Dose)',cat:'Fisch',kcal:116,protein:26,carbs:0,fat:1},
+  {name:'Forelle',cat:'Fisch',kcal:119,protein:20,carbs:0,fat:4},
+  {name:'Garnelen',cat:'Fisch',kcal:99,protein:24,carbs:0,fat:0.3},
+  {name:'Kabeljau / Dorsch',cat:'Fisch',kcal:82,protein:18,carbs:0,fat:0.7},
+  {name:'Pangasius',cat:'Fisch',kcal:80,protein:15,carbs:0,fat:2.5},
+  {name:'Crevetten',cat:'Fisch',kcal:85,protein:18,carbs:0,fat:1},
+  {name:'Lachs (geräuchert)',cat:'Fisch',kcal:117,protein:18,carbs:0,fat:4.5},
+  // Milchprodukte
+  {name:'Vollmilch',cat:'Milchprodukte',kcal:64,protein:3.3,carbs:4.7,fat:3.5},
+  {name:'Magerquark',cat:'Milchprodukte',kcal:67,protein:12,carbs:4,fat:0.3},
+  {name:'Griechischer Joghurt',cat:'Milchprodukte',kcal:97,protein:9,carbs:3.6,fat:5},
+  {name:'Naturejoghurt',cat:'Milchprodukte',kcal:61,protein:3.5,carbs:4.7,fat:3.3},
+  {name:'Mozzarella',cat:'Milchprodukte',kcal:280,protein:22,carbs:1,fat:21},
+  {name:'Emmentaler',cat:'Milchprodukte',kcal:380,protein:29,carbs:0,fat:30},
+  {name:'Gruyère',cat:'Milchprodukte',kcal:413,protein:27,carbs:0.4,fat:33},
+  {name:'Cottage Cheese',cat:'Milchprodukte',kcal:98,protein:11,carbs:3.4,fat:4.3},
+  {name:'Frischkäse',cat:'Milchprodukte',kcal:270,protein:5,carbs:3,fat:27},
+  {name:'Butter',cat:'Milchprodukte',kcal:745,protein:0.6,carbs:0.6,fat:83},
+  {name:'Hüttenkäse',cat:'Milchprodukte',kcal:104,protein:13,carbs:2,fat:5},
+  {name:'Parmesan',cat:'Milchprodukte',kcal:431,protein:38,carbs:0,fat:29},
+  {name:'Skyr',cat:'Milchprodukte',kcal:63,protein:11,carbs:4,fat:0.2},
+  {name:'Rahm',cat:'Milchprodukte',kcal:300,protein:2.5,carbs:3,fat:30},
+  // Eier
+  {name:'Ei (Grösse M)',cat:'Milchprodukte',kcal:155,protein:13,carbs:1.1,fat:11},
+  {name:'Eiweiss',cat:'Milchprodukte',kcal:52,protein:11,carbs:0.7,fat:0.2},
+  // Getreide & Brot
+  {name:'Haferflocken',cat:'Getreide',kcal:372,protein:13,carbs:59,fat:7},
+  {name:'Reis (gekocht)',cat:'Getreide',kcal:130,protein:2.7,carbs:28,fat:0.3},
+  {name:'Vollkornbrot',cat:'Getreide',kcal:246,protein:8,carbs:44,fat:3.4},
+  {name:'Weissbrot / Toast',cat:'Getreide',kcal:265,protein:9,carbs:49,fat:3.2},
+  {name:'Zopf',cat:'Getreide',kcal:310,protein:8,carbs:50,fat:9},
+  {name:'Pasta (gekocht)',cat:'Getreide',kcal:158,protein:6,carbs:31,fat:0.9},
+  {name:'Vollkornpasta (gekocht)',cat:'Getreide',kcal:148,protein:6,carbs:27,fat:1.5},
+  {name:'Couscous (gekocht)',cat:'Getreide',kcal:112,protein:3.8,carbs:23,fat:0.2},
+  {name:'Quinoa (gekocht)',cat:'Getreide',kcal:120,protein:4.4,carbs:21,fat:1.9},
+  {name:'Kartoffeln (gekocht)',cat:'Getreide',kcal:86,protein:2,carbs:20,fat:0.1},
+  {name:'Süsskartoffel (gekocht)',cat:'Getreide',kcal:90,protein:2,carbs:21,fat:0.1},
+  {name:'Mais',cat:'Getreide',kcal:108,protein:3.4,carbs:19,fat:1.5},
+  {name:'Müsli',cat:'Getreide',kcal:355,protein:8,carbs:60,fat:8},
+  {name:'Cornflakes',cat:'Getreide',kcal:378,protein:7,carbs:84,fat:0.9},
+  {name:'Reiswaffeln',cat:'Getreide',kcal:387,protein:8,carbs:81,fat:3},
+  {name:'Tortilla Wrap',cat:'Getreide',kcal:310,protein:8,carbs:50,fat:8},
+  {name:'Knäckebrot',cat:'Getreide',kcal:366,protein:10,carbs:66,fat:5},
+  // Obst
+  {name:'Apfel',cat:'Obst',kcal:52,protein:0.3,carbs:14,fat:0.2},
+  {name:'Banane',cat:'Obst',kcal:89,protein:1.1,carbs:23,fat:0.3},
+  {name:'Orange',cat:'Obst',kcal:47,protein:0.9,carbs:12,fat:0.1},
+  {name:'Erdbeeren',cat:'Obst',kcal:33,protein:0.7,carbs:8,fat:0.3},
+  {name:'Trauben',cat:'Obst',kcal:69,protein:0.7,carbs:18,fat:0.2},
+  {name:'Blaubeeren',cat:'Obst',kcal:57,protein:0.7,carbs:14,fat:0.3},
+  {name:'Wassermelone',cat:'Obst',kcal:30,protein:0.6,carbs:8,fat:0.2},
+  {name:'Mango',cat:'Obst',kcal:60,protein:0.8,carbs:15,fat:0.4},
+  {name:'Ananas',cat:'Obst',kcal:50,protein:0.5,carbs:13,fat:0.1},
+  {name:'Kiwi',cat:'Obst',kcal:61,protein:1.1,carbs:15,fat:0.5},
+  {name:'Birne',cat:'Obst',kcal:57,protein:0.4,carbs:15,fat:0.1},
+  {name:'Avocado',cat:'Obst',kcal:160,protein:2,carbs:9,fat:15},
+  {name:'Trockenfrüchte (Datteln)',cat:'Obst',kcal:282,protein:2.5,carbs:75,fat:0.4},
+  // Gemüse
+  {name:'Brokkoli',cat:'Gemüse',kcal:35,protein:2.8,carbs:7,fat:0.4},
+  {name:'Spinat',cat:'Gemüse',kcal:23,protein:2.9,carbs:3.6,fat:0.4},
+  {name:'Tomate',cat:'Gemüse',kcal:18,protein:0.9,carbs:3.9,fat:0.2},
+  {name:'Gurke',cat:'Gemüse',kcal:15,protein:0.7,carbs:3.6,fat:0.1},
+  {name:'Karotte',cat:'Gemüse',kcal:41,protein:0.9,carbs:10,fat:0.2},
+  {name:'Peperoni / Paprika',cat:'Gemüse',kcal:31,protein:1,carbs:6,fat:0.3},
+  {name:'Zwiebel',cat:'Gemüse',kcal:40,protein:1.1,carbs:9,fat:0.1},
+  {name:'Champignons',cat:'Gemüse',kcal:22,protein:3.1,carbs:3.3,fat:0.3},
+  {name:'Zucchetti',cat:'Gemüse',kcal:17,protein:1.2,carbs:3.1,fat:0.3},
+  {name:'Aubergine',cat:'Gemüse',kcal:25,protein:1,carbs:6,fat:0.2},
+  {name:'Blumenkohl',cat:'Gemüse',kcal:25,protein:2,carbs:5,fat:0.3},
+  {name:'Eisbergsalat',cat:'Gemüse',kcal:14,protein:0.9,carbs:3,fat:0.1},
+  {name:'Rüebli (Rote Bete)',cat:'Gemüse',kcal:43,protein:1.6,carbs:10,fat:0.2},
+  // Hülsenfrüchte
+  {name:'Linsen (gekocht)',cat:'Hülsenfrüchte',kcal:116,protein:9,carbs:20,fat:0.4},
+  {name:'Kichererbsen (gekocht)',cat:'Hülsenfrüchte',kcal:164,protein:9,carbs:27,fat:2.6},
+  {name:'Kidney-Bohnen (Dose)',cat:'Hülsenfrüchte',kcal:127,protein:9,carbs:22,fat:0.5},
+  {name:'Edamame',cat:'Hülsenfrüchte',kcal:121,protein:12,carbs:9,fat:5},
+  {name:'Tofu',cat:'Hülsenfrüchte',kcal:76,protein:8,carbs:1.9,fat:4.8},
+  {name:'Hummus',cat:'Hülsenfrüchte',kcal:166,protein:8,carbs:14,fat:10},
+  // Nüsse & Samen
+  {name:'Mandeln',cat:'Nüsse',kcal:579,protein:21,carbs:22,fat:50},
+  {name:'Cashews',cat:'Nüsse',kcal:553,protein:18,carbs:30,fat:44},
+  {name:'Erdnüsse',cat:'Nüsse',kcal:567,protein:26,carbs:16,fat:49},
+  {name:'Walnüsse',cat:'Nüsse',kcal:654,protein:15,carbs:14,fat:65},
+  {name:'Erdnussbutter',cat:'Nüsse',kcal:588,protein:25,carbs:20,fat:50},
+  {name:'Chiasamen',cat:'Nüsse',kcal:486,protein:17,carbs:42,fat:31},
+  {name:'Leinsamen',cat:'Nüsse',kcal:534,protein:18,carbs:29,fat:42},
+  {name:'Sonnenblumenkerne',cat:'Nüsse',kcal:584,protein:21,carbs:20,fat:51},
+  // Süsses & Snacks
+  {name:'Schokolade (Milch)',cat:'Snacks',kcal:535,protein:8,carbs:59,fat:30},
+  {name:'Schokolade (dunkel 70%)',cat:'Snacks',kcal:598,protein:8,carbs:46,fat:43},
+  {name:'Gummibärchen',cat:'Snacks',kcal:343,protein:7,carbs:77,fat:0.5},
+  {name:'Chips',cat:'Snacks',kcal:536,protein:7,carbs:53,fat:33},
+  {name:'Glacé / Glace',cat:'Snacks',kcal:207,protein:3.5,carbs:24,fat:11},
+  {name:'Kuchen',cat:'Snacks',kcal:367,protein:5,carbs:47,fat:18},
+  {name:'Guezli / Kekse',cat:'Snacks',kcal:480,protein:6,carbs:65,fat:22},
+  {name:'Honig',cat:'Snacks',kcal:304,protein:0.3,carbs:82,fat:0},
+  {name:'Nutella',cat:'Snacks',kcal:539,protein:6,carbs:58,fat:31},
+  {name:'Konfitüre',cat:'Snacks',kcal:250,protein:0.4,carbs:63,fat:0.1},
+  {name:'Protein-Riegel',cat:'Snacks',kcal:370,protein:30,carbs:35,fat:12},
+  // Getränke
+  {name:'Orangensaft',cat:'Getränke',kcal:45,protein:0.7,carbs:10,fat:0.2},
+  {name:'Apfelsaft',cat:'Getränke',kcal:46,protein:0.1,carbs:11,fat:0.1},
+  {name:'Coca-Cola',cat:'Getränke',kcal:42,protein:0,carbs:11,fat:0},
+  {name:'Rivella',cat:'Getränke',kcal:35,protein:0,carbs:9,fat:0},
+  {name:'Bier',cat:'Getränke',kcal:43,protein:0.5,carbs:3.6,fat:0},
+  {name:'Wein (rot)',cat:'Getränke',kcal:85,protein:0.1,carbs:2.6,fat:0},
+  {name:'Energy Drink',cat:'Getränke',kcal:45,protein:0,carbs:11,fat:0},
+  {name:'Proteinshake (Wasser)',cat:'Getränke',kcal:120,protein:24,carbs:3,fat:1.5},
+  {name:'Proteinshake (Milch)',cat:'Getränke',kcal:200,protein:30,carbs:12,fat:5},
+  {name:'Hafermilch',cat:'Getränke',kcal:46,protein:1,carbs:7,fat:1.5},
+  // Fertiggerichte / Common
+  {name:'Pizza Margherita',cat:'Fertiggerichte',kcal:266,protein:11,carbs:33,fat:10},
+  {name:'Döner Kebab',cat:'Fertiggerichte',kcal:215,protein:16,carbs:15,fat:10},
+  {name:'Burger (Beef)',cat:'Fertiggerichte',kcal:254,protein:14,carbs:24,fat:12},
+  {name:'Pommes Frites',cat:'Fertiggerichte',kcal:312,protein:3.4,carbs:41,fat:15},
+  {name:'Sushi (Lachs Maki)',cat:'Fertiggerichte',kcal:179,protein:8,carbs:28,fat:4},
+  {name:'Rösti',cat:'Fertiggerichte',kcal:176,protein:2.5,carbs:22,fat:9},
+  {name:'Älplermagronen',cat:'Fertiggerichte',kcal:190,protein:8,carbs:22,fat:8},
+  {name:'Birchermüesli',cat:'Fertiggerichte',kcal:142,protein:4,carbs:22,fat:4},
+  {name:'Raclette (1 Scheibe)',cat:'Fertiggerichte',kcal:357,protein:23,carbs:0.5,fat:29},
+  {name:'Fondue (Käse)',cat:'Fertiggerichte',kcal:264,protein:17,carbs:3,fat:20},
+  // Saucen & Öl
+  {name:'Olivenöl',cat:'Saucen',kcal:884,protein:0,carbs:0,fat:100},
+  {name:'Kokosöl',cat:'Saucen',kcal:862,protein:0,carbs:0,fat:100},
+  {name:'Ketchup',cat:'Saucen',kcal:112,protein:1.2,carbs:26,fat:0.1},
+  {name:'Mayonnaise',cat:'Saucen',kcal:680,protein:1,carbs:1,fat:75},
+  {name:'Senf',cat:'Saucen',kcal:66,protein:4.4,carbs:6,fat:3.3},
+  {name:'Sojasauce',cat:'Saucen',kcal:53,protein:8,carbs:5,fat:0},
+  {name:'Balsamico',cat:'Saucen',kcal:88,protein:0.5,carbs:17,fat:0},
+  {name:'Whey Protein Pulver',cat:'Saucen',kcal:400,protein:80,carbs:8,fat:6},
+  {name:'Zucker',cat:'Saucen',kcal:400,protein:0,carbs:100,fat:0},
+];
+
+let nutSelectedDate = new Date();
+let nutSelectedFood = null;
+let foodCatFilter = 'all';
+
+function getNutDateKey(d) {
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function nutDatePrev() { nutSelectedDate.setDate(nutSelectedDate.getDate()-1); renderNutrition(); }
+function nutDateNext() { nutSelectedDate.setDate(nutSelectedDate.getDate()+1); renderNutrition(); }
+
+function renderNutrition() {
+  const key = getNutDateKey(nutSelectedDate);
+  const today = getNutDateKey(new Date());
+  const label = key === today ? t('todaysSummary') : nutSelectedDate.toLocaleDateString(getLoc(), {weekday:'short',day:'2-digit',month:'short'});
+  document.getElementById('nutDateLabel').textContent = label;
+
+  const log = (state.nutritionLog || []).filter(e => e.date === key);
+  const totals = { kcal:0, protein:0, carbs:0, fat:0 };
+  log.forEach(e => { totals.kcal += e.kcal; totals.protein += e.protein; totals.carbs += e.carbs; totals.fat += e.fat; });
+  const goals = state.nutritionGoals || { kcal:2000, protein:150, carbs:250, fat:65 };
+
+  document.getElementById('nutKcalVal').textContent = Math.round(totals.kcal);
+  document.getElementById('nutKcalBar').style.width = Math.min(100, (totals.kcal/goals.kcal)*100) + '%';
+  document.getElementById('nutKcalGoal').textContent = '/ ' + goals.kcal;
+  document.getElementById('nutProteinVal').innerHTML = Math.round(totals.protein) + '<span class="unit">g</span>';
+  document.getElementById('nutProteinBar').style.width = Math.min(100, (totals.protein/goals.protein)*100) + '%';
+  document.getElementById('nutProteinGoal').textContent = '/ ' + goals.protein + 'g';
+  document.getElementById('nutCarbsVal').innerHTML = Math.round(totals.carbs) + '<span class="unit">g</span>';
+  document.getElementById('nutCarbsBar').style.width = Math.min(100, (totals.carbs/goals.carbs)*100) + '%';
+  document.getElementById('nutCarbsGoal').textContent = '/ ' + goals.carbs + 'g';
+  document.getElementById('nutFatVal').innerHTML = Math.round(totals.fat) + '<span class="unit">g</span>';
+  document.getElementById('nutFatBar').style.width = Math.min(100, (totals.fat/goals.fat)*100) + '%';
+  document.getElementById('nutFatGoal').textContent = '/ ' + goals.fat + 'g';
+
+  const list = document.getElementById('nutLogList');
+  if (log.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="icon">🍽</div><div>' + t('noFoodYet') + '</div></div>';
+  } else {
+    list.innerHTML = log.map((e,i) => `
+      <div class="nut-log-item">
+        <div style="flex:1;min-width:0;">
+          <div class="nut-log-name">${escapeHtml(e.name)}</div>
+          <div class="nut-log-meta">P:${Math.round(e.protein)}g K:${Math.round(e.carbs)}g F:${Math.round(e.fat)}g • ${e.amount}g</div>
+        </div>
+        <div style="text-align:right;display:flex;align-items:center;gap:10px;">
+          <div>
+            <div class="nut-log-kcal">${Math.round(e.kcal)}</div>
+            <div class="nut-log-amount">kcal</div>
+          </div>
+          <button class="cardio-delete" style="position:static;" onclick="deleteNutEntry('${e.id}')">✕</button>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function deleteNutEntry(id) {
+  state.nutritionLog = state.nutritionLog.filter(e => e.id !== id);
+  saveState(); renderNutrition();
+}
+
+function getAllFoods() {
+  return [...FOOD_DATABASE, ...(state.customFoods || [])];
+}
+
+function openFoodModal() {
+  document.getElementById('foodSearch').value = '';
+  foodCatFilter = 'all';
+  renderFoodCatPills();
+  filterFoods();
+  document.getElementById('foodModal').classList.add('active');
+}
+function closeFoodModal() { document.getElementById('foodModal').classList.remove('active'); }
+
+function renderFoodCatPills() {
+  const cats = [...new Set(getAllFoods().map(f => f.cat))];
+  const container = document.getElementById('foodCatPills');
+  container.innerHTML = `<div class="food-cat-pill ${foodCatFilter==='all'?'active':''}" onclick="setFoodCat('all')">Alle</div>` +
+    cats.map(c => `<div class="food-cat-pill ${foodCatFilter===c?'active':''}" onclick="setFoodCat('${escapeHtml(c)}')">${escapeHtml(c)}</div>`).join('');
+}
+function setFoodCat(cat) { foodCatFilter = cat; renderFoodCatPills(); filterFoods(); }
+
+function filterFoods() {
+  const q = document.getElementById('foodSearch').value.toLowerCase();
+  const foods = getAllFoods().filter(f => {
+    if (foodCatFilter !== 'all' && f.cat !== foodCatFilter) return false;
+    return f.name.toLowerCase().includes(q);
+  });
+  const list = document.getElementById('foodListModal');
+  list.innerHTML = foods.slice(0, 50).map(f => `
+    <div class="exercise-option" onclick="selectFood('${escapeHtml(f.name).replace(/'/g,"\\'")}')">
+      <div>
+        <span>${escapeHtml(f.name)}</span>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:2px;">${f.kcal} kcal | P:${f.protein}g K:${f.carbs}g F:${f.fat}g</div>
+      </div>
+      <span class="muscle" style="font-size:10px;">${escapeHtml(f.cat)}</span>
+    </div>
+  `).join('') || '<div class="empty-state">Kein Essen gefunden</div>';
+}
+
+function selectFood(name) {
+  const food = getAllFoods().find(f => f.name === name);
+  if (!food) return;
+  nutSelectedFood = food;
+  closeFoodModal();
+  document.getElementById('foodAmountTitle').textContent = food.name;
+  document.getElementById('foodAmountInfo').textContent = `${food.kcal} kcal | P:${food.protein}g K:${food.carbs}g F:${food.fat}g ${t('perHundredG')}`;
+  document.getElementById('foodAmountInput').value = 100;
+  updateFoodPreview();
+  document.getElementById('foodAmountModal').classList.add('active');
+}
+function closeFoodAmountModal() { document.getElementById('foodAmountModal').classList.remove('active'); }
+
+function setFoodAmount(g) {
+  document.getElementById('foodAmountInput').value = g;
+  document.querySelectorAll('#foodAmountModal .cardio-type-pill').forEach(p => {
+    p.classList.toggle('active', parseInt(p.textContent) === g);
+  });
+  updateFoodPreview();
+}
+
+function updateFoodPreview() {
+  if (!nutSelectedFood) return;
+  const g = parseFloat(document.getElementById('foodAmountInput').value) || 100;
+  const f = nutSelectedFood;
+  const mult = g / 100;
+  document.getElementById('foodAmountPreview').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;text-align:center;">
+      <div><div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;font-weight:700;">kcal</div><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);">${Math.round(f.kcal*mult)}</div></div>
+      <div><div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;font-weight:700;">Protein</div><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#4ade80;">${(f.protein*mult).toFixed(1)}g</div></div>
+      <div><div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;font-weight:700;">Carbs</div><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#fbbf24;">${(f.carbs*mult).toFixed(1)}g</div></div>
+      <div><div style="font-size:10px;color:var(--text-dim);text-transform:uppercase;font-weight:700;">Fett</div><div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:#f87171;">${(f.fat*mult).toFixed(1)}g</div></div>
+    </div>`;
+}
+
+function confirmAddFood() {
+  if (!nutSelectedFood) return;
+  const g = parseFloat(document.getElementById('foodAmountInput').value) || 100;
+  const f = nutSelectedFood;
+  const mult = g / 100;
+  if (!state.nutritionLog) state.nutritionLog = [];
+  state.nutritionLog.push({
+    id: 'nut_' + Date.now(),
+    date: getNutDateKey(nutSelectedDate),
+    name: f.name,
+    amount: g,
+    kcal: Math.round(f.kcal * mult * 10) / 10,
+    protein: Math.round(f.protein * mult * 10) / 10,
+    carbs: Math.round(f.carbs * mult * 10) / 10,
+    fat: Math.round(f.fat * mult * 10) / 10,
+  });
+  saveState();
+  closeFoodAmountModal();
+  renderNutrition();
+  showToast('🍎 ' + f.name + ' (' + g + 'g) hinzugefügt');
+}
+
+function toggleCustomFoodForm() {
+  const form = document.getElementById('customFoodForm');
+  form.classList.toggle('active');
+}
+
+function saveCustomFood() {
+  const name = document.getElementById('cfName').value.trim();
+  const kcal = parseFloat(document.getElementById('cfKcal').value) || 0;
+  const protein = parseFloat(document.getElementById('cfProtein').value) || 0;
+  const carbs = parseFloat(document.getElementById('cfCarbs').value) || 0;
+  const fat = parseFloat(document.getElementById('cfFat').value) || 0;
+  if (!name) { showToast('Name eingeben'); return; }
+  if (!state.customFoods) state.customFoods = [];
+  state.customFoods.push({ name, cat: 'Eigene', kcal, protein, carbs, fat });
+  saveState();
+  document.getElementById('cfName').value = '';
+  document.getElementById('cfKcal').value = '';
+  document.getElementById('cfProtein').value = '';
+  document.getElementById('cfCarbs').value = '';
+  document.getElementById('cfFat').value = '';
+  document.getElementById('customFoodForm').classList.remove('active');
+  filterFoods();
+  showToast('✓ ' + name + ' gespeichert');
+}
+
+function openNutGoalsModal() {
+  const g = state.nutritionGoals || { kcal:2000, protein:150, carbs:250, fat:65 };
+  document.getElementById('goalKcal').value = g.kcal;
+  document.getElementById('goalProtein').value = g.protein;
+  document.getElementById('goalCarbs').value = g.carbs;
+  document.getElementById('goalFat').value = g.fat;
+  document.getElementById('nutGoalsModal').classList.add('active');
+}
+function closeNutGoalsModal() { document.getElementById('nutGoalsModal').classList.remove('active'); }
+function saveNutGoals() {
+  state.nutritionGoals = {
+    kcal: parseInt(document.getElementById('goalKcal').value) || 2000,
+    protein: parseInt(document.getElementById('goalProtein').value) || 150,
+    carbs: parseInt(document.getElementById('goalCarbs').value) || 250,
+    fat: parseInt(document.getElementById('goalFat').value) || 65,
+  };
+  saveState();
+  closeNutGoalsModal();
+  renderNutrition();
+  showToast('Ziele gespeichert');
+}
+
+// =====================================================
+// FEATURE: ROUTE GENERATOR
+// =====================================================
+let selectedRouteDist = 5;
+let generatedRouteData = null;
+let routeGenMapInstance = null;
+let routeDetailMapInstance2 = null;
+
+function selectRouteDist(km) {
+  selectedRouteDist = km;
+  document.querySelectorAll('#routeDistPills .cardio-type-pill').forEach(p => {
+    p.classList.toggle('active', parseInt(p.textContent) === km);
+  });
+}
+
+function generateRoute() {
+  const btn = document.getElementById('genRouteBtn');
+  const status = document.getElementById('routeStatus');
+  status.style.display = '';
+  status.textContent = t('locating');
+  btn.disabled = true;
+  btn.textContent = '...';
+
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      status.textContent = t('generating');
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      buildCircularRoute(lat, lon, selectedRouteDist).then(route => {
+        btn.disabled = false;
+        btn.textContent = t('generateRoute');
+        if (route) {
+          status.style.display = 'none';
+          generatedRouteData = route;
+          showRouteOnMap(route);
+        } else {
+          status.textContent = 'Route konnte nicht generiert werden. Nochmal versuchen.';
+        }
+      });
+    },
+    err => {
+      btn.disabled = false;
+      btn.textContent = t('generateRoute');
+      status.textContent = t('locationError') + ': ' + err.message;
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
+
+async function buildCircularRoute(centerLat, centerLon, distKm) {
+  const numPoints = 6;
+  const radiusKm = distKm / (2 * Math.PI);
+  const randomOffset = 0.2;
+  const startAngle = Math.random() * 2 * Math.PI;
+  const waypoints = [];
+
+  for (let i = 0; i < numPoints; i++) {
+    const angle = startAngle + (2 * Math.PI * i / numPoints);
+    const r = radiusKm * (1 + (Math.random() - 0.5) * randomOffset);
+    const dLat = (r / 111.32) * Math.cos(angle);
+    const dLon = (r / (111.32 * Math.cos(centerLat * Math.PI / 180))) * Math.sin(angle);
+    waypoints.push([centerLon + dLon, centerLat + dLat]);
+  }
+  waypoints.push(waypoints[0]);
+
+  const coords = waypoints.map(w => w[0].toFixed(6) + ',' + w[1].toFixed(6)).join(';');
+  const url = 'https://router.project-osrm.org/route/v1/foot/' + coords + '?overview=full&geometries=geojson&steps=false';
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.code !== 'Ok' || !data.routes || !data.routes[0]) return null;
+    const route = data.routes[0];
+    const geojson = route.geometry;
+    const actualDistKm = Math.round(route.distance / 10) / 100;
+    const durationMin = Math.round(route.duration / 60);
+    return {
+      coordinates: geojson.coordinates.map(c => [c[1], c[0]]),
+      distance: actualDistKm,
+      duration: durationMin,
+      center: [centerLat, centerLon],
+    };
+  } catch(e) {
+    return null;
+  }
+}
+
+function showRouteOnMap(route) {
+  const mapEl = document.getElementById('routeGenMap');
+  const infoEl = document.getElementById('routeGenInfo');
+  mapEl.style.display = '';
+  infoEl.style.display = '';
+
+  if (routeGenMapInstance) { routeGenMapInstance.remove(); routeGenMapInstance = null; }
+  routeGenMapInstance = L.map(mapEl, { zoomControl: true, attributionControl: false });
+  createDarkTileLayer().addTo(routeGenMapInstance);
+
+  const line = L.polyline(route.coordinates, { color: '#d4ff3a', weight: 3.5 }).addTo(routeGenMapInstance);
+  L.circleMarker(route.center, { radius: 8, color: '#4ade80', fillColor: '#4ade80', fillOpacity: 1 }).addTo(routeGenMapInstance);
+  routeGenMapInstance.fitBounds(line.getBounds(), { padding: [30, 30] });
+
+  document.getElementById('routeGenStats').innerHTML = `
+    <div class="gps-stat"><div class="gps-stat-label">Distanz</div><div class="gps-stat-val">${route.distance}<span style="font-size:11px;color:var(--text-dim);"> km</span></div></div>
+    <div class="gps-stat"><div class="gps-stat-label">Dauer (ca.)</div><div class="gps-stat-val">${route.duration}<span style="font-size:11px;color:var(--text-dim);"> min</span></div></div>
+  `;
+}
+
+function saveGeneratedRoute() {
+  if (!generatedRouteData) return;
+  const name = document.getElementById('routeNameInput').value.trim() || (selectedRouteDist + 'km Route');
+  if (!state.savedRoutes) state.savedRoutes = [];
+  const reduced = generatedRouteData.coordinates.length > 300
+    ? generatedRouteData.coordinates.filter((_,i) => i % Math.ceil(generatedRouteData.coordinates.length / 300) === 0)
+    : generatedRouteData.coordinates;
+  state.savedRoutes.push({
+    id: 'route_' + Date.now(),
+    name: name,
+    distance: generatedRouteData.distance,
+    duration: generatedRouteData.duration,
+    center: generatedRouteData.center,
+    coordinates: reduced,
+    timestamp: Date.now(),
+  });
+  saveState();
+  document.getElementById('routeNameInput').value = '';
+  document.getElementById('routeGenMap').style.display = 'none';
+  document.getElementById('routeGenInfo').style.display = 'none';
+  if (routeGenMapInstance) { routeGenMapInstance.remove(); routeGenMapInstance = null; }
+  generatedRouteData = null;
+  renderSavedRoutes();
+  showToast('Route gespeichert!');
+}
+
+function renderSavedRoutes() {
+  const list = document.getElementById('savedRoutesList');
+  if (!list) return;
+  const routes = state.savedRoutes || [];
+  if (routes.length === 0) {
+    list.innerHTML = '<div class="empty-state" style="padding:20px;"><div class="icon">🗺</div><div>' + t('noRoutes') + '</div></div>';
+    return;
+  }
+  list.innerHTML = [...routes].sort((a,b) => b.timestamp - a.timestamp).map(r => {
+    const d = new Date(r.timestamp);
+    const dateStr = d.toLocaleDateString(getLoc(), { day:'2-digit', month:'short' });
+    return `
+      <div class="cardio-item" onclick="openRouteDetail('${r.id}')">
+        <button class="cardio-delete" onclick="event.stopPropagation(); deleteRoute('${r.id}')">✕</button>
+        <div class="cardio-item-date">${dateStr}</div>
+        <div class="cardio-item-type">🗺 ${escapeHtml(r.name)}</div>
+        <div class="cardio-item-stats"><span><strong>${r.distance}</strong> km</span><span>~<strong>${r.duration}</strong> min</span></div>
+      </div>`;
+  }).join('');
+}
+
+function deleteRoute(id) {
+  if (!confirm('Route löschen?')) return;
+  state.savedRoutes = (state.savedRoutes || []).filter(r => r.id !== id);
+  saveState();
+  renderSavedRoutes();
+}
+
+function openRouteDetail(id) {
+  const r = (state.savedRoutes || []).find(x => x.id === id);
+  if (!r || !r.coordinates) return;
+  document.getElementById('routeDetailTitle').textContent = r.name;
+  const mapEl = document.getElementById('routeDetailMap');
+  mapEl.style.display = '';
+  document.getElementById('routeDetailStats').innerHTML = `
+    <div class="detail-stat"><div class="detail-stat-label">Distanz</div><div class="detail-stat-val">${r.distance}<span class="unit"> km</span></div></div>
+    <div class="detail-stat"><div class="detail-stat-label">Dauer (ca.)</div><div class="detail-stat-val">${r.duration}<span class="unit"> min</span></div></div>
+  `;
+  document.getElementById('routeDetailModal').style.display = 'flex';
+  setTimeout(() => {
+    if (routeDetailMapInstance2) { routeDetailMapInstance2.remove(); routeDetailMapInstance2 = null; }
+    routeDetailMapInstance2 = L.map(mapEl, { zoomControl: true, attributionControl: false });
+    createDarkTileLayer().addTo(routeDetailMapInstance2);
+    const line = L.polyline(r.coordinates, { color: '#d4ff3a', weight: 3.5 }).addTo(routeDetailMapInstance2);
+    if (r.center) L.circleMarker(r.center, { radius: 6, color: '#4ade80', fillColor: '#4ade80', fillOpacity: 1 }).addTo(routeDetailMapInstance2);
+    routeDetailMapInstance2.fitBounds(line.getBounds(), { padding: [30, 30] });
+  }, 150);
+}
+
+function closeRouteDetail() {
+  document.getElementById('routeDetailModal').style.display = 'none';
+  if (routeDetailMapInstance2) { routeDetailMapInstance2.remove(); routeDetailMapInstance2 = null; }
 }
 
 // Init app — MUST be after all let/const declarations to avoid TDZ
