@@ -1421,6 +1421,39 @@
     white-space: nowrap;
   }
   .nut-goals-btn:active { border-color: var(--accent); background: rgba(212,255,58,0.08); }
+  .nut-chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .nut-chart-title {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .nut-profile-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .nut-profile-bar:active { border-color: var(--accent); }
+  .nut-profile-stat { display: flex; align-items: baseline; gap: 4px; }
+  .nut-profile-val { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.5px; }
+  .nut-profile-unit { font-size: 11px; color: var(--text-dim); font-weight: 600; text-transform: uppercase; }
+  .nut-profile-divider { width: 1px; height: 24px; background: var(--border); }
+  .nut-profile-edit { margin-left: auto; color: var(--text-dim); font-size: 16px; }
 
   /* Paywall Modal */
   .paywall-overlay {
@@ -1991,6 +2024,22 @@
     <div class="view" id="view-nutrition">
       <div class="card-title" style="margin-bottom:16px;" data-i18n="nutritionTracking">Ernährungs-Tracker</div>
 
+      <!-- Weekly Chart -->
+      <div class="nut-chart-card" id="nutWeekChart">
+        <div class="nut-chart-title">Woche</div>
+        <canvas id="nutWeekCanvas" width="320" height="100"></canvas>
+      </div>
+
+      <!-- Weight & Profile Summary -->
+      <div class="nut-profile-bar" id="nutProfileBar" onclick="openNutProfileModal()">
+        <div class="nut-profile-stat"><span class="nut-profile-val" id="nutProfWeight">--</span><span class="nut-profile-unit">kg</span></div>
+        <div class="nut-profile-divider"></div>
+        <div class="nut-profile-stat"><span class="nut-profile-val" id="nutProfTDEE">--</span><span class="nut-profile-unit">TDEE</span></div>
+        <div class="nut-profile-divider"></div>
+        <div class="nut-profile-stat"><span class="nut-profile-val" id="nutProfDeficit">--</span><span class="nut-profile-unit">Ziel</span></div>
+        <div class="nut-profile-edit">✎</div>
+      </div>
+
       <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;">
         <button class="calendar-nav-btn" onclick="nutDatePrev()">‹</button>
         <div style="flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;" id="nutDateLabel"></div>
@@ -2305,6 +2354,51 @@
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeNutGoalsModal()">Abbruch</button>
       <button class="btn-primary" onclick="saveNutGoals()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- BODY PROFILE MODAL -->
+<div class="modal-overlay" id="nutProfileModal" onclick="if(event.target===this) closeNutProfileModal()">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Körperprofil</div>
+    <div class="cardio-form-grid">
+      <div class="cardio-field"><label>Gewicht (kg)</label><input type="number" id="profWeight" inputmode="decimal" step="0.1" /></div>
+      <div class="cardio-field"><label>Grösse (cm)</label><input type="number" id="profHeight" inputmode="numeric" /></div>
+      <div class="cardio-field"><label>Alter</label><input type="number" id="profAge" inputmode="numeric" /></div>
+      <div class="cardio-field">
+        <label>Geschlecht</label>
+        <select id="profGender" class="exercise-select" style="margin:0;">
+          <option value="m">Männlich</option>
+          <option value="f">Weiblich</option>
+        </select>
+      </div>
+      <div class="cardio-field">
+        <label>Aktivität</label>
+        <select id="profActivity" class="exercise-select" style="margin:0;">
+          <option value="1.2">Sitzend (wenig Bewegung)</option>
+          <option value="1.375">Leicht aktiv (1-3x/Woche)</option>
+          <option value="1.55" selected>Moderat (3-5x/Woche)</option>
+          <option value="1.725">Sehr aktiv (6-7x/Woche)</option>
+          <option value="1.9">Extrem aktiv (2x täglich)</option>
+        </select>
+      </div>
+      <div class="cardio-field">
+        <label>Gewichtsverlust/Woche</label>
+        <select id="profWeeklyLoss" class="exercise-select" style="margin:0;">
+          <option value="0">Halten</option>
+          <option value="0.25">-0.25 kg/Woche</option>
+          <option value="0.5" selected>-0.5 kg/Woche</option>
+          <option value="0.75">-0.75 kg/Woche</option>
+          <option value="1">-1.0 kg/Woche (max)</option>
+        </select>
+      </div>
+    </div>
+    <div id="profCalcPreview" style="background:var(--surface-2);border-radius:10px;padding:12px;margin:12px 0;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeNutProfileModal()">Abbruch</button>
+      <button class="btn-primary" onclick="saveNutProfile()">Berechnen & Speichern</button>
     </div>
   </div>
 </div>
@@ -3624,6 +3718,8 @@ let state = {
   nutritionLog: [],
   customFoods: [],
   nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 },
+  nutProfile: null,
+  weightLog: [],
   savedRoutes: [],
 };
 let timerInterval = null;
@@ -3694,7 +3790,7 @@ function logoutProfile() {
     workouts: [], prs: {}, myTemplates: [], customThresholds: {},
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
     customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [], cardioTemplates: [],
-    nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, savedRoutes: [],
+    nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, nutProfile: null, weightLog: [], savedRoutes: [],
   };
   if (isFirebaseReady()) firebaseAuth.signOut().catch(() => {});
   document.getElementById('mainApp').style.display = 'none';
@@ -3733,7 +3829,7 @@ function loadState() {
     workouts: [], prs: {}, myTemplates: [], customThresholds: {},
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
     customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [], cardioTemplates: [],
-    nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, savedRoutes: [],
+    nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, nutProfile: null, weightLog: [], savedRoutes: [],
   };
   const saved = localStorage.getItem(storageKey());
   if (saved) {
@@ -3772,6 +3868,8 @@ function saveState() {
     nutritionLog: state.nutritionLog,
     customFoods: state.customFoods,
     nutritionGoals: state.nutritionGoals,
+    nutProfile: state.nutProfile,
+    weightLog: state.weightLog,
     savedRoutes: state.savedRoutes,
   }));
 }
@@ -5811,6 +5909,12 @@ document.querySelectorAll('.more-menu-item').forEach(btn => {
   });
 });
 
+['profWeight','profHeight','profAge','profGender','profActivity','profWeeklyLoss'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', updateProfilePreview);
+  if (el) el.addEventListener('change', updateProfilePreview);
+});
+
 document.querySelectorAll('.section-tab').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.section-tab').forEach(b => b.classList.remove('active'));
@@ -6916,6 +7020,8 @@ function renderNutrition() {
       </div>
     `).join('');
   }
+  renderNutProfileBar();
+  renderNutWeekChart();
 }
 
 function deleteNutEntry(id) {
@@ -7064,6 +7170,176 @@ function saveNutGoals() {
   closeNutGoalsModal();
   renderNutrition();
   showToast('Ziele gespeichert');
+}
+
+// =====================================================
+// FEATURE: BODY PROFILE & WEEKLY CHART
+// =====================================================
+
+function calcTDEE(profile) {
+  if (!profile) return null;
+  const { weight, height, age, gender, activity } = profile;
+  let bmr;
+  if (gender === 'm') {
+    bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+  } else {
+    bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+  }
+  return Math.round(bmr * parseFloat(activity));
+}
+
+function calcTargetKcal(profile) {
+  const tdee = calcTDEE(profile);
+  if (!tdee) return 2000;
+  const deficit = (parseFloat(profile.weeklyLoss) || 0) * 1100;
+  return Math.max(1200, Math.round(tdee - deficit));
+}
+
+function openNutProfileModal() {
+  const p = state.nutProfile || {};
+  document.getElementById('profWeight').value = p.weight || '';
+  document.getElementById('profHeight').value = p.height || '';
+  document.getElementById('profAge').value = p.age || '';
+  document.getElementById('profGender').value = p.gender || 'm';
+  document.getElementById('profActivity').value = p.activity || '1.55';
+  document.getElementById('profWeeklyLoss').value = p.weeklyLoss || '0.5';
+  updateProfilePreview();
+  document.getElementById('nutProfileModal').classList.add('active');
+}
+
+function closeNutProfileModal() { document.getElementById('nutProfileModal').classList.remove('active'); }
+
+function updateProfilePreview() {
+  const w = parseFloat(document.getElementById('profWeight').value);
+  const h = parseFloat(document.getElementById('profHeight').value);
+  const a = parseInt(document.getElementById('profAge').value);
+  const g = document.getElementById('profGender').value;
+  const act = document.getElementById('profActivity').value;
+  const loss = document.getElementById('profWeeklyLoss').value;
+  const el = document.getElementById('profCalcPreview');
+  if (!w || !h || !a) { el.textContent = 'Alle Felder ausfüllen für Berechnung'; return; }
+  const p = { weight: w, height: h, age: a, gender: g, activity: act, weeklyLoss: loss };
+  const tdee = calcTDEE(p);
+  const target = calcTargetKcal(p);
+  const proteinG = Math.round(w * 2);
+  const fatG = Math.round(target * 0.25 / 9);
+  const carbsG = Math.round((target - proteinG * 4 - fatG * 9) / 4);
+  el.innerHTML = `TDEE: <b>${tdee}</b> kcal/Tag<br>Ziel: <b>${target}</b> kcal/Tag<br>Protein: <b>${proteinG}g</b> • Carbs: <b>${carbsG}g</b> • Fett: <b>${fatG}g</b>`;
+}
+
+function saveNutProfile() {
+  const w = parseFloat(document.getElementById('profWeight').value);
+  const h = parseFloat(document.getElementById('profHeight').value);
+  const a = parseInt(document.getElementById('profAge').value);
+  if (!w || !h || !a) { showToast('Alle Felder ausfüllen'); return; }
+  const profile = {
+    weight: w, height: h, age: a,
+    gender: document.getElementById('profGender').value,
+    activity: document.getElementById('profActivity').value,
+    weeklyLoss: document.getElementById('profWeeklyLoss').value,
+  };
+  state.nutProfile = profile;
+
+  const target = calcTargetKcal(profile);
+  const proteinG = Math.round(w * 2);
+  const fatG = Math.round(target * 0.25 / 9);
+  const carbsG = Math.round((target - proteinG * 4 - fatG * 9) / 4);
+  state.nutritionGoals = { kcal: target, protein: proteinG, carbs: Math.max(50, carbsG), fat: fatG };
+
+  const today = getNutDateKey(new Date());
+  const existing = (state.weightLog || []).find(e => e.date === today);
+  if (existing) { existing.kg = w; } else {
+    if (!state.weightLog) state.weightLog = [];
+    state.weightLog.push({ date: today, kg: w });
+  }
+
+  saveState();
+  closeNutProfileModal();
+  renderNutrition();
+  renderNutProfileBar();
+  renderNutWeekChart();
+  showToast('Profil gespeichert — Ziele berechnet');
+}
+
+function renderNutProfileBar() {
+  const p = state.nutProfile;
+  const wEl = document.getElementById('nutProfWeight');
+  const tEl = document.getElementById('nutProfTDEE');
+  const dEl = document.getElementById('nutProfDeficit');
+  if (!p) {
+    wEl.textContent = '--';
+    tEl.textContent = '--';
+    dEl.textContent = '--';
+    return;
+  }
+  wEl.textContent = p.weight;
+  tEl.textContent = calcTDEE(p);
+  dEl.textContent = calcTargetKcal(p);
+}
+
+function renderNutWeekChart() {
+  const canvas = document.getElementById('nutWeekCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.parentElement.clientWidth - 28;
+  const h = 90;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, w, h);
+
+  const goal = (state.nutritionGoals || {}).kcal || 2000;
+  const days = [];
+  const dayLabels = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = getNutDateKey(d);
+    const log = (state.nutritionLog || []).filter(e => e.date === key);
+    let total = 0;
+    log.forEach(e => total += e.kcal);
+    days.push({ label: dayLabels[d.getDay()], kcal: total, isToday: i === 0 });
+  }
+
+  const maxVal = Math.max(goal * 1.2, ...days.map(d => d.kcal));
+  const barW = Math.floor((w - 8) / 7) - 6;
+  const barMaxH = h - 24;
+
+  days.forEach((d, i) => {
+    const x = 4 + i * (barW + 6);
+    const barH = Math.max(2, (d.kcal / maxVal) * barMaxH);
+    const y = barMaxH - barH;
+
+    if (d.kcal > goal) {
+      ctx.fillStyle = 'rgba(248,113,113,0.7)';
+    } else if (d.isToday) {
+      ctx.fillStyle = 'rgba(212,255,58,0.8)';
+    } else {
+      ctx.fillStyle = 'rgba(212,255,58,0.35)';
+    }
+    ctx.beginPath();
+    ctx.roundRect(x, y, barW, barH, 3);
+    ctx.fill();
+
+    ctx.fillStyle = d.isToday ? '#f5f5f5' : '#888';
+    ctx.font = '500 10px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(d.label, x + barW / 2, h - 2);
+  });
+
+  const goalY = barMaxH - (goal / maxVal) * barMaxH;
+  ctx.strokeStyle = 'rgba(212,255,58,0.4)';
+  ctx.setLineDash([4, 3]);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, goalY);
+  ctx.lineTo(w, goalY);
+  ctx.stroke();
+  ctx.setLineDash([]);
 }
 
 // =====================================================
