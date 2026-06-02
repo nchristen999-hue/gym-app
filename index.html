@@ -140,10 +140,9 @@
     border-radius: 1px;
   }
   .more-menu {
-    position: absolute;
-    bottom: calc(100% + 8px);
-    right: 50%;
-    transform: translateX(50%);
+    position: fixed;
+    bottom: 70px;
+    right: 12px;
     background: var(--surface-2);
     border: 1px solid var(--border);
     border-radius: 14px;
@@ -151,8 +150,9 @@
     display: none;
     flex-direction: column;
     gap: 2px;
-    min-width: 160px;
-    box-shadow: 0 -4px 24px rgba(0,0,0,0.5);
+    min-width: 170px;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.6);
+    z-index: 101;
     animation: fadeIn 0.15s;
   }
   .more-menu.show { display: flex; }
@@ -2023,19 +2023,18 @@
   </main>
 
   <div class="more-menu-backdrop" id="moreMenuBackdrop" onclick="closeMoreMenu()"></div>
+  <div class="more-menu" id="moreMenu">
+    <button class="more-menu-item" data-mview="history" data-pro="true"><span class="mm-icon">📅</span><span data-i18n="history">History</span><span class="mm-lock tab-lock" id="lockHistory">🔒</span></button>
+    <button class="more-menu-item" data-mview="medals" data-pro="true"><span class="mm-icon">🏆</span><span data-i18n="medals">Medals</span><span class="mm-lock tab-lock" id="lockMedals">🔒</span></button>
+    <button class="more-menu-item" data-mview="progress" data-pro="true"><span class="mm-icon">📈</span><span data-i18n="stats">Stats</span><span class="mm-lock tab-lock" id="lockProgress">🔒</span></button>
+  </div>
   <nav class="tabs">
     <div class="inner">
       <button class="tab-btn active" data-view="home"><span class="icon">🏠</span><span data-i18n="home">Home</span></button>
       <button class="tab-btn" data-view="workout"><span class="icon">💪</span><span data-i18n="training">Training</span></button>
       <button class="tab-btn" data-view="nutrition" data-pro="true"><span class="icon">🍎</span><span><span data-i18n="nutrition">Nutrition</span><span class="tab-lock" id="lockNutrition">🔒</span></span></button>
       <button class="tab-btn" data-view="cardio" data-pro="true"><span class="icon">🏃</span><span><span data-i18n="cardio">Cardio</span><span class="tab-lock" id="lockCardio">🔒</span></span></button>
-      <button class="tab-btn" id="moreTabBtn" onclick="toggleMoreMenu(event)"><span class="icon">☰</span><span>More</span>
-        <div class="more-menu" id="moreMenu">
-          <button class="more-menu-item" data-mview="history" data-pro="true"><span class="mm-icon">📅</span><span data-i18n="history">History</span><span class="mm-lock tab-lock" id="lockHistory">🔒</span></button>
-          <button class="more-menu-item" data-mview="medals" data-pro="true"><span class="mm-icon">🏆</span><span data-i18n="medals">Medals</span><span class="mm-lock tab-lock" id="lockMedals">🔒</span></button>
-          <button class="more-menu-item" data-mview="progress" data-pro="true"><span class="mm-icon">📈</span><span data-i18n="stats">Stats</span><span class="mm-lock tab-lock" id="lockProgress">🔒</span></button>
-        </div>
-      </button>
+      <button class="tab-btn" id="moreTabBtn" onclick="toggleMoreMenu(event)"><span class="icon">⋯</span><span>More</span></button>
     </div>
   </nav>
 
@@ -7101,17 +7100,17 @@ function generateRoute() {
 }
 
 async function buildCircularRoute(startLat, startLon, distKm) {
-  const numPoints = 5;
-  const roadFactor = 0.45;
-  let radiusKm = (distKm / (2 * Math.PI)) * roadFactor;
-  const startAngle = Math.random() * 2 * Math.PI;
+  const numPoints = 4;
+  let radiusKm = distKm / 12;
+  let bestRoute = null;
+  let bestDiff = Infinity;
 
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const startAngle = Math.random() * 2 * Math.PI;
     const waypoints = [[startLon, startLat]];
     for (let i = 1; i <= numPoints; i++) {
       const angle = startAngle + (2 * Math.PI * i / (numPoints + 1));
-      const jitter = 1 + (Math.random() - 0.5) * 0.15;
-      const r = radiusKm * jitter;
+      const r = radiusKm * (1 + (Math.random() - 0.5) * 0.1);
       const dLat = (r / 111.32) * Math.cos(angle);
       const dLon = (r / (111.32 * Math.cos(startLat * Math.PI / 180))) * Math.sin(angle);
       waypoints.push([startLon + dLon, startLat + dLat]);
@@ -7124,49 +7123,28 @@ async function buildCircularRoute(startLat, startLon, distKm) {
     try {
       const res = await fetch(url);
       const data = await res.json();
-      if (data.code !== 'Ok' || !data.routes || !data.routes[0]) return null;
+      if (data.code !== 'Ok' || !data.routes || !data.routes[0]) continue;
       const route = data.routes[0];
-      const geojson = route.geometry;
-      const actualDistKm = route.distance / 1000;
-      const ratio = distKm / actualDistKm;
+      const actualKm = route.distance / 1000;
+      const diff = Math.abs(actualKm - distKm) / distKm;
 
-      if (ratio > 0.85 && ratio < 1.15) {
-        return {
-          coordinates: geojson.coordinates.map(c => [c[1], c[0]]),
-          distance: Math.round(actualDistKm * 100) / 100,
+      if (diff < bestDiff) {
+        bestDiff = diff;
+        bestRoute = {
+          coordinates: route.geometry.coordinates.map(c => [c[1], c[0]]),
+          distance: Math.round(actualKm * 100) / 100,
           duration: Math.round(route.duration / 60),
           center: [startLat, startLon],
         };
       }
-      radiusKm = radiusKm * ratio;
+
+      if (diff < 0.10) return bestRoute;
+      radiusKm = radiusKm * (distKm / actualKm);
     } catch(e) {
-      return null;
+      continue;
     }
   }
-
-  const waypoints = [[startLon, startLat]];
-  for (let i = 1; i <= numPoints; i++) {
-    const angle = startAngle + (2 * Math.PI * i / (numPoints + 1));
-    const r = radiusKm * (1 + (Math.random() - 0.5) * 0.1);
-    const dLat = (r / 111.32) * Math.cos(angle);
-    const dLon = (r / (111.32 * Math.cos(startLat * Math.PI / 180))) * Math.sin(angle);
-    waypoints.push([startLon + dLon, startLat + dLat]);
-  }
-  waypoints.push([startLon, startLat]);
-  const coords = waypoints.map(w => w[0].toFixed(6) + ',' + w[1].toFixed(6)).join(';');
-  const url = 'https://router.project-osrm.org/route/v1/foot/' + coords + '?overview=full&geometries=geojson&steps=false';
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.code !== 'Ok' || !data.routes || !data.routes[0]) return null;
-    const route = data.routes[0];
-    return {
-      coordinates: route.geometry.coordinates.map(c => [c[1], c[0]]),
-      distance: Math.round(route.distance / 10) / 100,
-      duration: Math.round(route.duration / 60),
-      center: [startLat, startLon],
-    };
-  } catch(e) { return null; }
+  return bestRoute;
 }
 
 function showRouteOnMap(route) {
