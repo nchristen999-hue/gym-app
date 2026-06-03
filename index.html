@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700;800;900&family=Saira:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -1485,6 +1486,106 @@
   .paywall-close { background: transparent; color: var(--text-dim); border: 1px solid var(--border); padding: 12px; border-radius: 12px; width: 100%; cursor: pointer; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
   .paywall-restore { margin-top: 12px; }
   .paywall-restore a { color: var(--text-dim); font-size: 11px; text-decoration: none; }
+
+  /* =========================================================
+     THEME: RETRO-ATHLETIC
+     Royal/Cream/Yellow/Cherry · Saira Condensed + Space Mono
+     ========================================================= */
+  body.theme-retro { --bg: #FBF5E8; --surface: #FFFFFF; --surface-2: #F0E8CC; --border: rgba(15,24,64,0.20); --border-strong: #0F1840; --text: #0F1840; --text-dim: #4A5780; --accent: #D62828; --accent-dim: #A61F1F; --royal: #1E3A8A; --yellow: #F4B400; --danger: #991B1B; --gold: #B8923D; --silver: #8C8888; --bronze: #8C5A3C; --wood: #6B5439; --platinum: #7AA0A4; }
+  body.theme-retro, body.theme-retro html { font-family: 'Saira', system-ui, sans-serif; color: var(--text); background: var(--bg); }
+  body.theme-retro {
+    background-color: var(--bg);
+    background-image: radial-gradient(rgba(15,24,64,0.06) 1px, transparent 1px), radial-gradient(ellipse 60% 30% at 90% 5%, rgba(244,180,0,0.15) 0%, transparent 60%), radial-gradient(ellipse 50% 25% at 5% 100%, rgba(214,40,40,0.08) 0%, transparent 60%);
+    background-size: 4px 4px, auto, auto;
+  }
+  body.theme-retro ::selection { background: var(--yellow); color: var(--text); }
+  body.theme-retro header { background: var(--bg); border-bottom: 3px solid var(--text); padding: 16px 20px 14px; padding-top: max(16px, env(safe-area-inset-top)); }
+  body.theme-retro header::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: repeating-linear-gradient(90deg, var(--yellow) 0 18px, var(--text) 18px 20px); }
+  body.theme-retro .logo { font-family: 'Saira Condensed', sans-serif; font-weight: 900; font-size: 28px; letter-spacing: 0.5px; color: var(--text); }
+  body.theme-retro .logo .accent { color: var(--accent); }
+  body.theme-retro .pill { background: var(--text); border: 2px solid var(--text); color: var(--bg); font-family: 'Space Mono', monospace; font-weight: 700; font-size: 12px; border-radius: 4px; padding: 6px 10px; }
+  body.theme-retro .pill.points { background: var(--yellow); color: var(--text); border-color: var(--text); box-shadow: 2px 2px 0 var(--text); }
+  body.theme-retro .pill.streak.active { background: var(--accent); color: #fff; border-color: var(--text); box-shadow: 2px 2px 0 var(--text); }
+  body.theme-retro .header-gear { background: var(--text); border: 2px solid var(--text); color: var(--bg); border-radius: 4px; }
+  body.theme-retro nav.tabs { background: var(--text); border-top: 3px solid var(--yellow); }
+  body.theme-retro .tab-btn { font-family: 'Saira Condensed', sans-serif; font-weight: 800; color: rgba(255,255,255,0.6); font-size: 10px; letter-spacing: 1.5px; }
+  body.theme-retro .tab-btn.active { color: var(--yellow); }
+  body.theme-retro .card-title { font-family: 'Saira Condensed', sans-serif; font-size: 13px; letter-spacing: 1.5px; font-weight: 800; color: var(--text); }
+  body.theme-retro .card-title-action { font-family: 'Saira Condensed', sans-serif; font-size: 12px; color: var(--accent); font-weight: 800; }
+  body.theme-retro .hero { background: var(--royal); color: #fff; border: 3px solid var(--text); border-radius: 8px; box-shadow: 6px 6px 0 var(--text); overflow: hidden; }
+  body.theme-retro .hero::before { content: 'EST. \'26'; position: absolute; top: 12px; right: 14px; background: var(--yellow); color: var(--text); padding: 4px 10px; border-radius: 4px; border: 2px solid var(--text); font-family: 'Saira Condensed', sans-serif; font-weight: 900; font-size: 12px; letter-spacing: 1.5px; }
+  body.theme-retro .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 8px; background: repeating-linear-gradient(90deg, var(--yellow) 0 14px, var(--text) 14px 16px, var(--yellow) 16px 30px, var(--accent) 30px 32px); }
+  body.theme-retro .hero-greeting { font-family: 'Space Mono', monospace; font-weight: 700; font-size: 11px; letter-spacing: 2px; color: var(--yellow); }
+  body.theme-retro .hero-title { font-family: 'Saira Condensed', sans-serif; font-weight: 900; font-size: 64px; line-height: 0.85; letter-spacing: -1px; color: #fff; text-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .start-workout-btn { background: var(--yellow); color: var(--text); border: 2px solid var(--text); box-shadow: 3px 3px 0 var(--text); font-family: 'Saira Condensed', sans-serif; font-weight: 900; border-radius: 4px; }
+  body.theme-retro .start-workout-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--text); }
+  body.theme-retro .level-card { background: var(--surface); border: 3px solid var(--text); border-radius: 8px; box-shadow: 4px 4px 0 var(--text); }
+  body.theme-retro .level-card:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--text); }
+  body.theme-retro .level-name { font-family: 'Saira Condensed', sans-serif; font-weight: 900; font-size: 24px; text-transform: uppercase; color: var(--text); }
+  body.theme-retro .level-name .num { background: var(--accent); color: #fff; padding: 2px 8px; border: 2px solid var(--text); border-radius: 4px; margin-right: 8px; }
+  body.theme-retro .level-points { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--text-dim); font-weight: 700; }
+  body.theme-retro .progress-bar { background: var(--surface-2); height: 12px; border: 2px solid var(--text); border-radius: 4px; }
+  body.theme-retro .progress-bar-fill { background: linear-gradient(90deg, var(--accent) 0%, var(--yellow) 100%); box-shadow: none; border-radius: 0; }
+  body.theme-retro .stat-card { background: var(--surface); border: 3px solid var(--text); border-radius: 8px; box-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .stat-label { font-family: 'Saira Condensed', sans-serif; font-weight: 800; font-size: 11px; color: var(--text); }
+  body.theme-retro .stat-value { font-family: 'Saira Condensed', sans-serif; font-weight: 900; font-size: 44px; letter-spacing: -1px; line-height: 0.9; color: var(--text); }
+  body.theme-retro .stat-value .unit { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 700; }
+  body.theme-retro .section-tabs, body.theme-retro .cardio-mode-tabs { background: var(--surface); border: 3px solid var(--text); border-radius: 8px; box-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .section-tab, body.theme-retro .cardio-mode-tab { font-family: 'Saira Condensed', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: 1px; border-radius: 4px; color: var(--text); }
+  body.theme-retro .section-tab.active, body.theme-retro .cardio-mode-tab.active { background: var(--accent); color: #fff; }
+  body.theme-retro .template-item, body.theme-retro .history-item, body.theme-retro .cardio-item { background: var(--surface); border: 3px solid var(--text); border-radius: 8px; box-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .template-item:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--text); }
+  body.theme-retro .template-name, body.theme-retro .exercise-name { font-family: 'Saira Condensed', sans-serif; font-weight: 800; font-size: 17px; text-transform: uppercase; }
+  body.theme-retro .template-meta, body.theme-retro .history-meta, body.theme-retro .cardio-item-stats { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dim); font-weight: 700; }
+  body.theme-retro .history-date, body.theme-retro .cardio-item-date { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text-dim); font-weight: 700; }
+  body.theme-retro .history-name, body.theme-retro .cardio-item-type { font-family: 'Saira Condensed', sans-serif; font-weight: 900; font-size: 22px; text-transform: uppercase; color: var(--text); }
+  body.theme-retro .cardio-item-stats .kcal-val { color: var(--accent); }
+  body.theme-retro .cardio-form, body.theme-retro .exercise-block { background: var(--surface); border: 3px solid var(--text); border-radius: 8px; box-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .cardio-type-pill { background: var(--surface); border: 2px solid var(--text); color: var(--text); font-family: 'Saira Condensed', sans-serif; font-size: 13px; border-radius: 6px; font-weight: 800; text-transform: uppercase; }
+  body.theme-retro .cardio-type-pill.active { background: var(--accent); border-color: var(--text); color: #fff; box-shadow: 2px 2px 0 var(--text); }
+  body.theme-retro .cardio-field input, body.theme-retro .cardio-field select { background: var(--surface-2); border: 2px solid var(--text); color: var(--text); border-radius: 4px; font-family: 'Space Mono', monospace; font-weight: 700; }
+  body.theme-retro .cardio-field input:focus, body.theme-retro .cardio-field select:focus { border-color: var(--accent); background: #fff; }
+  body.theme-retro .cardio-field label { font-family: 'Saira Condensed', sans-serif; color: var(--text); font-weight: 800; }
+  body.theme-retro .cardio-save-btn { background: var(--accent); color: #fff; border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 900; border: 3px solid var(--text); box-shadow: 4px 4px 0 var(--text); }
+  body.theme-retro .cardio-toggle-btn { background: var(--surface); border: 3px solid var(--text); color: var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 900; box-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .gps-stat { background: var(--surface-2); border: 2px solid var(--text); border-radius: 6px; }
+  body.theme-retro .gps-stat-label { font-family: 'Saira Condensed', sans-serif; font-weight: 800; color: var(--text); }
+  body.theme-retro .gps-stat-val { font-family: 'Saira Condensed', sans-serif; font-weight: 900; color: var(--accent); }
+  body.theme-retro .gps-btn { border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 900; border: 3px solid var(--text); box-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .gps-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--text); }
+  body.theme-retro .gps-btn-start, body.theme-retro .gps-btn-resume { background: var(--accent); color: #fff; }
+  body.theme-retro .gps-btn-pause { background: var(--yellow); color: var(--text); }
+  body.theme-retro .gps-btn-stop { background: var(--text); color: var(--bg); }
+  body.theme-retro .workout-timer { font-family: 'Saira Condensed', sans-serif; font-weight: 900; font-size: 44px; color: var(--accent); }
+  body.theme-retro .workout-name-input { font-family: 'Saira Condensed', sans-serif; font-weight: 900; color: var(--text); border-bottom: 2px solid var(--text); text-transform: uppercase; }
+  body.theme-retro .sets-header { font-family: 'Saira Condensed', sans-serif; font-weight: 800; color: var(--text); }
+  body.theme-retro .set-input { font-family: 'Space Mono', monospace; background: var(--surface-2); border: 2px solid var(--text); color: var(--text); border-radius: 4px; }
+  body.theme-retro .set-input:focus { border-color: var(--accent); background: #fff; }
+  body.theme-retro .set-check { border-radius: 4px; border: 2px solid var(--text); background: var(--surface); }
+  body.theme-retro .set-check.done { background: var(--accent); color: #fff; }
+  body.theme-retro .add-set-btn { border: 2px dashed var(--text); color: var(--text); border-radius: 4px; font-family: 'Saira Condensed', sans-serif; font-weight: 800; }
+  body.theme-retro .add-exercise-btn { background: var(--surface); border: 3px solid var(--text); color: var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 900; box-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .finish-btn { background: var(--accent); color: #fff; border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 900; border: 3px solid var(--text); box-shadow: 4px 4px 0 var(--text); }
+  body.theme-retro .modal-overlay { background: rgba(15,24,64,0.65); backdrop-filter: blur(2px); }
+  body.theme-retro .modal { background: var(--surface); border: 3px solid var(--text); border-radius: 8px; box-shadow: 6px 6px 0 var(--text); }
+  body.theme-retro .modal-title { font-family: 'Saira Condensed', sans-serif; font-weight: 900; font-size: 24px; color: var(--text); text-transform: uppercase; }
+  body.theme-retro .btn-primary { background: var(--accent); color: #fff; border: 2px solid var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 900; box-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .login-screen { background: var(--bg); }
+  body.theme-retro .login-container { background: var(--surface); border: 3px solid var(--text); border-radius: 8px; box-shadow: 6px 6px 0 var(--text); }
+  body.theme-retro .login-logo { font-family: 'Saira Condensed', sans-serif; font-weight: 900; font-size: 56px; color: var(--text); text-shadow: 3px 3px 0 var(--yellow); }
+  body.theme-retro .login-logo span { color: var(--accent) !important; text-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .auth-tabs { background: var(--surface-2); border: 2px solid var(--text); border-radius: 6px; }
+  body.theme-retro .auth-tab { font-family: 'Saira Condensed', sans-serif; color: var(--text); border-radius: 4px; font-weight: 800; }
+  body.theme-retro .auth-tab.active { background: var(--accent); color: #fff; }
+  body.theme-retro .auth-input-group input { background: var(--surface-2); border: 2px solid var(--text); color: var(--text); font-family: 'Space Mono', monospace; border-radius: 4px; }
+  body.theme-retro .auth-input-group input:focus { border-color: var(--accent); background: #fff; }
+  body.theme-retro .auth-btn { background: var(--accent); color: #fff; border: 3px solid var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 900; box-shadow: 4px 4px 0 var(--text); }
+  body.theme-retro .settings-overlay { background: var(--bg); }
+  body.theme-retro .settings-header { background: var(--bg); border-bottom: 3px solid var(--text); }
+  body.theme-retro .settings-action-btn { border: 2px solid var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 800; color: var(--text); }
+  body.theme-retro .settings-action-btn:active { transform: translate(1px, 1px); }
+  body.theme-retro .theme-option { border: 3px solid var(--text); border-radius: 8px; box-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .theme-option.active { border-color: var(--accent); box-shadow: 3px 3px 0 var(--accent); }
 </style>
 </head>
 <body>
@@ -2235,6 +2336,25 @@
     </div>
 
     <div class="settings-section">
+      <div class="settings-section-title">🎨 <span data-i18n="theme">Design</span></div>
+      <div style="display:flex;gap:10px;" id="themeOptions">
+        <div class="theme-option active" onclick="setTheme('default')" data-theme="default" style="flex:1;padding:14px 10px;border-radius:12px;border:2px solid var(--border);cursor:pointer;text-align:center;transition:all 0.2s;">
+          <div style="width:100%;height:40px;border-radius:8px;margin-bottom:8px;background:#0a0a0a;border:1px solid #2a2a2a;position:relative;overflow:hidden;">
+            <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:#d4ff3a;"></div>
+          </div>
+          <div style="font-size:12px;font-weight:700;">Dark</div>
+        </div>
+        <div class="theme-option" onclick="setTheme('retro')" data-theme="retro" style="flex:1;padding:14px 10px;border-radius:12px;border:2px solid var(--border);cursor:pointer;text-align:center;transition:all 0.2s;">
+          <div style="width:100%;height:40px;border-radius:8px;margin-bottom:8px;background:#FBF5E8;border:2px solid #0F1840;position:relative;overflow:hidden;box-shadow:2px 2px 0 #0F1840;">
+            <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:repeating-linear-gradient(90deg,#F4B400 0 8px,#0F1840 8px 10px);"></div>
+            <div style="position:absolute;top:4px;right:4px;background:#D62828;width:8px;height:8px;border-radius:2px;"></div>
+          </div>
+          <div style="font-size:12px;font-weight:700;">Retro</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
       <div class="settings-section-title">👤 <span data-i18n="profile">Profile</span></div>
       <div style="font-size:14px;font-weight:600;margin-bottom:4px;" id="settingsProfileName"></div>
       <div style="font-size:12px;color:var(--text-dim);margin-bottom:4px;" id="settingsProfileEmail"></div>
@@ -2696,6 +2816,7 @@ const TRANSLATIONS = {
   importData: { en:'📤 Import data', de:'📤 Daten importieren', es:'📤 Importar datos', fr:'📤 Importer données', it:'📤 Importa dati' },
   deleteAllData: { en:'🗑 Delete all data', de:'🗑 Alle Daten löschen', es:'🗑 Eliminar todos los datos', fr:'🗑 Supprimer toutes les données', it:'🗑 Elimina tutti i dati' },
   language: { en:'Language', de:'Sprache', es:'Idioma', fr:'Langue', it:'Lingua' },
+  theme: { en:'Design', de:'Design', es:'Diseño', fr:'Design', it:'Design' },
 
   // ── PAYWALL ──
   unlockAll: { en:'Unlock all features', de:'Schalte alle Features frei', es:'Desbloquea todas las funciones', fr:'Débloquez toutes les fonctions', it:'Sblocca tutte le funzionalità' },
@@ -6453,6 +6574,22 @@ function closeSettings() {
   document.getElementById('settingsOverlay').classList.remove('active');
 }
 
+function setTheme(theme) {
+  document.body.classList.remove('theme-retro');
+  if (theme === 'retro') document.body.classList.add('theme-retro');
+  localStorage.setItem('gymtrack_theme', theme);
+  document.querySelectorAll('#themeOptions .theme-option').forEach(el => {
+    el.classList.toggle('active', el.dataset.theme === theme);
+  });
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.content = theme === 'retro' ? '#FBF5E8' : '#0a0a0a';
+}
+
+function loadTheme() {
+  const saved = localStorage.getItem('gymtrack_theme');
+  if (saved && saved !== 'default') setTheme(saved);
+}
+
 function renderRestTimeOptions() {
   const options = [30, 45, 60, 90, 120, 180];
   const container = document.getElementById('restTimeOptions');
@@ -7732,6 +7869,7 @@ function closeRouteDetail() {
 
 // Init app — MUST be after all let/const declarations to avoid TDZ
 (function initApp() {
+  loadTheme();
   document.documentElement.lang = currentLang;
   const langSel = document.getElementById('langSelect');
   if (langSel) langSel.value = currentLang;
