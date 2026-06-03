@@ -7519,23 +7519,33 @@ function generateRoute() {
 
 async function buildCircularRoute(startLat, startLon, distKm, routeType) {
   const profile = routeType === 'Radfahren' ? 'bike' : 'foot';
-  const numPoints = distKm > 30 ? 8 : distKm > 10 ? 6 : 5;
-  const piCircuit = Math.PI * 2;
-  let radiusKm = distKm / (piCircuit * 1.15);
+  const TAU = Math.PI * 2;
+  const numPoints = distKm > 50 ? 10 : distKm > 20 ? 8 : 7;
+  let radiusKm = distKm / (TAU * 1.2);
   let bestRoute = null;
   let bestDiff = Infinity;
 
-  for (let attempt = 0; attempt < 8; attempt++) {
-    const startAngle = Math.random() * piCircuit;
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const startAngle = Math.random() * TAU;
+    // ellipse with random stretch for varied shapes (not always circle)
+    const ellipseRatio = 0.6 + Math.random() * 0.8;
+    const ellipseAngle = Math.random() * Math.PI;
+
     const waypoints = [[startLon, startLat]];
 
     for (let i = 1; i <= numPoints; i++) {
-      const baseAngle = startAngle + (piCircuit * i / (numPoints + 1));
-      const angleJitter = (Math.random() - 0.5) * (piCircuit / (numPoints + 1)) * 0.6;
-      const angle = baseAngle + angleJitter;
-      const rJitter = radiusKm * (0.7 + Math.random() * 0.6);
-      const dLat = (rJitter / 111.32) * Math.cos(angle);
-      const dLon = (rJitter / (111.32 * Math.cos(startLat * Math.PI / 180))) * Math.sin(angle);
+      const angle = startAngle + (TAU * i / (numPoints + 1));
+      // small angle jitter — keeps waypoints in order, prevents overlapping
+      const jitter = (Math.random() - 0.5) * (TAU / (numPoints + 1)) * 0.2;
+      const a = angle + jitter;
+      // elliptical radius — tight range (0.9-1.1x) to avoid spikes
+      const cosE = Math.cos(a - ellipseAngle);
+      const sinE = Math.sin(a - ellipseAngle);
+      const ellipseR = radiusKm / Math.sqrt(cosE * cosE + sinE * sinE / (ellipseRatio * ellipseRatio));
+      const r = ellipseR * (0.9 + Math.random() * 0.2);
+
+      const dLat = (r / 111.32) * Math.cos(a);
+      const dLon = (r / (111.32 * Math.cos(startLat * Math.PI / 180))) * Math.sin(a);
       waypoints.push([startLon + dLon, startLat + dLat]);
     }
     waypoints.push([startLon, startLat]);
@@ -7551,6 +7561,14 @@ async function buildCircularRoute(startLat, startLon, distKm, routeType) {
       const actualKm = route.distance / 1000;
       const diff = Math.abs(actualKm - distKm) / distKm;
 
+      // reject routes with heavy backtracking: check if route bbox is absurdly narrow
+      const lats = route.geometry.coordinates.map(c => c[1]);
+      const lons = route.geometry.coordinates.map(c => c[0]);
+      const latSpan = Math.max(...lats) - Math.min(...lats);
+      const lonSpan = Math.max(...lons) - Math.min(...lons);
+      const aspect = Math.max(latSpan, lonSpan) / (Math.min(latSpan, lonSpan) || 0.0001);
+      if (aspect > 6) continue; // too narrow = likely out-and-back
+
       if (diff < bestDiff) {
         bestDiff = diff;
         bestRoute = {
@@ -7562,8 +7580,8 @@ async function buildCircularRoute(startLat, startLon, distKm, routeType) {
         };
       }
 
-      if (diff < 0.08) return bestRoute;
-      radiusKm = radiusKm * (distKm / actualKm) * (0.95 + Math.random() * 0.1);
+      if (diff < 0.10) return bestRoute;
+      radiusKm = radiusKm * (distKm / actualKm);
     } catch(e) {
       continue;
     }
