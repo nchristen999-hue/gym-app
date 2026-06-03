@@ -4823,6 +4823,7 @@ function saveGpsSession() {
   state.cardioSessions.push(session);
   saveState();
 
+  syncSessionToHealth(session);
   gpsReset();
   toggleCardioForm();
   renderCardio();
@@ -4951,6 +4952,7 @@ function saveGpxSession() {
   state.cardioSessions.push(session);
   saveState();
 
+  syncSessionToHealth(session);
   gpxTrackpoints = [];
   toggleCardioForm();
   renderCardio();
@@ -4986,6 +4988,7 @@ function saveCardioSession() {
   session.points = xp;
   state.totalPoints += xp;
   saveState();
+  syncSessionToHealth(session);
   toggleCardioForm();
   renderCardio();
   showToast(t('cardioSaved') + ' +' + xp + ' XP');
@@ -7365,6 +7368,78 @@ function renderNutWeekChart() {
   ctx.lineTo(w, goalY);
   ctx.stroke();
   ctx.setLineDash([]);
+}
+
+// =====================================================
+// FEATURE: APPLE HEALTH / HEALTHKIT INTEGRATION
+// =====================================================
+const HealthKit = {
+  _available: null,
+
+  async isAvailable() {
+    if (this._available !== null) return this._available;
+    try {
+      if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.HealthKit) {
+        const res = await window.Capacitor.Plugins.HealthKit.isAvailable();
+        this._available = res.available === true;
+      } else {
+        this._available = false;
+      }
+    } catch(e) {
+      this._available = false;
+    }
+    return this._available;
+  },
+
+  async requestAuthorization() {
+    if (!await this.isAvailable()) return false;
+    try {
+      await window.Capacitor.Plugins.HealthKit.requestAuthorization({
+        all: [],
+        read: ['HKWorkoutTypeIdentifier', 'HKQuantityTypeIdentifierActiveEnergyBurned', 'HKQuantityTypeIdentifierDistanceWalkingRunning', 'HKQuantityTypeIdentifierDistanceCycling', 'HKQuantityTypeIdentifierHeartRate'],
+        write: ['HKWorkoutTypeIdentifier', 'HKQuantityTypeIdentifierActiveEnergyBurned', 'HKQuantityTypeIdentifierDistanceWalkingRunning', 'HKQuantityTypeIdentifierDistanceCycling'],
+      });
+      return true;
+    } catch(e) {
+      console.warn('HealthKit auth failed:', e);
+      return false;
+    }
+  },
+
+  _workoutType(cardioType) {
+    const map = { 'Laufen': 'HKWorkoutActivityTypeRunning', 'Radfahren': 'HKWorkoutActivityTypeCycling', 'Schwimmen': 'HKWorkoutActivityTypeSwimming', 'Wandern': 'HKWorkoutActivityTypeHiking' };
+    return map[cardioType] || 'HKWorkoutActivityTypeOther';
+  },
+
+  async syncWorkout(session) {
+    if (!await this.isAvailable()) return;
+    const authed = await this.requestAuthorization();
+    if (!authed) return;
+
+    try {
+      const startDate = new Date(session.timestamp).toISOString();
+      const endDate = new Date(session.timestamp + (session.duration || 0) * 60000).toISOString();
+
+      await window.Capacitor.Plugins.HealthKit.saveWorkout({
+        activityType: this._workoutType(session.type),
+        startDate,
+        endDate,
+        energyBurned: session.kcal || 0,
+        energyBurnedUnit: 'kilocalorie',
+        distance: (session.distance || 0) * 1000,
+        distanceUnit: 'meter',
+      });
+      console.log('HealthKit: workout synced');
+    } catch(e) {
+      console.warn('HealthKit sync failed:', e);
+    }
+  },
+};
+
+async function syncSessionToHealth(session) {
+  try {
+    await HealthKit.syncWorkout(session);
+  } catch(e) { /* silent fail on web */ }
 }
 
 // =====================================================
