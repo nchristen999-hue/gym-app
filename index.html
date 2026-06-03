@@ -1829,9 +1829,11 @@
           </div>
         </div>
         <input type="text" class="workout-name-input" id="workoutName" data-i18n="workoutNamePh" placeholder="Workout name (e.g. Push)" />
-        <div class="cardio-field" style="margin-bottom:12px;">
-          <label data-i18n="activityDate">Activity Date</label>
-          <input type="date" class="set-input" id="workoutActivityDate" style="width:100%;text-align:left;padding:10px 12px;" />
+        <div class="cardio-form-grid" style="grid-template-columns:1fr;margin-bottom:12px;">
+          <div class="cardio-field">
+            <label data-i18n="activityDate">Activity Date</label>
+            <input type="date" id="workoutActivityDate" style="width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:14px;" />
+          </div>
         </div>
         <div id="exerciseContainer"></div>
         <button class="add-exercise-btn" onclick="openExerciseModal()" data-i18n="addExercise">+ Add exercise</button>
@@ -1951,17 +1953,21 @@
               <input type="number" inputmode="numeric" id="gpsHR" data-i18n="optional" placeholder="optional" />
             </div>
           </div>
-          <div class="cardio-field">
-            <label data-i18n="activityDate">Activity Date</label>
-            <input type="date" class="set-input" id="gpsActivityDate" style="width:100%;text-align:left;padding:10px 12px;" />
+          <div class="cardio-form-grid" style="grid-template-columns:1fr;margin-top:8px;">
+            <div class="cardio-field">
+              <label data-i18n="activityDate">Activity Date</label>
+              <input type="date" id="gpsActivityDate" style="width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:14px;" />
+            </div>
           </div>
         </div>
 
         <!-- MANUAL MODE -->
         <div class="cardio-mode-panel" id="cardioModeManual">
-          <div class="cardio-field" style="margin-bottom:12px;">
-            <label data-i18n="activityDate">Activity Date</label>
-            <input type="date" class="set-input" id="cardioActivityDate" style="width:100%;text-align:left;padding:10px 12px;" />
+          <div class="cardio-form-grid" style="grid-template-columns:1fr;margin-bottom:8px;">
+            <div class="cardio-field">
+              <label data-i18n="activityDate">Activity Date</label>
+              <input type="date" id="cardioActivityDate" style="width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:14px;" />
+            </div>
           </div>
           <div class="cardio-form-grid">
             <div class="cardio-field">
@@ -1997,34 +2003,6 @@
       <div class="card-title" style="margin:16px 0 12px;" data-i18n="pastSessions">Past Sessions</div>
       <div id="cardioHistoryList"></div>
 
-      <!-- ROUTES SECTION -->
-      <div style="margin-top:24px;border-top:1px solid var(--border);padding-top:20px;">
-        <div class="card-title" style="margin-bottom:12px;" data-i18n="routes">Routen</div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px;">
-          <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Sportart:</div>
-          <div style="display:flex;gap:6px;margin-bottom:14px;" id="routeTypePills">
-            <div class="cardio-type-pill active" onclick="selectRouteType('Laufen')">🏃 Laufen</div>
-            <div class="cardio-type-pill" onclick="selectRouteType('Radfahren')">🚴 Radfahren</div>
-          </div>
-          <div style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">Distanz wählen:</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;" id="routeDistPills"></div>
-          <button class="gps-btn gps-btn-start" style="width:100%;border-radius:12px;" onclick="generateRoute()" id="genRouteBtn" data-i18n="generateRoute">Route generieren</button>
-          <div id="routeStatus" style="font-size:12px;color:var(--text-dim);text-align:center;margin-top:8px;display:none;"></div>
-          <div id="routeGenMap" style="width:100%;height:250px;border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-top:12px;display:none;"></div>
-          <div id="routeGenInfo" style="display:none;margin-top:10px;">
-            <div class="gps-live-stats" style="margin-bottom:10px;" id="routeGenStats"></div>
-            <div style="display:flex;gap:8px;">
-              <input type="text" class="input-field" id="routeNameInput" placeholder="Routen-Name" style="margin:0;flex:1;" />
-              <button class="btn-primary" style="white-space:nowrap;" onclick="saveGeneratedRoute()">Speichern</button>
-            </div>
-            <button class="gps-btn gps-btn-start" style="width:100%;border-radius:12px;margin-top:8px;" onclick="generateRoute()">Neue Route</button>
-            <button class="gps-btn gps-btn-start" style="width:100%;border-radius:12px;margin-top:8px;background:transparent;border:1px solid var(--accent);color:var(--accent);" onclick="openRouteInMaps()">📍 In Google Maps öffnen</button>
-          </div>
-        </div>
-
-        <div class="card-title" style="margin-bottom:8px;" data-i18n="savedRoutes">Gespeicherte Routen</div>
-        <div id="savedRoutesList"></div>
-      </div>
     </div>
 
     <div class="view" id="view-medals">
@@ -2513,19 +2491,6 @@
   </div>
 </div>
 
-<!-- ROUTE DETAIL MODAL -->
-<div class="modal-overlay" id="routeDetailModal" onclick="if(event.target===this) closeRouteDetail()">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="routeDetailTitle">Route</div>
-    <div class="detail-map" id="routeDetailMap"></div>
-    <div class="detail-stats-grid" id="routeDetailStats"></div>
-    <div class="modal-actions" style="display:flex;gap:8px;flex-direction:column;">
-      <button class="btn-primary" style="background:transparent;border:1px solid var(--accent);color:var(--accent);" id="routeDetailMapsBtn" onclick="openSavedRouteInMaps()">📍 In Google Maps öffnen</button>
-      <button class="btn-primary" onclick="closeRouteDetail()">Schliessen</button>
-    </div>
-  </div>
-</div>
 
 <!-- PAYWALL MODAL -->
 <div class="paywall-overlay" id="paywallOverlay" onclick="if(event.target===this) closePaywall()">
@@ -2969,14 +2934,6 @@ const TRANSLATIONS = {
   saveFood: { en:'Save Food', de:'Essen speichern', es:'Guardar', fr:'Enregistrer', it:'Salva' },
   addToLog: { en:'Add', de:'Hinzufügen', es:'Añadir', fr:'Ajouter', it:'Aggiungi' },
 
-  // ── ROUTES ──
-  routes: { en:'Routes', de:'Routen', es:'Rutas', fr:'Itinéraires', it:'Percorsi' },
-  generateRoute: { en:'Generate Route', de:'Route generieren', es:'Generar ruta', fr:'Générer itinéraire', it:'Genera percorso' },
-  savedRoutes: { en:'Saved Routes', de:'Gespeicherte Routen', es:'Rutas guardadas', fr:'Itinéraires sauvés', it:'Percorsi salvati' },
-  saveRoute: { en:'Save Route', de:'Route speichern', es:'Guardar ruta', fr:'Sauver itinéraire', it:'Salva percorso' },
-  generating: { en:'Generating route...', de:'Route wird generiert...', es:'Generando ruta...', fr:'Génération...', it:'Generazione...' },
-  noRoutes: { en:'No saved routes yet', de:'Noch keine gespeicherten Routen', es:'Sin rutas guardadas', fr:'Aucun itinéraire sauvé', it:'Nessun percorso salvato' },
-  routeName: { en:'Route name', de:'Routen-Name', es:'Nombre de ruta', fr:'Nom de l\'itinéraire', it:'Nome del percorso' },
   locating: { en:'Getting location...', de:'Standort wird ermittelt...', es:'Obteniendo ubicación...', fr:'Localisation...', it:'Localizzazione...' },
   locationError: { en:'Could not get location', de:'Standort konnte nicht ermittelt werden', es:'No se pudo obtener ubicación', fr:'Impossible de localiser', it:'Impossibile localizzare' },
 };
@@ -3827,7 +3784,6 @@ let state = {
   nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 },
   nutProfile: null,
   weightLog: [],
-  savedRoutes: [],
 };
 let timerInterval = null;
 let templateBuilder = { editingId: null, name: '', exercises: [] };
@@ -3897,7 +3853,7 @@ function logoutProfile() {
     workouts: [], prs: {}, myTemplates: [], customThresholds: {},
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
     customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [], cardioTemplates: [],
-    nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, nutProfile: null, weightLog: [], savedRoutes: [],
+    nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, nutProfile: null, weightLog: [],
   };
   if (isFirebaseReady()) firebaseAuth.signOut().catch(() => {});
   document.getElementById('mainApp').style.display = 'none';
@@ -3936,7 +3892,7 @@ function loadState() {
     workouts: [], prs: {}, myTemplates: [], customThresholds: {},
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
     customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [], cardioTemplates: [],
-    nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, nutProfile: null, weightLog: [], savedRoutes: [],
+    nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, nutProfile: null, weightLog: [],
   };
   const saved = localStorage.getItem(storageKey());
   if (saved) {
@@ -3977,7 +3933,6 @@ function saveState() {
     nutritionGoals: state.nutritionGoals,
     nutProfile: state.nutProfile,
     weightLog: state.weightLog,
-    savedRoutes: state.savedRoutes,
   }));
 }
 
@@ -5431,7 +5386,7 @@ function showView(name) {
   if (name === 'home') renderHome();
   if (name === 'workout') renderWorkout();
   if (name === 'history') { renderHistory(); if (typeof renderCalendar === 'function') renderCalendar(); }
-  if (name === 'cardio') { renderCardio(); renderRouteDistPills(); renderSavedRoutes(); }
+  if (name === 'cardio') { renderCardio(); }
   if (name === 'nutrition') renderNutrition();
   if (name === 'medals') renderMedals();
   if (name === 'progress') renderProgress();
@@ -7471,360 +7426,6 @@ async function syncSessionToHealth(session) {
   try {
     await HealthKit.syncWorkout(session);
   } catch(e) { /* silent fail on web */ }
-}
-
-// =====================================================
-// FEATURE: ROUTE GENERATOR
-// =====================================================
-let selectedRouteType = 'Laufen';
-let selectedRouteDist = 5;
-let generatedRouteData = null;
-let routeGenMapInstance = null;
-let routeDetailMapInstance2 = null;
-let currentRouteDetailId = null;
-
-const ROUTE_DISTANCES = {
-  Laufen:    [3, 5, 8, 10, 15, 21],
-  Radfahren: [5, 10, 15, 25, 40, 50, 75, 100],
-};
-
-function selectRouteType(type) {
-  selectedRouteType = type;
-  document.querySelectorAll('#routeTypePills .cardio-type-pill').forEach(p => {
-    p.classList.toggle('active', p.textContent.includes(type === 'Laufen' ? 'Laufen' : 'Radfahren'));
-  });
-  const dists = ROUTE_DISTANCES[type];
-  selectedRouteDist = dists[1] || dists[0];
-  renderRouteDistPills();
-}
-
-function renderRouteDistPills() {
-  const container = document.getElementById('routeDistPills');
-  if (!container) return;
-  const dists = ROUTE_DISTANCES[selectedRouteType] || ROUTE_DISTANCES.Laufen;
-  container.innerHTML = dists.map(km =>
-    `<div class="cardio-type-pill${km === selectedRouteDist ? ' active' : ''}" onclick="selectRouteDist(${km})">${km} km</div>`
-  ).join('');
-}
-
-function selectRouteDist(km) {
-  selectedRouteDist = km;
-  document.querySelectorAll('#routeDistPills .cardio-type-pill').forEach(p => {
-    p.classList.toggle('active', parseInt(p.textContent) === km);
-  });
-}
-
-function generateRoute() {
-  const btn = document.getElementById('genRouteBtn');
-  const status = document.getElementById('routeStatus');
-  status.style.display = '';
-  status.textContent = t('locating');
-  btn.disabled = true;
-  btn.textContent = '...';
-
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      status.textContent = t('generating');
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      buildCircularRoute(lat, lon, selectedRouteDist, selectedRouteType).then(route => {
-        btn.disabled = false;
-        btn.textContent = t('generateRoute');
-        if (route) {
-          status.style.display = 'none';
-          generatedRouteData = route;
-          showRouteOnMap(route);
-        } else {
-          status.textContent = 'Route konnte nicht generiert werden. Nochmal versuchen.';
-        }
-      });
-    },
-    err => {
-      btn.disabled = false;
-      btn.textContent = t('generateRoute');
-      status.textContent = t('locationError') + ': ' + err.message;
-    },
-    { enableHighAccuracy: true, timeout: 10000 }
-  );
-}
-
-async function buildCircularRoute(startLat, startLon, distKm, routeType) {
-  const profile = routeType === 'Radfahren' ? 'bicycle' : 'foot';
-  const TAU = Math.PI * 2;
-  const numPoints = distKm > 30 ? 8 : 6;
-
-  // First, snap start position to nearest routable road
-  const startSnap = await snapToRoad(startLat, startLon, profile);
-  if (startSnap) {
-    startLat = startSnap[0];
-    startLon = startSnap[1];
-  }
-
-  let bestRoute = null;
-  let bestDiff = Infinity;
-
-  for (let attempt = 0; attempt < 8; attempt++) {
-    let radiusKm = distKm / (TAU * 1.3);
-    // Vary start angle and radius per attempt
-    const startAngle = (TAU / 8) * attempt + (Math.random() * 0.3);
-    const radiusJitter = 0.85 + Math.random() * 0.3;
-    radiusKm *= radiusJitter;
-
-    // Generate waypoints along a circle
-    const rawWaypoints = [];
-    for (let i = 0; i < numPoints; i++) {
-      const a = startAngle + (TAU * i / numPoints);
-      const jitter = 0.88 + Math.random() * 0.24;
-      const r = radiusKm * jitter;
-      const dLat = (r / 111.32) * Math.cos(a);
-      const dLon = (r / (111.32 * Math.cos(startLat * Math.PI / 180))) * Math.sin(a);
-      rawWaypoints.push([startLon + dLon, startLat + dLat]);
-    }
-
-    // Snap each waypoint to nearest road using OSRM nearest service
-    const snappedWaypoints = [];
-    let allSnapped = true;
-    for (const wp of rawWaypoints) {
-      const snapped = await snapToRoad(wp[1], wp[0], profile);
-      if (snapped) {
-        snappedWaypoints.push([snapped[1], snapped[0]]);
-      } else {
-        allSnapped = false;
-        snappedWaypoints.push(wp);
-      }
-    }
-
-    // Use OSRM trip API for optimal round-trip (avoids backtracking)
-    const allPts = [[startLon, startLat], ...snappedWaypoints];
-    const coords = allPts.map(w => w[0].toFixed(6) + ',' + w[1].toFixed(6)).join(';');
-    const url = `https://router.project-osrm.org/trip/v1/${profile}/${coords}?overview=full&geometries=geojson&source=first&destination=last&roundtrip=true`;
-
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-
-      if (data.code !== 'Ok' || !data.trips || !data.trips[0]) {
-        // Fallback to route API if trip fails
-        const routeUrl = `https://router.project-osrm.org/route/v1/${profile}/${coords};${startLon.toFixed(6)},${startLat.toFixed(6)}?overview=full&geometries=geojson&steps=false&continue_straight=false`;
-        const routeRes = await fetch(routeUrl);
-        const routeData = await routeRes.json();
-        if (routeData.code !== 'Ok' || !routeData.routes || !routeData.routes[0]) continue;
-
-        const route = routeData.routes[0];
-        const actualKm = route.distance / 1000;
-        const diff = Math.abs(actualKm - distKm) / distKm;
-
-        if (diff < bestDiff) {
-          bestDiff = diff;
-          bestRoute = {
-            coordinates: route.geometry.coordinates.map(c => [c[1], c[0]]),
-            routeWaypoints: [[startLat, startLon], ...snappedWaypoints.map(w => [w[1], w[0]])],
-            distance: Math.round(actualKm * 100) / 100,
-            duration: Math.round(route.duration / 60),
-            center: [startLat, startLon],
-            type: routeType,
-          };
-        }
-        if (diff < 0.15) break;
-        continue;
-      }
-
-      const trip = data.trips[0];
-      const actualKm = trip.distance / 1000;
-      const diff = Math.abs(actualKm - distKm) / distKm;
-
-      if (diff < bestDiff) {
-        bestDiff = diff;
-        bestRoute = {
-          coordinates: trip.geometry.coordinates.map(c => [c[1], c[0]]),
-          routeWaypoints: [[startLat, startLon], ...snappedWaypoints.map(w => [w[1], w[0]])],
-          distance: Math.round(actualKm * 100) / 100,
-          duration: Math.round(trip.duration / 60),
-          center: [startLat, startLon],
-          type: routeType,
-        };
-      }
-
-      if (diff < 0.15) break;
-    } catch(e) {
-      continue;
-    }
-  }
-
-  // Validate route quality
-  if (bestRoute) {
-    const coords = bestRoute.coordinates;
-    const startPt = coords[0];
-    const endPt = coords[coords.length - 1];
-    const endDist = haversine(startPt[0], startPt[1], endPt[0], endPt[1]);
-    // Route must return close to start (within 500m)
-    if (endDist > 0.5) {
-      bestRoute = null;
-    }
-  }
-
-  return bestRoute;
-}
-
-async function snapToRoad(lat, lon, profile) {
-  try {
-    const url = `https://router.project-osrm.org/nearest/v1/${profile}/${lon.toFixed(6)},${lat.toFixed(6)}?number=1`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.code === 'Ok' && data.waypoints && data.waypoints[0]) {
-      const wp = data.waypoints[0];
-      // Only accept snap if within 500m of original point
-      const snapDist = wp.distance;
-      if (snapDist < 500) {
-        return [wp.location[1], wp.location[0]];
-      }
-    }
-  } catch(e) {}
-  return null;
-}
-
-function showRouteOnMap(route) {
-  const mapEl = document.getElementById('routeGenMap');
-  const infoEl = document.getElementById('routeGenInfo');
-  mapEl.style.display = '';
-  infoEl.style.display = '';
-
-  if (routeGenMapInstance) { routeGenMapInstance.remove(); routeGenMapInstance = null; }
-  routeGenMapInstance = L.map(mapEl, { zoomControl: true, attributionControl: false });
-  createDarkTileLayer().addTo(routeGenMapInstance);
-
-  const icon = route.type === 'Radfahren' ? '🚴' : '🏃';
-  const line = L.polyline(route.coordinates, { color: '#d4ff3a', weight: 3.5 }).addTo(routeGenMapInstance);
-  L.circleMarker(route.center, { radius: 8, color: '#4ade80', fillColor: '#4ade80', fillOpacity: 1 }).addTo(routeGenMapInstance).bindPopup('Start / Ziel');
-  routeGenMapInstance.fitBounds(line.getBounds(), { padding: [30, 30] });
-
-  document.getElementById('routeGenStats').innerHTML = `
-    <div class="gps-stat"><div class="gps-stat-label">Typ</div><div class="gps-stat-val">${icon}</div></div>
-    <div class="gps-stat"><div class="gps-stat-label">Distanz</div><div class="gps-stat-val">${route.distance}<span style="font-size:11px;color:var(--text-dim);"> km</span></div></div>
-    <div class="gps-stat"><div class="gps-stat-label">Dauer (ca.)</div><div class="gps-stat-val">${route.duration}<span style="font-size:11px;color:var(--text-dim);"> min</span></div></div>
-  `;
-}
-
-function buildGoogleMapsUrl(coordinates, routeType, routeWaypoints) {
-  let points;
-  if (routeWaypoints && routeWaypoints.length >= 2) {
-    points = routeWaypoints;
-  } else {
-    const maxWp = 8;
-    const step = Math.max(1, Math.floor(coordinates.length / maxWp));
-    points = [];
-    for (let i = 0; i < coordinates.length && points.length < maxWp; i += step) {
-      points.push(coordinates[i]);
-    }
-  }
-  const origin = points[0][0].toFixed(6) + ',' + points[0][1].toFixed(6);
-  const dest = origin;
-  const wps = points.slice(1).map(p => p[0].toFixed(6) + ',' + p[1].toFixed(6)).join('|');
-  const mode = routeType === 'Radfahren' ? 'bicycling' : 'walking';
-  let url = 'https://www.google.com/maps/dir/?api=1&origin=' + origin + '&destination=' + dest + '&travelmode=' + mode;
-  if (wps) url += '&waypoints=' + encodeURIComponent(wps);
-  return url;
-}
-
-function openRouteInMaps() {
-  if (!generatedRouteData || !generatedRouteData.coordinates) return;
-  const url = buildGoogleMapsUrl(generatedRouteData.coordinates, generatedRouteData.type, generatedRouteData.routeWaypoints);
-  window.open(url, '_blank');
-}
-
-function openSavedRouteInMaps() {
-  if (!currentRouteDetailId) return;
-  const r = (state.savedRoutes || []).find(x => x.id === currentRouteDetailId);
-  if (!r || !r.coordinates) return;
-  const url = buildGoogleMapsUrl(r.coordinates, r.type, r.routeWaypoints);
-  window.open(url, '_blank');
-}
-
-function saveGeneratedRoute() {
-  if (!generatedRouteData) return;
-  const typeIcon = generatedRouteData.type === 'Radfahren' ? '🚴' : '🏃';
-  const name = document.getElementById('routeNameInput').value.trim() || (typeIcon + ' ' + selectedRouteDist + 'km Route');
-  if (!state.savedRoutes) state.savedRoutes = [];
-  const reduced = generatedRouteData.coordinates.length > 300
-    ? generatedRouteData.coordinates.filter((_,i) => i % Math.ceil(generatedRouteData.coordinates.length / 300) === 0)
-    : generatedRouteData.coordinates;
-  state.savedRoutes.push({
-    id: 'route_' + Date.now(),
-    name: name,
-    distance: generatedRouteData.distance,
-    duration: generatedRouteData.duration,
-    center: generatedRouteData.center,
-    coordinates: reduced,
-    type: generatedRouteData.type || 'Laufen',
-    timestamp: Date.now(),
-  });
-  saveState();
-  document.getElementById('routeNameInput').value = '';
-  document.getElementById('routeGenMap').style.display = 'none';
-  document.getElementById('routeGenInfo').style.display = 'none';
-  if (routeGenMapInstance) { routeGenMapInstance.remove(); routeGenMapInstance = null; }
-  generatedRouteData = null;
-  renderSavedRoutes();
-  showToast('Route gespeichert!');
-}
-
-function renderSavedRoutes() {
-  const list = document.getElementById('savedRoutesList');
-  if (!list) return;
-  const routes = state.savedRoutes || [];
-  if (routes.length === 0) {
-    list.innerHTML = '<div class="empty-state" style="padding:20px;"><div class="icon">🗺</div><div>' + t('noRoutes') + '</div></div>';
-    return;
-  }
-  list.innerHTML = [...routes].sort((a,b) => b.timestamp - a.timestamp).map(r => {
-    const d = new Date(r.timestamp);
-    const dateStr = d.toLocaleDateString(getLoc(), { day:'2-digit', month:'short' });
-    const icon = r.type === 'Radfahren' ? '🚴' : '🏃';
-    return `
-      <div class="cardio-item" onclick="openRouteDetail('${r.id}')">
-        <button class="cardio-delete" onclick="event.stopPropagation(); deleteRoute('${r.id}')">✕</button>
-        <div class="cardio-item-date">${dateStr} • ${icon} ${escapeHtml(r.type || 'Laufen')}</div>
-        <div class="cardio-item-type">🗺 ${escapeHtml(r.name)}</div>
-        <div class="cardio-item-stats"><span><strong>${r.distance}</strong> km</span><span>~<strong>${r.duration}</strong> min</span></div>
-      </div>`;
-  }).join('');
-}
-
-function deleteRoute(id) {
-  if (!confirm('Route löschen?')) return;
-  state.savedRoutes = (state.savedRoutes || []).filter(r => r.id !== id);
-  saveState();
-  renderSavedRoutes();
-}
-
-function openRouteDetail(id) {
-  const r = (state.savedRoutes || []).find(x => x.id === id);
-  if (!r || !r.coordinates) return;
-  currentRouteDetailId = id;
-  const icon = r.type === 'Radfahren' ? '🚴' : '🏃';
-  document.getElementById('routeDetailTitle').textContent = icon + ' ' + r.name;
-  const mapEl = document.getElementById('routeDetailMap');
-  mapEl.style.display = '';
-  document.getElementById('routeDetailStats').innerHTML = `
-    <div class="detail-stat"><div class="detail-stat-label">Typ</div><div class="detail-stat-val">${icon} ${escapeHtml(r.type || 'Laufen')}</div></div>
-    <div class="detail-stat"><div class="detail-stat-label">Distanz</div><div class="detail-stat-val">${r.distance}<span class="unit"> km</span></div></div>
-    <div class="detail-stat"><div class="detail-stat-label">Dauer (ca.)</div><div class="detail-stat-val">${r.duration}<span class="unit"> min</span></div></div>
-  `;
-  document.getElementById('routeDetailModal').style.display = 'flex';
-  setTimeout(() => {
-    if (routeDetailMapInstance2) { routeDetailMapInstance2.remove(); routeDetailMapInstance2 = null; }
-    routeDetailMapInstance2 = L.map(mapEl, { zoomControl: true, attributionControl: false });
-    createDarkTileLayer().addTo(routeDetailMapInstance2);
-    const line = L.polyline(r.coordinates, { color: '#d4ff3a', weight: 3.5 }).addTo(routeDetailMapInstance2);
-    if (r.center) L.circleMarker(r.center, { radius: 6, color: '#4ade80', fillColor: '#4ade80', fillOpacity: 1 }).addTo(routeDetailMapInstance2).bindPopup('Start / Ziel');
-    routeDetailMapInstance2.fitBounds(line.getBounds(), { padding: [30, 30] });
-  }, 150);
-}
-
-function closeRouteDetail() {
-  document.getElementById('routeDetailModal').style.display = 'none';
-  if (routeDetailMapInstance2) { routeDetailMapInstance2.remove(); routeDetailMapInstance2 = null; }
-  currentRouteDetailId = null;
 }
 
 // Init app — MUST be after all let/const declarations to avoid TDZ
