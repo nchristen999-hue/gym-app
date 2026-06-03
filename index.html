@@ -7541,7 +7541,7 @@ async function buildCircularRoute(startLat, startLon, distKm, routeType) {
     waypoints.push([startLon, startLat]);
 
     const coords = waypoints.map(w => w[0].toFixed(6) + ',' + w[1].toFixed(6)).join(';');
-    const url = `https://router.project-osrm.org/route/v1/${profile}/${coords}?overview=full&geometries=geojson&steps=false`;
+    const url = `https://router.project-osrm.org/route/v1/${profile}/${coords}?overview=full&geometries=geojson&steps=false&exclude=motorway`;
 
     try {
       const res = await fetch(url);
