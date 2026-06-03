@@ -1940,14 +1940,13 @@
       <div style="margin-top:24px;border-top:1px solid var(--border);padding-top:20px;">
         <div class="card-title" style="margin-bottom:12px;" data-i18n="routes">Routen</div>
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px;">
-          <div style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">Distanz wählen:</div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;" id="routeDistPills">
-            <div class="cardio-type-pill" onclick="selectRouteDist(3)">3 km</div>
-            <div class="cardio-type-pill active" onclick="selectRouteDist(5)">5 km</div>
-            <div class="cardio-type-pill" onclick="selectRouteDist(10)">10 km</div>
-            <div class="cardio-type-pill" onclick="selectRouteDist(15)">15 km</div>
-            <div class="cardio-type-pill" onclick="selectRouteDist(20)">20 km</div>
+          <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Sportart:</div>
+          <div style="display:flex;gap:6px;margin-bottom:14px;" id="routeTypePills">
+            <div class="cardio-type-pill active" onclick="selectRouteType('Laufen')">🏃 Laufen</div>
+            <div class="cardio-type-pill" onclick="selectRouteType('Radfahren')">🚴 Radfahren</div>
           </div>
+          <div style="font-size:12px;color:var(--text-dim);margin-bottom:10px;">Distanz wählen:</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;" id="routeDistPills"></div>
           <button class="gps-btn gps-btn-start" style="width:100%;border-radius:12px;" onclick="generateRoute()" id="genRouteBtn" data-i18n="generateRoute">Route generieren</button>
           <div id="routeStatus" style="font-size:12px;color:var(--text-dim);text-align:center;margin-top:8px;display:none;"></div>
           <div id="routeGenMap" style="width:100%;height:250px;border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-top:12px;display:none;"></div>
@@ -1958,6 +1957,7 @@
               <button class="btn-primary" style="white-space:nowrap;" onclick="saveGeneratedRoute()">Speichern</button>
             </div>
             <button class="gps-btn gps-btn-start" style="width:100%;border-radius:12px;margin-top:8px;" onclick="generateRoute()">Neue Route</button>
+            <button class="gps-btn gps-btn-start" style="width:100%;border-radius:12px;margin-top:8px;background:transparent;border:1px solid var(--accent);color:var(--accent);" onclick="openRouteInMaps()">📍 In Google Maps öffnen</button>
           </div>
         </div>
 
@@ -2419,7 +2419,8 @@
     <div class="modal-title" id="routeDetailTitle">Route</div>
     <div class="detail-map" id="routeDetailMap"></div>
     <div class="detail-stats-grid" id="routeDetailStats"></div>
-    <div class="modal-actions">
+    <div class="modal-actions" style="display:flex;gap:8px;flex-direction:column;">
+      <button class="btn-primary" style="background:transparent;border:1px solid var(--accent);color:var(--accent);" id="routeDetailMapsBtn" onclick="openSavedRouteInMaps()">📍 In Google Maps öffnen</button>
       <button class="btn-primary" onclick="closeRouteDetail()">Schliessen</button>
     </div>
   </div>
@@ -5425,7 +5426,7 @@ function showView(name) {
   if (name === 'home') renderHome();
   if (name === 'workout') renderWorkout();
   if (name === 'history') { renderHistory(); if (typeof renderCalendar === 'function') renderCalendar(); }
-  if (name === 'cardio') { renderCardio(); renderSavedRoutes(); }
+  if (name === 'cardio') { renderCardio(); renderRouteDistPills(); renderSavedRoutes(); }
   if (name === 'nutrition') renderNutrition();
   if (name === 'medals') renderMedals();
   if (name === 'progress') renderProgress();
@@ -7369,10 +7370,36 @@ function renderNutWeekChart() {
 // =====================================================
 // FEATURE: ROUTE GENERATOR
 // =====================================================
+let selectedRouteType = 'Laufen';
 let selectedRouteDist = 5;
 let generatedRouteData = null;
 let routeGenMapInstance = null;
 let routeDetailMapInstance2 = null;
+let currentRouteDetailId = null;
+
+const ROUTE_DISTANCES = {
+  Laufen:    [3, 5, 8, 10, 15, 21],
+  Radfahren: [5, 10, 15, 25, 40, 50, 75, 100],
+};
+
+function selectRouteType(type) {
+  selectedRouteType = type;
+  document.querySelectorAll('#routeTypePills .cardio-type-pill').forEach(p => {
+    p.classList.toggle('active', p.textContent.includes(type === 'Laufen' ? 'Laufen' : 'Radfahren'));
+  });
+  const dists = ROUTE_DISTANCES[type];
+  selectedRouteDist = dists[1] || dists[0];
+  renderRouteDistPills();
+}
+
+function renderRouteDistPills() {
+  const container = document.getElementById('routeDistPills');
+  if (!container) return;
+  const dists = ROUTE_DISTANCES[selectedRouteType] || ROUTE_DISTANCES.Laufen;
+  container.innerHTML = dists.map(km =>
+    `<div class="cardio-type-pill${km === selectedRouteDist ? ' active' : ''}" onclick="selectRouteDist(${km})">${km} km</div>`
+  ).join('');
+}
 
 function selectRouteDist(km) {
   selectedRouteDist = km;
@@ -7394,7 +7421,7 @@ function generateRoute() {
       status.textContent = t('generating');
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
-      buildCircularRoute(lat, lon, selectedRouteDist).then(route => {
+      buildCircularRoute(lat, lon, selectedRouteDist, selectedRouteType).then(route => {
         btn.disabled = false;
         btn.textContent = t('generateRoute');
         if (route) {
@@ -7415,26 +7442,31 @@ function generateRoute() {
   );
 }
 
-async function buildCircularRoute(startLat, startLon, distKm) {
-  const numPoints = 4;
-  let radiusKm = distKm / 12;
+async function buildCircularRoute(startLat, startLon, distKm, routeType) {
+  const profile = routeType === 'Radfahren' ? 'bike' : 'foot';
+  const numPoints = distKm > 30 ? 8 : distKm > 10 ? 6 : 5;
+  const piCircuit = Math.PI * 2;
+  let radiusKm = distKm / (piCircuit * 1.15);
   let bestRoute = null;
   let bestDiff = Infinity;
 
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const startAngle = Math.random() * 2 * Math.PI;
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const startAngle = Math.random() * piCircuit;
     const waypoints = [[startLon, startLat]];
+
     for (let i = 1; i <= numPoints; i++) {
-      const angle = startAngle + (2 * Math.PI * i / (numPoints + 1));
-      const r = radiusKm * (1 + (Math.random() - 0.5) * 0.1);
-      const dLat = (r / 111.32) * Math.cos(angle);
-      const dLon = (r / (111.32 * Math.cos(startLat * Math.PI / 180))) * Math.sin(angle);
+      const baseAngle = startAngle + (piCircuit * i / (numPoints + 1));
+      const angleJitter = (Math.random() - 0.5) * (piCircuit / (numPoints + 1)) * 0.6;
+      const angle = baseAngle + angleJitter;
+      const rJitter = radiusKm * (0.7 + Math.random() * 0.6);
+      const dLat = (rJitter / 111.32) * Math.cos(angle);
+      const dLon = (rJitter / (111.32 * Math.cos(startLat * Math.PI / 180))) * Math.sin(angle);
       waypoints.push([startLon + dLon, startLat + dLat]);
     }
     waypoints.push([startLon, startLat]);
 
     const coords = waypoints.map(w => w[0].toFixed(6) + ',' + w[1].toFixed(6)).join(';');
-    const url = 'https://router.project-osrm.org/route/v1/foot/' + coords + '?overview=full&geometries=geojson&steps=false';
+    const url = `https://router.project-osrm.org/route/v1/${profile}/${coords}?overview=full&geometries=geojson&steps=false`;
 
     try {
       const res = await fetch(url);
@@ -7451,11 +7483,12 @@ async function buildCircularRoute(startLat, startLon, distKm) {
           distance: Math.round(actualKm * 100) / 100,
           duration: Math.round(route.duration / 60),
           center: [startLat, startLon],
+          type: routeType,
         };
       }
 
-      if (diff < 0.10) return bestRoute;
-      radiusKm = radiusKm * (distKm / actualKm);
+      if (diff < 0.08) return bestRoute;
+      radiusKm = radiusKm * (distKm / actualKm) * (0.95 + Math.random() * 0.1);
     } catch(e) {
       continue;
     }
@@ -7473,19 +7506,54 @@ function showRouteOnMap(route) {
   routeGenMapInstance = L.map(mapEl, { zoomControl: true, attributionControl: false });
   createDarkTileLayer().addTo(routeGenMapInstance);
 
+  const icon = route.type === 'Radfahren' ? '🚴' : '🏃';
   const line = L.polyline(route.coordinates, { color: '#d4ff3a', weight: 3.5 }).addTo(routeGenMapInstance);
-  L.circleMarker(route.center, { radius: 8, color: '#4ade80', fillColor: '#4ade80', fillOpacity: 1 }).addTo(routeGenMapInstance);
+  L.circleMarker(route.center, { radius: 8, color: '#4ade80', fillColor: '#4ade80', fillOpacity: 1 }).addTo(routeGenMapInstance).bindPopup('Start / Ziel');
   routeGenMapInstance.fitBounds(line.getBounds(), { padding: [30, 30] });
 
   document.getElementById('routeGenStats').innerHTML = `
+    <div class="gps-stat"><div class="gps-stat-label">Typ</div><div class="gps-stat-val">${icon}</div></div>
     <div class="gps-stat"><div class="gps-stat-label">Distanz</div><div class="gps-stat-val">${route.distance}<span style="font-size:11px;color:var(--text-dim);"> km</span></div></div>
     <div class="gps-stat"><div class="gps-stat-label">Dauer (ca.)</div><div class="gps-stat-val">${route.duration}<span style="font-size:11px;color:var(--text-dim);"> min</span></div></div>
   `;
 }
 
+function buildGoogleMapsUrl(coordinates, routeType) {
+  const maxWaypoints = 8;
+  const step = Math.max(1, Math.floor(coordinates.length / maxWaypoints));
+  const points = [];
+  for (let i = 0; i < coordinates.length && points.length < maxWaypoints; i += step) {
+    points.push(coordinates[i]);
+  }
+  const last = coordinates[coordinates.length - 1];
+  if (points[points.length - 1] !== last) points.push(last);
+  const origin = points[0][0].toFixed(6) + ',' + points[0][1].toFixed(6);
+  const dest = points[points.length - 1][0].toFixed(6) + ',' + points[points.length - 1][1].toFixed(6);
+  const wps = points.slice(1, -1).map(p => p[0].toFixed(6) + ',' + p[1].toFixed(6)).join('|');
+  const mode = routeType === 'Radfahren' ? 'bicycling' : 'walking';
+  let url = 'https://www.google.com/maps/dir/?api=1&origin=' + origin + '&destination=' + dest + '&travelmode=' + mode;
+  if (wps) url += '&waypoints=' + encodeURIComponent(wps);
+  return url;
+}
+
+function openRouteInMaps() {
+  if (!generatedRouteData || !generatedRouteData.coordinates) return;
+  const url = buildGoogleMapsUrl(generatedRouteData.coordinates, generatedRouteData.type);
+  window.open(url, '_blank');
+}
+
+function openSavedRouteInMaps() {
+  if (!currentRouteDetailId) return;
+  const r = (state.savedRoutes || []).find(x => x.id === currentRouteDetailId);
+  if (!r || !r.coordinates) return;
+  const url = buildGoogleMapsUrl(r.coordinates, r.type);
+  window.open(url, '_blank');
+}
+
 function saveGeneratedRoute() {
   if (!generatedRouteData) return;
-  const name = document.getElementById('routeNameInput').value.trim() || (selectedRouteDist + 'km Route');
+  const typeIcon = generatedRouteData.type === 'Radfahren' ? '🚴' : '🏃';
+  const name = document.getElementById('routeNameInput').value.trim() || (typeIcon + ' ' + selectedRouteDist + 'km Route');
   if (!state.savedRoutes) state.savedRoutes = [];
   const reduced = generatedRouteData.coordinates.length > 300
     ? generatedRouteData.coordinates.filter((_,i) => i % Math.ceil(generatedRouteData.coordinates.length / 300) === 0)
@@ -7497,6 +7565,7 @@ function saveGeneratedRoute() {
     duration: generatedRouteData.duration,
     center: generatedRouteData.center,
     coordinates: reduced,
+    type: generatedRouteData.type || 'Laufen',
     timestamp: Date.now(),
   });
   saveState();
@@ -7520,10 +7589,11 @@ function renderSavedRoutes() {
   list.innerHTML = [...routes].sort((a,b) => b.timestamp - a.timestamp).map(r => {
     const d = new Date(r.timestamp);
     const dateStr = d.toLocaleDateString(getLoc(), { day:'2-digit', month:'short' });
+    const icon = r.type === 'Radfahren' ? '🚴' : '🏃';
     return `
       <div class="cardio-item" onclick="openRouteDetail('${r.id}')">
         <button class="cardio-delete" onclick="event.stopPropagation(); deleteRoute('${r.id}')">✕</button>
-        <div class="cardio-item-date">${dateStr}</div>
+        <div class="cardio-item-date">${dateStr} • ${icon} ${escapeHtml(r.type || 'Laufen')}</div>
         <div class="cardio-item-type">🗺 ${escapeHtml(r.name)}</div>
         <div class="cardio-item-stats"><span><strong>${r.distance}</strong> km</span><span>~<strong>${r.duration}</strong> min</span></div>
       </div>`;
@@ -7540,10 +7610,13 @@ function deleteRoute(id) {
 function openRouteDetail(id) {
   const r = (state.savedRoutes || []).find(x => x.id === id);
   if (!r || !r.coordinates) return;
-  document.getElementById('routeDetailTitle').textContent = r.name;
+  currentRouteDetailId = id;
+  const icon = r.type === 'Radfahren' ? '🚴' : '🏃';
+  document.getElementById('routeDetailTitle').textContent = icon + ' ' + r.name;
   const mapEl = document.getElementById('routeDetailMap');
   mapEl.style.display = '';
   document.getElementById('routeDetailStats').innerHTML = `
+    <div class="detail-stat"><div class="detail-stat-label">Typ</div><div class="detail-stat-val">${icon} ${escapeHtml(r.type || 'Laufen')}</div></div>
     <div class="detail-stat"><div class="detail-stat-label">Distanz</div><div class="detail-stat-val">${r.distance}<span class="unit"> km</span></div></div>
     <div class="detail-stat"><div class="detail-stat-label">Dauer (ca.)</div><div class="detail-stat-val">${r.duration}<span class="unit"> min</span></div></div>
   `;
@@ -7553,7 +7626,7 @@ function openRouteDetail(id) {
     routeDetailMapInstance2 = L.map(mapEl, { zoomControl: true, attributionControl: false });
     createDarkTileLayer().addTo(routeDetailMapInstance2);
     const line = L.polyline(r.coordinates, { color: '#d4ff3a', weight: 3.5 }).addTo(routeDetailMapInstance2);
-    if (r.center) L.circleMarker(r.center, { radius: 6, color: '#4ade80', fillColor: '#4ade80', fillOpacity: 1 }).addTo(routeDetailMapInstance2);
+    if (r.center) L.circleMarker(r.center, { radius: 6, color: '#4ade80', fillColor: '#4ade80', fillOpacity: 1 }).addTo(routeDetailMapInstance2).bindPopup('Start / Ziel');
     routeDetailMapInstance2.fitBounds(line.getBounds(), { padding: [30, 30] });
   }, 150);
 }
@@ -7561,6 +7634,7 @@ function openRouteDetail(id) {
 function closeRouteDetail() {
   document.getElementById('routeDetailModal').style.display = 'none';
   if (routeDetailMapInstance2) { routeDetailMapInstance2.remove(); routeDetailMapInstance2 = null; }
+  currentRouteDetailId = null;
 }
 
 // Init app — MUST be after all let/const declarations to avoid TDZ
