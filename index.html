@@ -573,15 +573,6 @@
   .gps-status .pulse.orange { background: #ff8c42; }
   .gps-status .pulse.red { background: var(--danger); }
   @keyframes gpsPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-  .gpx-upload-zone {
-    border: 2px dashed var(--border); border-radius: 12px; padding: 30px 20px; text-align: center;
-    cursor: pointer; margin-bottom: 14px; transition: border-color 0.2s;
-  }
-  .gpx-upload-zone:hover, .gpx-upload-zone.dragover { border-color: var(--accent); }
-  .gpx-upload-zone .icon { font-size: 32px; margin-bottom: 8px; }
-  .gpx-upload-zone .label { font-size: 13px; color: var(--text-dim); font-weight: 600; }
-  .gpx-upload-zone .hint { font-size: 11px; color: var(--text-dim); opacity: 0.6; margin-top: 4px; }
-  .gpx-preview-map { width: 100%; height: 180px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border); }
   .cardio-detail-modal .modal { max-height: 90vh; overflow-y: auto; }
   .detail-map { width: 100%; height: 250px; border-radius: 12px; overflow: hidden; margin-bottom: 16px; border: 1px solid var(--border); }
   .detail-stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
@@ -1838,6 +1829,10 @@
           </div>
         </div>
         <input type="text" class="workout-name-input" id="workoutName" data-i18n="workoutNamePh" placeholder="Workout name (e.g. Push)" />
+        <div class="cardio-field" style="margin-bottom:12px;">
+          <label data-i18n="activityDate">Activity Date</label>
+          <input type="date" class="set-input" id="workoutActivityDate" style="width:100%;text-align:left;padding:10px 12px;" />
+        </div>
         <div id="exerciseContainer"></div>
         <button class="add-exercise-btn" onclick="openExerciseModal()" data-i18n="addExercise">+ Add exercise</button>
         <button class="finish-btn" onclick="finishWorkout()" data-i18n="finishWorkout">Finish workout</button>
@@ -1916,7 +1911,6 @@
 
         <div class="cardio-mode-tabs">
           <button class="cardio-mode-tab active" data-mode="gps" onclick="setCardioMode('gps')" data-i18n="gpsLive">📡 GPS Live</button>
-          <button class="cardio-mode-tab" data-mode="gpx" onclick="setCardioMode('gpx')" data-i18n="gpxImport">📂 GPX Import</button>
           <button class="cardio-mode-tab" data-mode="manual" onclick="setCardioMode('manual')" data-i18n="manual">✏️ Manual</button>
         </div>
 
@@ -1957,55 +1951,18 @@
               <input type="number" inputmode="numeric" id="gpsHR" data-i18n="optional" placeholder="optional" />
             </div>
           </div>
-        </div>
-
-        <!-- GPX UPLOAD MODE -->
-        <div class="cardio-mode-panel" id="cardioModeGpx">
-          <div class="gpx-upload-zone" id="gpxUploadZone" onclick="document.getElementById('gpxFileInput').click()">
-            <div class="icon">📂</div>
-            <div class="label" data-i18n="uploadGpx">Upload GPX file</div>
-            <div class="hint" data-i18n="dragGpx">Tap or drag a .gpx file here</div>
+          <div class="cardio-field">
+            <label data-i18n="activityDate">Activity Date</label>
+            <input type="date" class="set-input" id="gpsActivityDate" style="width:100%;text-align:left;padding:10px 12px;" />
           </div>
-          <input type="file" id="gpxFileInput" accept=".gpx" style="display:none;" onchange="handleGpxUpload(event)" />
-          <div id="gpxPreviewContainer" style="display:none;">
-            <div class="gpx-preview-map" id="gpxPreviewMap"></div>
-            <div class="gps-live-stats" style="margin-bottom:12px;">
-              <div class="gps-stat"><div class="gps-stat-label" data-i18n="duration">Duration</div><div class="gps-stat-val" id="gpxPreDuration">--</div></div>
-              <div class="gps-stat"><div class="gps-stat-label" data-i18n="distance">Distance</div><div class="gps-stat-val" id="gpxPreDistance">--</div></div>
-              <div class="gps-stat"><div class="gps-stat-label" data-i18n="elevation">Elevation</div><div class="gps-stat-val" id="gpxPreElevation">--</div></div>
-            </div>
-          </div>
-          <div class="cardio-form-grid">
-            <div class="cardio-field">
-              <label data-i18n="durationMin">Duration (min)</label>
-              <input type="number" inputmode="numeric" id="gpxDuration" data-i18n="fromGpx" placeholder="from GPX" oninput="autoFillKcal('gpx')" />
-            </div>
-            <div class="cardio-field">
-              <label data-i18n="distanceKm">Distance (km)</label>
-              <input type="number" inputmode="decimal" step="0.1" id="gpxDistance" data-i18n="fromGpx" placeholder="from GPX" oninput="autoFillKcal('gpx')" />
-            </div>
-            <div class="cardio-field">
-              <label data-i18n="elevationM">Elevation (m)</label>
-              <input type="number" inputmode="numeric" id="gpxElevation" data-i18n="fromGpx" placeholder="from GPX" oninput="autoFillKcal('gpx')" />
-            </div>
-            <div class="cardio-field">
-              <label data-i18n="avgPace">Avg Pace (min/km)</label>
-              <input type="text" id="gpxPace" data-i18n="fromGpx" placeholder="from GPX" />
-            </div>
-            <div class="cardio-field">
-              <label data-i18n="avgHR">Avg HR (bpm)</label>
-              <input type="number" inputmode="numeric" id="gpxHR" data-i18n="optional" placeholder="optional" />
-            </div>
-            <div class="cardio-field">
-              <label data-i18n="kcalCalc">kcal (calculated)</label>
-              <input type="number" inputmode="numeric" id="gpxKcal" placeholder="auto" />
-            </div>
-          </div>
-          <button class="cardio-save-btn" onclick="saveGpxSession()" data-i18n="save">Save</button>
         </div>
 
         <!-- MANUAL MODE -->
         <div class="cardio-mode-panel" id="cardioModeManual">
+          <div class="cardio-field" style="margin-bottom:12px;">
+            <label data-i18n="activityDate">Activity Date</label>
+            <input type="date" class="set-input" id="cardioActivityDate" style="width:100%;text-align:left;padding:10px 12px;" />
+          </div>
           <div class="cardio-form-grid">
             <div class="cardio-field">
               <label data-i18n="durationMin">Duration (min)</label>
@@ -2577,7 +2534,7 @@
     <div class="paywall-title">GYM<span class="accent">TRACK</span> PRO</div>
     <div class="paywall-subtitle" data-i18n="unlockAll">Unlock all features</div>
     <div class="paywall-features">
-      <div class="paywall-feature"><span class="check">✓</span><span data-i18n="cardioTrackingFeat">Cardio Tracking (GPS, GPX, Manual)</span></div>
+      <div class="paywall-feature"><span class="check">✓</span><span data-i18n="cardioTrackingFeat">Cardio Tracking (GPS, Manual)</span></div>
       <div class="paywall-feature"><span class="check">✓</span><span data-i18n="medalsAchievements">Medals & Achievements</span></div>
       <div class="paywall-feature"><span class="check">✓</span><span data-i18n="progressCharts">Progress Charts & Statistics</span></div>
       <div class="paywall-feature"><span class="check">✓</span><span data-i18n="muscleMapVis">Muscle Map Visualization</span></div>
@@ -2746,7 +2703,6 @@ const TRANSLATIONS = {
   newCardioSession: { en:'+ New Cardio Session', de:'+ Neue Cardio-Einheit', es:'+ Nueva sesión cardio', fr:'+ Nouvelle session cardio', it:'+ Nuova sessione cardio' },
   sport: { en:'Sport', de:'Sportart', es:'Deporte', fr:'Sport', it:'Sport' },
   gpsLive: { en:'📡 GPS Live', de:'📡 GPS Live', es:'📡 GPS Live', fr:'📡 GPS Live', it:'📡 GPS Live' },
-  gpxImport: { en:'📂 GPX Import', de:'📂 GPX Import', es:'📂 GPX Import', fr:'📂 GPX Import', it:'📂 GPX Import' },
   manual: { en:'✏️ Manual', de:'✏️ Manuell', es:'✏️ Manual', fr:'✏️ Manuel', it:'✏️ Manuale' },
   gpsReady: { en:'GPS ready', de:'GPS bereit', es:'GPS listo', fr:'GPS prêt', it:'GPS pronto' },
   duration: { en:'Duration', de:'Dauer', es:'Duración', fr:'Durée', it:'Durata' },
@@ -2757,14 +2713,12 @@ const TRANSLATIONS = {
   optional: { en:'optional', de:'optional', es:'opcional', fr:'optionnel', it:'opzionale' },
   save: { en:'Save', de:'Speichern', es:'Guardar', fr:'Sauvegarder', it:'Salva' },
   pastSessions: { en:'Past Sessions', de:'Vergangene Einheiten', es:'Sesiones pasadas', fr:'Sessions passées', it:'Sessioni passate' },
-  uploadGpx: { en:'Upload GPX file', de:'GPX-Datei hochladen', es:'Subir archivo GPX', fr:'Importer fichier GPX', it:'Carica file GPX' },
-  dragGpx: { en:'Tap or drag a .gpx file here', de:'Tippe oder ziehe eine .gpx Datei hierher', es:'Toca o arrastra un archivo .gpx aquí', fr:'Appuyez ou glissez un fichier .gpx ici', it:'Tocca o trascina un file .gpx qui' },
+  activityDate: { en:'Activity Date', de:'Aktivitätsdatum', es:'Fecha de actividad', fr:'Date d\'activité', it:'Data attività' },
   durationMin: { en:'Duration (min)', de:'Dauer (Min)', es:'Duración (min)', fr:'Durée (min)', it:'Durata (min)' },
   distanceKm: { en:'Distance (km)', de:'Distanz (km)', es:'Distancia (km)', fr:'Distance (km)', it:'Distanza (km)' },
   elevationM: { en:'Elevation (m)', de:'Höhenmeter (m)', es:'Desnivel (m)', fr:'Dénivelé (m)', it:'Dislivello (m)' },
   avgPace: { en:'Avg Pace (min/km)', de:'Ø Pace (min/km)', es:'Ritmo medio (min/km)', fr:'Allure moy. (min/km)', it:'Ritmo medio (min/km)' },
   kcalCalc: { en:'kcal (calculated)', de:'kcal (berechnet)', es:'kcal (calculado)', fr:'kcal (calculé)', it:'kcal (calcolato)' },
-  fromGpx: { en:'from GPX', de:'aus GPX', es:'desde GPX', fr:'depuis GPX', it:'da GPX' },
 
   // ── MEDALS ──
   medalCollection: { en:'Medal Collection', de:'Medaillen-Sammlung', es:'Colección de medallas', fr:'Collection de médailles', it:'Collezione medaglie' },
@@ -2844,7 +2798,7 @@ const TRANSLATIONS = {
 
   // ── PAYWALL ──
   unlockAll: { en:'Unlock all features', de:'Schalte alle Features frei', es:'Desbloquea todas las funciones', fr:'Débloquez toutes les fonctions', it:'Sblocca tutte le funzionalità' },
-  cardioTrackingFeat: { en:'Cardio Tracking (GPS, GPX, Manual)', de:'Cardio-Tracking (GPS, GPX, Manuell)', es:'Seguimiento cardio (GPS, GPX, Manual)', fr:'Suivi cardio (GPS, GPX, Manuel)', it:'Tracking cardio (GPS, GPX, Manuale)' },
+  cardioTrackingFeat: { en:'Cardio Tracking (GPS, Manual)', de:'Cardio-Tracking (GPS, Manuell)', es:'Seguimiento cardio (GPS, Manual)', fr:'Suivi cardio (GPS, Manuel)', it:'Tracking cardio (GPS, Manuale)' },
   medalsAchievements: { en:'Medals & Achievements', de:'Medaillen & Achievements', es:'Medallas y logros', fr:'Médailles et succès', it:'Medaglie e obiettivi' },
   progressCharts: { en:'Progress Charts & Statistics', de:'Fortschritts-Charts & Statistiken', es:'Gráficos de progreso y estadísticas', fr:'Graphiques de progrès et statistiques', it:'Grafici di progresso e statistiche' },
   muscleMapVis: { en:'Muscle Map Visualization', de:'Muskel-Map Visualisierung', es:'Visualización de mapa muscular', fr:'Visualisation carte musculaire', it:'Visualizzazione mappa muscolare' },
@@ -2867,7 +2821,6 @@ const TRANSLATIONS = {
 
   // ── TOASTS / ALERTS / CONFIRMS ──
   gpsSaved: { en:'GPS cardio saved!', de:'GPS-Cardio gespeichert!', es:'¡Cardio GPS guardado!', fr:'Cardio GPS sauvegardé !', it:'Cardio GPS salvato!' },
-  gpxSaved: { en:'GPX cardio saved!', de:'GPX-Cardio gespeichert!', es:'¡Cardio GPX guardado!', fr:'Cardio GPX sauvegardé !', it:'Cardio GPX salvato!' },
   cardioSaved: { en:'Cardio saved!', de:'Cardio gespeichert!', es:'¡Cardio guardado!', fr:'Cardio sauvegardé !', it:'Cardio salvato!' },
   templateSaved: { en:'★ Template saved', de:'★ Template gespeichert', es:'★ Plantilla guardada', fr:'★ Modèle sauvegardé', it:'★ Modello salvato' },
   templateDeleted: { en:'Template deleted', de:'Template gelöscht', es:'Plantilla eliminada', fr:'Modèle supprimé', it:'Modello eliminato' },
@@ -2900,7 +2853,6 @@ const TRANSLATIONS = {
   upgradeForCHF: { en:'Upgrade for', de:'Upgrade für', es:'Mejora por', fr:'Passez pour', it:'Aggiorna per' },
   gpsNotAvailable: { en:'GPS not available on this device.', de:'GPS nicht verfügbar auf diesem Gerät.', es:'GPS no disponible en este dispositivo.', fr:'GPS non disponible sur cet appareil.', it:'GPS non disponibile su questo dispositivo.' },
   tooFewGpsPoints: { en:'Too few GPS points.', de:'Zu wenig GPS-Punkte.', es:'Muy pocos puntos GPS.', fr:'Trop peu de points GPS.', it:'Troppo pochi punti GPS.' },
-  noTrackpointsGpx: { en:'No trackpoints found in GPX.', de:'Keine Trackpunkte in GPX gefunden.', es:'No se encontraron puntos en GPX.', fr:'Aucun point dans le GPX.', it:'Nessun punto trovato nel GPX.' },
   enterDurationOrDist: { en:'Please enter at least duration or distance.', de:'Bitte mindestens Dauer oder Distanz eingeben.', es:'Ingresa al menos duración o distancia.', fr:'Entrez au moins la durée ou la distance.', it:'Inserisci almeno durata o distanza.' },
   confirmDeleteCardio: { en:'Delete cardio session?', de:'Cardio-Einheit löschen?', es:'¿Eliminar sesión cardio?', fr:'Supprimer session cardio ?', it:'Eliminare sessione cardio?' },
   confirmDeleteTemplate: { en:'Delete template?', de:'Template wirklich löschen?', es:'¿Eliminar plantilla?', fr:'Supprimer le modèle ?', it:'Eliminare il modello?' },
@@ -4262,7 +4214,7 @@ function calculateStreak() {
   if (state.workouts.length === 0) return { current: 0, max: 0 };
   
   const days = [...new Set(state.workouts.map(w => {
-    const d = new Date(w.timestamp);
+    const d = new Date(w.activityDate || w.timestamp);
     return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
   }))].sort().reverse();
   
@@ -4275,7 +4227,10 @@ function calculateStreak() {
   if (days[0] === todayKey || days[0] === yesterdayKey) {
     current = 1;
     let lastDate = new Date(state.workouts.find(w => {
-      const d = new Date(w.timestamp);
+      const d = new Date(w.activityDate || w.timestamp);
+      return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}` === days[0];
+    }).activityDate || state.workouts.find(w => {
+      const d = new Date(w.activityDate || w.timestamp);
       return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}` === days[0];
     }).timestamp);
     
@@ -4492,7 +4447,7 @@ function toggleCardioEx(exIdx) {
 
 function renderHistory() {
   const list = document.getElementById('historyList');
-  const workouts = (state.workouts || []).map(w => ({ kind: 'workout', timestamp: w.timestamp, data: w }));
+  const workouts = (state.workouts || []).map(w => ({ kind: 'workout', timestamp: w.activityDate || w.timestamp, data: w }));
   const cardios = (state.cardioSessions || []).map(c => ({ kind: 'cardio', timestamp: c.date || c.timestamp || 0, data: c }));
   const merged = [...workouts, ...cardios].sort((a,b) => b.timestamp - a.timestamp);
 
@@ -4678,8 +4633,6 @@ let gpsTimerInterval = null;
 let gpsLiveMap = null;
 let gpsPolyline = null;
 let gpsMarker = null;
-let gpxTrackpoints = [];
-let gpxPreviewMap = null;
 let cardioDetailMapInstance = null;
 
 const CARDIO_ICONS = {
@@ -4692,14 +4645,13 @@ function selectCardioType(type) {
     p.classList.toggle('active', p.dataset.type === type);
   });
   if (cardioMode === 'manual') autoFillKcal('cardio');
-  else if (cardioMode === 'gpx') autoFillKcal('gpx');
 }
 
 function setCardioMode(mode) {
   cardioMode = mode;
   document.querySelectorAll('.cardio-mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
   document.querySelectorAll('.cardio-mode-panel').forEach(p => p.classList.remove('active'));
-  const panelId = { gps: 'cardioModeGps', gpx: 'cardioModeGpx', manual: 'cardioModeManual' }[mode];
+  const panelId = { gps: 'cardioModeGps', manual: 'cardioModeManual' }[mode];
   document.getElementById(panelId).classList.add('active');
   if (mode === 'gps') initGpsMap();
 }
@@ -4710,6 +4662,11 @@ function toggleCardioForm() {
   if (form.style.display === 'none') {
     form.style.display = '';
     btn.textContent = '✕ ' + t('cancel');
+    const today = new Date().toISOString().split('T')[0];
+    const cdEl = document.getElementById('cardioActivityDate');
+    if (cdEl) cdEl.value = today;
+    const gpsDateEl = document.getElementById('gpsActivityDate');
+    if (gpsDateEl) gpsDateEl.value = today;
     if (cardioMode === 'gps') setTimeout(initGpsMap, 100);
   } else {
     if (gpsState === 'tracking' || gpsState === 'paused') {
@@ -4724,16 +4681,11 @@ function toggleCardioForm() {
 
 function clearCardioForm() {
   ['cardioDuration','cardioDistance','cardioElevation','cardioPace','cardioHR','cardioKcal',
-   'gpxDuration','gpxDistance','gpxElevation','gpxPace','gpxHR','gpxKcal','gpsHR','gpsKcal'].forEach(id => {
+   'gpsHR','gpsKcal','cardioActivityDate','gpsActivityDate'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
   selectCardioType('Laufen');
-  gpxTrackpoints = [];
-  const gpxPre = document.getElementById('gpxPreviewContainer');
-  if (gpxPre) gpxPre.style.display = 'none';
-  const gpxInput = document.getElementById('gpxFileInput');
-  if (gpxInput) gpxInput.value = '';
 }
 
 // --- Haversine ---
@@ -4947,9 +4899,20 @@ function saveGpsSession() {
 
   const reduced = downsampleTrack(gpsTrackpoints, 200);
 
+  const gpsDateEl = document.getElementById('gpsActivityDate');
+  const gpsDateVal = gpsDateEl ? gpsDateEl.value : '';
+  let activityTimestamp;
+  if (gpsDateVal) {
+    const parts = gpsDateVal.split('-');
+    activityTimestamp = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]), 12, 0, 0).getTime();
+  } else {
+    activityTimestamp = gpsStartTime;
+  }
+
   const session = {
     id: 'cardio_' + Date.now(),
-    timestamp: gpsStartTime,
+    timestamp: activityTimestamp,
+    createdAt: Date.now(),
     type: selectedCardioType,
     source: 'gps',
     duration: durationMin,
@@ -4987,123 +4950,6 @@ function downsampleTrack(pts, maxPts) {
   return result;
 }
 
-// --- GPX UPLOAD ---
-(function() {
-  const zone = document.getElementById('gpxUploadZone');
-  if (!zone) return;
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault();
-    zone.classList.remove('dragover');
-    const file = e.dataTransfer.files[0];
-    if (file && file.name.endsWith('.gpx')) processGpxFile(file);
-  });
-})();
-
-function handleGpxUpload(e) {
-  const file = e.target.files[0];
-  if (file) processGpxFile(file);
-}
-
-function processGpxFile(file) {
-  const reader = new FileReader();
-  reader.onload = e => {
-    const xml = e.target.result;
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(xml, 'text/xml');
-    const trkpts = doc.querySelectorAll('trkpt');
-    if (trkpts.length === 0) { alert(t('noTrackpointsGpx')); return; }
-
-    gpxTrackpoints = [];
-    trkpts.forEach(pt => {
-      const lat = parseFloat(pt.getAttribute('lat'));
-      const lon = parseFloat(pt.getAttribute('lon'));
-      const eleEl = pt.querySelector('ele');
-      const timeEl = pt.querySelector('time');
-      const alt = eleEl ? parseFloat(eleEl.textContent) : 0;
-      const time = timeEl ? new Date(timeEl.textContent).getTime() : 0;
-
-      const hrEl = pt.querySelector('extensions > *|TrackPointExtension > *|hr') || pt.querySelector('hr');
-      gpxTrackpoints.push({ lat, lon, alt, time, hr: hrEl ? parseInt(hrEl.textContent) : 0 });
-    });
-
-    const stats = calcTrackStats(gpxTrackpoints);
-
-    document.getElementById('gpxDuration').value = stats.durationMin || '';
-    document.getElementById('gpxDistance').value = stats.distance || '';
-    document.getElementById('gpxElevation').value = stats.elevGain || '';
-    document.getElementById('gpxPace').value = stats.pace || '';
-
-    const avgHR = gpxTrackpoints.filter(p => p.hr > 0);
-    if (avgHR.length > 0) {
-      document.getElementById('gpxHR').value = Math.round(avgHR.reduce((s,p) => s + p.hr, 0) / avgHR.length);
-    }
-
-    const autoKcal = calculateKcal(selectedCardioType, stats.durationMin || 0, stats.distance || 0, stats.elevGain || 0);
-    if (autoKcal > 0) document.getElementById('gpxKcal').value = autoKcal;
-
-    const preview = document.getElementById('gpxPreviewContainer');
-    preview.style.display = '';
-    document.getElementById('gpxPreDuration').textContent = stats.durationMin + ' ' + t('min');
-    document.getElementById('gpxPreDistance').textContent = stats.distance.toFixed(2) + ' km';
-    document.getElementById('gpxPreElevation').textContent = stats.elevGain + ' m';
-
-    setTimeout(() => {
-      const mapEl = document.getElementById('gpxPreviewMap');
-      if (gpxPreviewMap) { gpxPreviewMap.remove(); gpxPreviewMap = null; }
-      gpxPreviewMap = L.map(mapEl, { zoomControl: false, attributionControl: false });
-      createDarkTileLayer().addTo(gpxPreviewMap);
-      const latlngs = gpxTrackpoints.map(p => [p.lat, p.lon]);
-      const line = L.polyline(latlngs, { color: '#d4ff3a', weight: 3 }).addTo(gpxPreviewMap);
-      gpxPreviewMap.fitBounds(line.getBounds(), { padding: [20, 20] });
-    }, 100);
-
-    showToast('📂 GPX: ' + gpxTrackpoints.length + ' pts');
-  };
-  reader.readAsText(file);
-}
-
-function saveGpxSession() {
-  const duration = parseFloat(document.getElementById('gpxDuration').value) || 0;
-  const distance = parseFloat(document.getElementById('gpxDistance').value) || 0;
-  const elevation = parseFloat(document.getElementById('gpxElevation').value) || 0;
-  const pace = document.getElementById('gpxPace').value.trim();
-  const hr = parseInt(document.getElementById('gpxHR').value) || 0;
-  let kcal = parseInt(document.getElementById('gpxKcal').value) || 0;
-  if (kcal <= 0) kcal = calculateKcal(selectedCardioType, duration, distance, elevation);
-
-  if (duration <= 0 && distance <= 0) {
-    alert(t('enterDurationOrDist'));
-    return;
-  }
-
-  const reduced = downsampleTrack(gpxTrackpoints, 200);
-  const startTime = gpxTrackpoints.length > 0 && gpxTrackpoints[0].time ? gpxTrackpoints[0].time : Date.now();
-
-  const session = {
-    id: 'cardio_' + Date.now(),
-    timestamp: startTime,
-    type: selectedCardioType,
-    source: 'gpx',
-    duration, distance, elevation, pace, hr, kcal,
-    trackpoints: reduced,
-  };
-
-  if (!state.cardioSessions) state.cardioSessions = [];
-  const xp = calculateCardioXP(session);
-  session.points = xp;
-  state.totalPoints += xp;
-  state.cardioSessions.push(session);
-  saveState();
-
-  syncSessionToHealth(session);
-  gpxTrackpoints = [];
-  toggleCardioForm();
-  renderCardio();
-  showToast(t('gpxSaved') + ' +' + xp + ' XP');
-}
-
 // --- MANUAL SAVE ---
 function saveCardioSession() {
   const duration = parseFloat(document.getElementById('cardioDuration').value) || 0;
@@ -5119,9 +4965,20 @@ function saveCardioSession() {
     return;
   }
 
+  const cardioDateEl = document.getElementById('cardioActivityDate');
+  const cardioDateVal = cardioDateEl ? cardioDateEl.value : '';
+  let activityTimestamp;
+  if (cardioDateVal) {
+    const parts = cardioDateVal.split('-');
+    activityTimestamp = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]), 12, 0, 0).getTime();
+  } else {
+    activityTimestamp = Date.now();
+  }
+
   const session = {
     id: 'cardio_' + Date.now(),
-    timestamp: Date.now(),
+    timestamp: activityTimestamp,
+    createdAt: Date.now(),
     type: selectedCardioType,
     source: 'manual',
     duration, distance, elevation, pace, hr, kcal,
@@ -5602,6 +5459,8 @@ function startEmptyWorkout() {
   state.workoutStartTime = Date.now();
   startTimer();
   showView('workout');
+  const wDateEl = document.getElementById('workoutActivityDate');
+  if (wDateEl) wDateEl.value = new Date().toISOString().split('T')[0];
 }
 
 function startDefaultTemplate(idx) {
@@ -5626,6 +5485,8 @@ function startFromTemplate(name, exercises) {
   state.workoutStartTime = Date.now();
   startTimer();
   showView('workout');
+  const wDateEl = document.getElementById('workoutActivityDate');
+  if (wDateEl) wDateEl.value = new Date().toISOString().split('T')[0];
 }
 
 function createExerciseEntry(name) {
@@ -5788,6 +5649,15 @@ function finishWorkout() {
     if (!ex.isCardio) ex.sets = ex.sets.filter(s => s.done);
   });
 
+  const actDateEl = document.getElementById('workoutActivityDate');
+  const actDateVal = actDateEl ? actDateEl.value : '';
+  if (actDateVal) {
+    const parts = actDateVal.split('-');
+    const actDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]), 12, 0, 0);
+    w.activityDate = actDate.getTime();
+  } else {
+    w.activityDate = Date.now();
+  }
   w.timestamp = Date.now();
   w.duration = Math.floor((Date.now() - state.workoutStartTime) / 1000);
 
@@ -6231,7 +6101,7 @@ function renderCalendar() {
 
   const workoutMap = {};
   state.workouts.forEach(w => {
-    const d = new Date(w.timestamp);
+    const d = new Date(w.activityDate || w.timestamp);
     if (d.getFullYear() === year && d.getMonth() === month) {
       const key = d.getDate();
       workoutMap[key] = (workoutMap[key] || 0) + 1;
@@ -7682,54 +7552,135 @@ async function buildCircularRoute(startLat, startLon, distKm, routeType) {
   const profile = routeType === 'Radfahren' ? 'bicycle' : 'foot';
   const TAU = Math.PI * 2;
   const numPoints = distKm > 30 ? 8 : 6;
-  let radiusKm = distKm / (TAU * 1.35);
+
+  // First, snap start position to nearest routable road
+  const startSnap = await snapToRoad(startLat, startLon, profile);
+  if (startSnap) {
+    startLat = startSnap[0];
+    startLon = startSnap[1];
+  }
+
   let bestRoute = null;
   let bestDiff = Infinity;
 
-  for (let attempt = 0; attempt < 6; attempt++) {
-    const startAngle = (TAU / 6) * attempt;
-    const waypoints = [];
+  for (let attempt = 0; attempt < 8; attempt++) {
+    let radiusKm = distKm / (TAU * 1.3);
+    // Vary start angle and radius per attempt
+    const startAngle = (TAU / 8) * attempt + (Math.random() * 0.3);
+    const radiusJitter = 0.85 + Math.random() * 0.3;
+    radiusKm *= radiusJitter;
 
+    // Generate waypoints along a circle
+    const rawWaypoints = [];
     for (let i = 0; i < numPoints; i++) {
       const a = startAngle + (TAU * i / numPoints);
-      const jitter = 0.92 + Math.random() * 0.16;
+      const jitter = 0.88 + Math.random() * 0.24;
       const r = radiusKm * jitter;
       const dLat = (r / 111.32) * Math.cos(a);
       const dLon = (r / (111.32 * Math.cos(startLat * Math.PI / 180))) * Math.sin(a);
-      waypoints.push([startLon + dLon, startLat + dLat]);
+      rawWaypoints.push([startLon + dLon, startLat + dLat]);
     }
 
-    const allPts = [[startLon, startLat], ...waypoints, [startLon, startLat]];
+    // Snap each waypoint to nearest road using OSRM nearest service
+    const snappedWaypoints = [];
+    let allSnapped = true;
+    for (const wp of rawWaypoints) {
+      const snapped = await snapToRoad(wp[1], wp[0], profile);
+      if (snapped) {
+        snappedWaypoints.push([snapped[1], snapped[0]]);
+      } else {
+        allSnapped = false;
+        snappedWaypoints.push(wp);
+      }
+    }
+
+    // Use OSRM trip API for optimal round-trip (avoids backtracking)
+    const allPts = [[startLon, startLat], ...snappedWaypoints];
     const coords = allPts.map(w => w[0].toFixed(6) + ',' + w[1].toFixed(6)).join(';');
-    const url = `https://router.project-osrm.org/route/v1/${profile}/${coords}?overview=full&geometries=geojson&steps=false`;
+    const url = `https://router.project-osrm.org/trip/v1/${profile}/${coords}?overview=full&geometries=geojson&source=first&destination=last&roundtrip=true`;
 
     try {
       const res = await fetch(url);
       const data = await res.json();
-      if (data.code !== 'Ok' || !data.routes || !data.routes[0]) continue;
-      const route = data.routes[0];
-      const actualKm = route.distance / 1000;
+
+      if (data.code !== 'Ok' || !data.trips || !data.trips[0]) {
+        // Fallback to route API if trip fails
+        const routeUrl = `https://router.project-osrm.org/route/v1/${profile}/${coords};${startLon.toFixed(6)},${startLat.toFixed(6)}?overview=full&geometries=geojson&steps=false&continue_straight=false`;
+        const routeRes = await fetch(routeUrl);
+        const routeData = await routeRes.json();
+        if (routeData.code !== 'Ok' || !routeData.routes || !routeData.routes[0]) continue;
+
+        const route = routeData.routes[0];
+        const actualKm = route.distance / 1000;
+        const diff = Math.abs(actualKm - distKm) / distKm;
+
+        if (diff < bestDiff) {
+          bestDiff = diff;
+          bestRoute = {
+            coordinates: route.geometry.coordinates.map(c => [c[1], c[0]]),
+            routeWaypoints: [[startLat, startLon], ...snappedWaypoints.map(w => [w[1], w[0]])],
+            distance: Math.round(actualKm * 100) / 100,
+            duration: Math.round(route.duration / 60),
+            center: [startLat, startLon],
+            type: routeType,
+          };
+        }
+        if (diff < 0.15) break;
+        continue;
+      }
+
+      const trip = data.trips[0];
+      const actualKm = trip.distance / 1000;
       const diff = Math.abs(actualKm - distKm) / distKm;
 
       if (diff < bestDiff) {
         bestDiff = diff;
         bestRoute = {
-          coordinates: route.geometry.coordinates.map(c => [c[1], c[0]]),
-          routeWaypoints: [[startLat, startLon], ...waypoints.map(w => [w[1], w[0]])],
+          coordinates: trip.geometry.coordinates.map(c => [c[1], c[0]]),
+          routeWaypoints: [[startLat, startLon], ...snappedWaypoints.map(w => [w[1], w[0]])],
           distance: Math.round(actualKm * 100) / 100,
-          duration: Math.round(route.duration / 60),
+          duration: Math.round(trip.duration / 60),
           center: [startLat, startLon],
           type: routeType,
         };
       }
 
-      if (diff < 0.15) return bestRoute;
-      radiusKm = radiusKm * (distKm / actualKm);
+      if (diff < 0.15) break;
     } catch(e) {
       continue;
     }
   }
+
+  // Validate route quality
+  if (bestRoute) {
+    const coords = bestRoute.coordinates;
+    const startPt = coords[0];
+    const endPt = coords[coords.length - 1];
+    const endDist = haversine(startPt[0], startPt[1], endPt[0], endPt[1]);
+    // Route must return close to start (within 500m)
+    if (endDist > 0.5) {
+      bestRoute = null;
+    }
+  }
+
   return bestRoute;
+}
+
+async function snapToRoad(lat, lon, profile) {
+  try {
+    const url = `https://router.project-osrm.org/nearest/v1/${profile}/${lon.toFixed(6)},${lat.toFixed(6)}?number=1`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.code === 'Ok' && data.waypoints && data.waypoints[0]) {
+      const wp = data.waypoints[0];
+      // Only accept snap if within 500m of original point
+      const snapDist = wp.distance;
+      if (snapDist < 500) {
+        return [wp.location[1], wp.location[0]];
+      }
+    }
+  } catch(e) {}
+  return null;
 }
 
 function showRouteOnMap(route) {
