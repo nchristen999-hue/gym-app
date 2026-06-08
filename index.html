@@ -1170,6 +1170,16 @@
     stroke-width: 0.8;
     opacity: 0.4;
   }
+  body.theme-retro .muscle-map-svg .body-outline {
+    stroke: var(--text);
+    stroke-width: 1.2;
+    opacity: 0.6;
+  }
+  body.theme-retro .muscle-map-svg .muscle-part {
+    fill: rgba(15,24,64,0.06);
+    stroke: var(--border-strong);
+    stroke-width: 0.8;
+  }
   .muscle-map-legend {
     display: flex;
     flex-wrap: wrap;
@@ -1557,29 +1567,6 @@
   .share-btn:active { transform: scale(0.95); background: var(--accent); color: #000; border-color: var(--accent); }
   .share-preview { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
 
-  /* ===== CHALLENGES ===== */
-  .challenge-widget { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
-  .challenge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .challenge-badge { display: inline-block; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px; }
-  .challenge-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
-  .challenge-icon { font-size: 24px; flex-shrink: 0; }
-  .challenge-info { flex: 1; min-width: 0; }
-  .challenge-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
-  .challenge-desc { font-size: 11px; color: var(--text-dim); }
-  .challenge-progress { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
-  .challenge-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .challenge-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
-  .challenge-pct { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); font-weight: 700; }
-  .challenge-done { color: var(--accent); font-size: 20px; flex-shrink: 0; }
-
-  /* ===== LEADERBOARD ===== */
-
-  /* ===== TODAY WIDGET ===== */
-  .today-widget { background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .today-item { display: flex; align-items: center; gap: 8px; }
-  .today-icon { font-size: 20px; }
-  .today-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); font-weight: 700; }
-  .today-val { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; }
 
   /* =========================================================
      THEME: RETRO-ATHLETIC
@@ -1807,23 +1794,6 @@
         </div>
       </div>
 
-      <!-- TODAY WIDGET -->
-      <div class="today-widget" id="todayWidget">
-        <div class="today-item"><span class="today-icon">🔥</span><div><div class="today-label" data-i18n="streak">Streak</div><div class="today-val" id="todayStreak">0</div></div></div>
-        <div class="today-item"><span class="today-icon">💧</span><div><div class="today-label" data-i18n="water">Water</div><div class="today-val" id="todayWater">0/8</div></div></div>
-        <div class="today-item"><span class="today-icon">😴</span><div><div class="today-label" data-i18n="sleep">Sleep</div><div class="today-val" id="todaySleep">--</div></div></div>
-        <div class="today-item"><span class="today-icon">📋</span><div><div class="today-label" data-i18n="nextWorkout">Next</div><div class="today-val" id="todayNext">--</div></div></div>
-      </div>
-
-
-      <!-- DAILY CHALLENGES -->
-      <div class="challenge-widget" id="challengeWidget">
-        <div class="challenge-header">
-          <div class="water-title">⚡ <span data-i18n="dailyChallenges">Daily Challenges</span></div>
-          <div class="challenge-badge" data-i18n="today">Today</div>
-        </div>
-        <div id="challengeList"></div>
-      </div>
 
       <!-- MUSCLE MAP WIDGET -->
       <div class="muscle-map-card">
@@ -1856,13 +1826,13 @@
               <path class="muscle-part" data-muscle="Brust" d="M68,92 Q72,88 86,86 L100,86 Q92,90 86,96 L78,108 Q72,112 68,108 L64,102 Q64,96 68,92 Z" />
               <path class="muscle-part" data-muscle="Brust" d="M132,92 Q128,88 114,86 L100,86 Q108,90 114,96 L122,108 Q128,112 132,108 L136,102 Q136,96 132,92 Z" />
               <!-- Biceps L -->
-              <path class="muscle-part" data-muscle="Bizeps" d="M38,116 Q34,118 32,126 L28,148 Q26,158 28,164 L34,162 Q36,154 38,142 L42,128 Q44,120 42,116 Z" />
+              <path class="muscle-part" data-muscle="Arme" d="M38,116 Q34,118 32,126 L28,148 Q26,158 28,164 L34,162 Q36,154 38,142 L42,128 Q44,120 42,116 Z" />
               <!-- Biceps R -->
-              <path class="muscle-part" data-muscle="Bizeps" d="M162,116 Q166,118 168,126 L172,148 Q174,158 172,164 L166,162 Q164,154 162,142 L158,128 Q156,120 158,116 Z" />
+              <path class="muscle-part" data-muscle="Arme" d="M162,116 Q166,118 168,126 L172,148 Q174,158 172,164 L166,162 Q164,154 162,142 L158,128 Q156,120 158,116 Z" />
               <!-- Forearms L -->
-              <path class="muscle-part" data-muscle="Unterarm" d="M28,166 Q24,176 22,190 L20,210 Q22,218 26,216 L28,200 Q30,184 34,170 Z" />
+              <path class="muscle-part" data-muscle="Arme" d="M28,166 Q24,176 22,190 L20,210 Q22,218 26,216 L28,200 Q30,184 34,170 Z" />
               <!-- Forearms R -->
-              <path class="muscle-part" data-muscle="Unterarm" d="M172,166 Q176,176 178,190 L180,210 Q178,218 174,216 L172,200 Q170,184 166,170 Z" />
+              <path class="muscle-part" data-muscle="Arme" d="M172,166 Q176,176 178,190 L180,210 Q178,218 174,216 L172,200 Q170,184 166,170 Z" />
               <!-- Abs / Core -->
               <path class="muscle-part" data-muscle="Core" d="M80,110 Q84,108 100,108 Q116,108 120,110 L122,148 Q120,160 118,170 L116,182 Q112,188 100,190 Q88,188 84,182 L82,170 Q80,160 78,148 Z" />
               <!-- Obliques -->
@@ -1909,13 +1879,13 @@
               <path class="muscle-part" data-muscle="Rücken" d="M64,110 Q60,120 58,132 L60,148 Q62,152 66,150 L70,138 Q72,126 68,116 Z" />
               <path class="muscle-part" data-muscle="Rücken" d="M136,110 Q140,120 142,132 L140,148 Q138,152 134,150 L130,138 Q128,126 132,116 Z" />
               <!-- Triceps L -->
-              <path class="muscle-part" data-muscle="Trizeps" d="M38,116 Q34,118 32,126 L28,148 Q26,158 28,164 L34,162 Q36,154 38,142 L42,128 Q44,120 42,116 Z" />
+              <path class="muscle-part" data-muscle="Arme" d="M38,116 Q34,118 32,126 L28,148 Q26,158 28,164 L34,162 Q36,154 38,142 L42,128 Q44,120 42,116 Z" />
               <!-- Triceps R -->
-              <path class="muscle-part" data-muscle="Trizeps" d="M162,116 Q166,118 168,126 L172,148 Q174,158 172,164 L166,162 Q164,154 162,142 L158,128 Q156,120 158,116 Z" />
+              <path class="muscle-part" data-muscle="Arme" d="M162,116 Q166,118 168,126 L172,148 Q174,158 172,164 L166,162 Q164,154 162,142 L158,128 Q156,120 158,116 Z" />
               <!-- Forearms L -->
-              <path class="muscle-part" data-muscle="Unterarm" d="M28,166 Q24,176 22,190 L20,210 Q22,218 26,216 L28,200 Q30,184 34,170 Z" />
+              <path class="muscle-part" data-muscle="Arme" d="M28,166 Q24,176 22,190 L20,210 Q22,218 26,216 L28,200 Q30,184 34,170 Z" />
               <!-- Forearms R -->
-              <path class="muscle-part" data-muscle="Unterarm" d="M172,166 Q176,176 178,190 L180,210 Q178,218 174,216 L172,200 Q170,184 166,170 Z" />
+              <path class="muscle-part" data-muscle="Arme" d="M172,166 Q176,176 178,190 L180,210 Q178,218 174,216 L172,200 Q170,184 166,170 Z" />
               <!-- Lower Back / Erectors -->
               <path class="muscle-part" data-muscle="Core" d="M80,138 Q88,136 100,136 Q112,136 120,138 L122,168 Q118,178 116,184 Q112,188 100,190 Q88,188 84,184 L82,178 Q78,168 78,148 Z" />
               <!-- Glutes -->
@@ -2064,11 +2034,7 @@
         <div class="template-list" id="cardioTemplateList"></div>
       </div>
 
-      <div style="display:flex;gap:8px;margin-bottom:0;">
-        <button class="cardio-toggle-btn" id="cardioToggleBtn" onclick="toggleCardioForm()" style="flex:1;margin:0;" data-i18n="newCardioSession">+ New Cardio Session</button>
-        <button class="cardio-toggle-btn" onclick="document.getElementById('gpxFileInput').click()" style="margin:0;white-space:nowrap;">📁 GPX Import</button>
-      </div>
-      <input type="file" accept=".gpx,.tcx" id="gpxFileInput" style="display:none;" onchange="handleGpxImport(event)" />
+      <button class="cardio-toggle-btn" id="cardioToggleBtn" onclick="toggleCardioForm()" data-i18n="newCardioSession">+ New Cardio Session</button>
 
       <div class="cardio-form" id="cardioForm" style="display:none;">
         <div class="card-title" style="margin-bottom:10px;" data-i18n="sport">Sport</div>
@@ -2910,12 +2876,6 @@ const TRANSLATIONS = {
   sleep: { en:'Sleep', de:'Schlaf', es:'Sueño', fr:'Sommeil', it:'Sonno' },
   sleepSaved: { en:'Sleep logged!', de:'Schlaf gespeichert!', es:'¡Sueño registrado!', fr:'Sommeil enregistré !', it:'Sonno registrato!' },
   streak: { en:'Streak', de:'Serie', es:'Racha', fr:'Série', it:'Serie' },
-  nextWorkout: { en:'Next', de:'Nächstes', es:'Próximo', fr:'Prochain', it:'Prossimo' },
-
-  // ── CHALLENGES ──
-  dailyChallenges: { en:'Daily Challenges', de:'Tages-Challenges', es:'Desafíos diarios', fr:'Défis du jour', it:'Sfide giornaliere' },
-  challengeComplete: { en:'Challenge complete!', de:'Challenge geschafft!', es:'¡Desafío completado!', fr:'Défi accompli !', it:'Sfida completata!' },
-  today: { en:'Today', de:'Heute', es:'Hoy', fr:'Aujourd\'hui', it:'Oggi' },
 
   // ── PROGRESS PHOTOS ──
   progressPhotos: { en:'Photos', de:'Fotos', es:'Fotos', fr:'Photos', it:'Foto' },
@@ -3121,9 +3081,7 @@ const TRANSLATIONS = {
   muscleRuecken: { en:'Back', de:'Rücken', es:'Espalda', fr:'Dos', it:'Schiena' },
   muscleBeine: { en:'Legs', de:'Beine', es:'Piernas', fr:'Jambes', it:'Gambe' },
   muscleSchultern: { en:'Shoulders', de:'Schultern', es:'Hombros', fr:'Épaules', it:'Spalle' },
-  muscleBizeps: { en:'Biceps', de:'Bizeps', es:'Bíceps', fr:'Biceps', it:'Bicipiti' },
-  muscleTrizeps: { en:'Triceps', de:'Trizeps', es:'Tríceps', fr:'Triceps', it:'Tricipiti' },
-  muscleUnterarm: { en:'Forearms', de:'Unterarm', es:'Antebrazos', fr:'Avant-bras', it:'Avambracci' },
+  muscleArme: { en:'Arms', de:'Arme', es:'Brazos', fr:'Bras', it:'Braccia' },
   muscleCore: { en:'Core', de:'Core', es:'Core', fr:'Core', it:'Core' },
 
   // ── MISC UI ──
@@ -3202,7 +3160,7 @@ function tArr(key) {
   return entry[currentLang] || entry['en'] || [];
 }
 
-const MUSCLE_KEYS = { 'Brust':'muscleBrust', 'Rücken':'muscleRuecken', 'Beine':'muscleBeine', 'Schultern':'muscleSchultern', 'Bizeps':'muscleBizeps', 'Trizeps':'muscleTrizeps', 'Unterarm':'muscleUnterarm', 'Core':'muscleCore' };
+const MUSCLE_KEYS = { 'Brust':'muscleBrust', 'Rücken':'muscleRuecken', 'Beine':'muscleBeine', 'Schultern':'muscleSchultern', 'Bizeps':'muscleArme', 'Trizeps':'muscleArme', 'Unterarm':'muscleArme', 'Arme':'muscleArme', 'Core':'muscleCore' };
 const SPORT_KEYS = { 'Laufen':'running', 'Radfahren':'cycling', 'Schwimmen':'swimming', 'Wandern':'hiking', 'Sonstiges':'other' };
 function tMuscle(m) { return t(MUSCLE_KEYS[m] || m); }
 function tSport(type) { return t(SPORT_KEYS[type] || 'other'); }
@@ -4039,7 +3997,6 @@ let state = {
   waterLog: [],
   sleepLog: [],
   progressPhotos: [],
-  completedChallenges: [],
 };
 let timerInterval = null;
 let templateBuilder = { editingId: null, name: '', exercises: [] };
@@ -4194,7 +4151,6 @@ function saveState() {
     waterLog: state.waterLog,
     sleepLog: state.sleepLog,
     progressPhotos: state.progressPhotos,
-    completedChallenges: state.completedChallenges,
   }));
 }
 
@@ -6751,7 +6707,7 @@ function renderMuscleWeekWidget() {
   const muscleMap = {};
   allEx.forEach(e => { muscleMap[e.name] = e.muscle; });
 
-  const muscles = ['Brust', 'Rücken', 'Beine', 'Schultern', 'Bizeps', 'Trizeps', 'Unterarm', 'Core'];
+  const muscles = ['Brust', 'Rücken', 'Beine', 'Schultern', 'Arme', 'Core'];
   const data = {};
   muscles.forEach(m => { data[m] = { vol: 0, sets: 0 }; });
 
@@ -6823,6 +6779,7 @@ function getMuscleVolumes(period) {
   if (period === 'week') cutoff = now - 7 * 24 * 60 * 60 * 1000;
   else if (period === 'month') cutoff = now - 30 * 24 * 60 * 60 * 1000;
 
+  const armMerge = { 'Bizeps': 'Arme', 'Trizeps': 'Arme', 'Unterarm': 'Arme' };
   const volumes = {};
   const allEx = getAllExercises();
   const muscleMap = {};
@@ -6831,7 +6788,8 @@ function getMuscleVolumes(period) {
   state.workouts.forEach(w => {
     if (w.timestamp < cutoff) return;
     w.exercises.forEach(ex => {
-      const muscle = muscleMap[ex.name] || 'Sonstiges';
+      let muscle = muscleMap[ex.name] || 'Sonstiges';
+      muscle = armMerge[muscle] || muscle;
       if (!volumes[muscle]) volumes[muscle] = 0;
       ex.sets.forEach(s => {
         if (s.done && s.weight && s.reps) {
@@ -6856,7 +6814,7 @@ function getMuscleColor(ratio) {
 function renderMuscleMap() {
   const volumes = getMuscleVolumes(muscleMapPeriod);
   const maxVol = Math.max(...Object.values(volumes), 1);
-  const muscles = ['Brust', 'Rücken', 'Beine', 'Schultern', 'Bizeps', 'Trizeps', 'Unterarm', 'Core'];
+  const muscles = ['Brust', 'Rücken', 'Beine', 'Schultern', 'Arme', 'Core'];
 
   document.querySelectorAll('.muscle-part').forEach(el => {
     const muscle = el.dataset.muscle;
@@ -7782,7 +7740,6 @@ function setTodayWater(liters) {
   else state.waterLog.push({ date: today, liters });
   saveState();
   renderWaterWidget();
-  renderTodayWidget();
 }
 
 function addWater() { setTodayWater(Math.min(+(getTodayWater() + 0.25).toFixed(2), 6)); }
@@ -7816,7 +7773,6 @@ function saveSleep() {
   saveState();
   input.value = '';
   renderSleepWidget();
-  renderTodayWidget();
   showToast(t('sleepSaved'));
 }
 
@@ -7859,63 +7815,6 @@ function updateOfflineStatus() {
 window.addEventListener('online', updateOfflineStatus);
 window.addEventListener('offline', updateOfflineStatus);
 
-// =============================================
-// TODAY WIDGET
-// =============================================
-function renderTodayWidget() {
-  const stats = calculateStats();
-  document.getElementById('todayStreak').textContent = stats.streak + 'd';
-  document.getElementById('todayWater').textContent = getTodayWater().toFixed(1) + '/3L';
-  const sleep = getTodaySleep();
-  document.getElementById('todaySleep').textContent = sleep !== null ? sleep + 'h' : '--';
-  const todayDay = new Date().getDay();
-  const dayPlan = ['Rest', 'Push', 'Pull', 'Legs', 'Push', 'Pull', 'Legs'];
-  document.getElementById('todayNext').textContent = dayPlan[todayDay] || '--';
-}
-
-// =============================================
-// DAILY CHALLENGES
-// =============================================
-function getDailyChallenges() {
-  const today = getTodayKey();
-  const seed = today.split('-').join('');
-  const pool = [
-    { id: 'workout1', icon: '💪', name: { en:'Complete a workout', de:'Absolviere ein Workout' }, check: () => (state.workouts || []).some(w => { const d = new Date(w.activityDate || w.timestamp); return d.toISOString().split('T')[0] === today; }) },
-    { id: 'water3l', icon: '💧', name: { en:'Drink 3L of water', de:'Trinke 3L Wasser' }, check: () => getTodayWater() >= 3 },
-    { id: 'sleep7', icon: '😴', name: { en:'Log 7+ hours sleep', de:'Logge 7+ Stunden Schlaf' }, check: () => { const s = getTodaySleep(); return s !== null && s >= 7; } },
-    { id: 'cardio1', icon: '🏃', name: { en:'Do a cardio session', de:'Mache eine Cardio-Einheit' }, check: () => (state.cardioSessions || []).some(c => { const d = new Date(c.date || c.timestamp || 0); return d.toISOString().split('T')[0] === today; }) },
-    { id: 'log_food', icon: '🍎', name: { en:'Log your meals', de:'Logge deine Mahlzeiten' }, check: () => (state.nutritionLog || []).some(e => e.date === today) },
-    { id: 'water1l', icon: '💧', name: { en:'Drink 1.5L of water', de:'Trinke 1.5L Wasser' }, check: () => getTodayWater() >= 1.5 },
-  ];
-  const hash = parseInt(seed) % pool.length;
-  const selected = [];
-  for (let i = 0; i < 3 && i < pool.length; i++) {
-    selected.push(pool[(hash + i) % pool.length]);
-  }
-  return selected;
-}
-
-function renderChallenges() {
-  const challenges = getDailyChallenges();
-  const list = document.getElementById('challengeList');
-  list.innerHTML = challenges.map(ch => {
-    const done = ch.check();
-    const name = ch.name[currentLang] || ch.name.en;
-    return `
-      <div class="challenge-item">
-        <div class="challenge-icon">${ch.icon}</div>
-        <div class="challenge-info">
-          <div class="challenge-name">${name}</div>
-          <div class="challenge-progress">
-            <div class="challenge-bar"><div class="challenge-bar-fill" style="width:${done ? 100 : 0}%"></div></div>
-            <div class="challenge-pct">${done ? '100%' : '0%'}</div>
-          </div>
-        </div>
-        ${done ? '<div class="challenge-done">✓</div>' : ''}
-      </div>
-    `;
-  }).join('');
-}
 
 // =============================================
 // PROGRESS PHOTOS
@@ -8033,61 +7932,95 @@ function initCompareSlider() {
 // SHARING — premium canvas exports
 // =============================================
 function drawShareBase(ctx, W, H) {
-  ctx.fillStyle = '#0a0a0a';
-  ctx.fillRect(0, 0, W, H);
-  const g1 = ctx.createRadialGradient(W*0.2, H*0.08, 0, W*0.5, H*0.5, W*0.9);
-  g1.addColorStop(0, 'rgba(212,255,58,0.10)'); g1.addColorStop(0.5, 'rgba(212,255,58,0.03)'); g1.addColorStop(1, 'transparent');
+  const bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#0a0a0a'); bg.addColorStop(0.4, '#0d1117'); bg.addColorStop(1, '#0a0a0a');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+  const g1 = ctx.createRadialGradient(W*0.15, H*0.1, 0, W*0.15, H*0.1, W*0.6);
+  g1.addColorStop(0, 'rgba(212,255,58,0.14)'); g1.addColorStop(0.4, 'rgba(212,255,58,0.04)'); g1.addColorStop(1, 'transparent');
   ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H);
-  const g2 = ctx.createRadialGradient(W*0.8, H*0.9, 0, W*0.5, H*0.5, W);
-  g2.addColorStop(0, 'rgba(212,255,58,0.06)'); g2.addColorStop(1, 'transparent');
+  const g2 = ctx.createRadialGradient(W*0.85, H*0.85, 0, W*0.85, H*0.85, W*0.5);
+  g2.addColorStop(0, 'rgba(212,255,58,0.08)'); g2.addColorStop(1, 'transparent');
   ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
-  ctx.strokeStyle = 'rgba(212,255,58,0.08)'; ctx.lineWidth = 1;
-  ctx.strokeRect(60, 60, W-120, H-120);
-  ctx.strokeRect(80, 80, W-160, H-160);
+  const g3 = ctx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, W*0.3);
+  g3.addColorStop(0, 'rgba(100,200,255,0.03)'); g3.addColorStop(1, 'transparent');
+  ctx.fillStyle = g3; ctx.fillRect(0, 0, W, H);
+
+  ctx.save();
+  ctx.globalAlpha = 0.03;
+  for (let i = 0; i < H; i += 4) { ctx.fillStyle = i%8===0 ? '#fff' : 'transparent'; ctx.fillRect(0, i, W, 1); }
+  ctx.globalAlpha = 1;
+  ctx.restore();
+
+  ctx.strokeStyle = 'rgba(212,255,58,0.06)'; ctx.lineWidth = 1;
+  ctx.strokeRect(50, 50, W-100, H-100);
+
+  const accentBar = ctx.createLinearGradient(50, 0, W-50, 0);
+  accentBar.addColorStop(0, 'transparent'); accentBar.addColorStop(0.3, 'rgba(212,255,58,0.4)'); accentBar.addColorStop(0.7, 'rgba(212,255,58,0.4)'); accentBar.addColorStop(1, 'transparent');
+  ctx.fillStyle = accentBar; ctx.fillRect(50, 50, W-100, 3);
+  ctx.fillRect(50, H-53, W-100, 3);
 }
 
 function drawShareHeader(ctx, W, y) {
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#d4ff3a'; ctx.font = '900 64px "Bebas Neue", sans-serif';
-  ctx.letterSpacing = '8px';
+  ctx.save();
+  ctx.shadowColor = 'rgba(212,255,58,0.4)'; ctx.shadowBlur = 30;
+  ctx.fillStyle = '#d4ff3a'; ctx.font = '900 72px "Bebas Neue", sans-serif';
   ctx.fillText('GYMTRACK', W/2, y);
-  ctx.letterSpacing = '0px';
-  ctx.fillStyle = 'rgba(212,255,58,0.3)'; ctx.font = '700 16px Inter, sans-serif';
-  ctx.fillText('━━━━━━━━━━━━━━━━━━━━━━', W/2, y + 30);
-  return y + 50;
+  ctx.shadowBlur = 0;
+  ctx.restore();
+
+  const lineG = ctx.createLinearGradient(W*0.2, 0, W*0.8, 0);
+  lineG.addColorStop(0, 'transparent'); lineG.addColorStop(0.5, 'rgba(212,255,58,0.5)'); lineG.addColorStop(1, 'transparent');
+  ctx.fillStyle = lineG; ctx.fillRect(W*0.2, y+12, W*0.6, 2);
+
+  ctx.fillStyle = 'rgba(212,255,58,0.25)'; ctx.font = '700 14px Inter, sans-serif';
+  ctx.fillText('YOUR TRAINING SUMMARY', W/2, y + 40);
+  return y + 60;
 }
 
 function drawShareFooter(ctx, W, H, xp) {
   if (xp) {
     ctx.save();
     ctx.textAlign = 'center';
-    const fG = ctx.createLinearGradient(W/2 - 100, 0, W/2 + 100, 0);
-    fG.addColorStop(0, 'rgba(212,255,58,0.05)'); fG.addColorStop(0.5, 'rgba(212,255,58,0.15)'); fG.addColorStop(1, 'rgba(212,255,58,0.05)');
-    ctx.fillStyle = fG; ctx.beginPath();
-    ctx.roundRect(W/2-140, H-160, 280, 60, 30);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(212,255,58,0.3)'; ctx.lineWidth = 1;
-    ctx.roundRect(W/2-140, H-160, 280, 60, 30); ctx.stroke();
-    ctx.fillStyle = '#d4ff3a'; ctx.font = '900 36px "Bebas Neue", sans-serif';
-    ctx.fillText('+' + xp + ' XP', W/2, H-120);
+    const pillG = ctx.createLinearGradient(W/2-120, H-170, W/2+120, H-110);
+    pillG.addColorStop(0, 'rgba(212,255,58,0.08)'); pillG.addColorStop(0.5, 'rgba(212,255,58,0.18)'); pillG.addColorStop(1, 'rgba(212,255,58,0.08)');
+    ctx.fillStyle = pillG; ctx.beginPath(); ctx.roundRect(W/2-120, H-170, 240, 56, 28); ctx.fill();
+    ctx.strokeStyle = 'rgba(212,255,58,0.35)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.roundRect(W/2-120, H-170, 240, 56, 28); ctx.stroke();
+    ctx.shadowColor = 'rgba(212,255,58,0.3)'; ctx.shadowBlur = 15;
+    ctx.fillStyle = '#d4ff3a'; ctx.font = '900 32px "Bebas Neue", sans-serif';
+    ctx.fillText('⚡ +' + xp + ' XP', W/2, H-134);
+    ctx.shadowBlur = 0;
     ctx.restore();
   }
+
+  const footG = ctx.createLinearGradient(W*0.3, 0, W*0.7, 0);
+  footG.addColorStop(0, 'transparent'); footG.addColorStop(0.5, 'rgba(255,255,255,0.08)'); footG.addColorStop(1, 'transparent');
+  ctx.fillStyle = footG; ctx.fillRect(W*0.3, H-90, W*0.4, 1);
+
   ctx.textAlign = 'center';
-  ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.font = '500 20px Inter, sans-serif';
-  ctx.fillText('gymtrack.app', W/2, H-60);
+  ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.font = '600 18px Inter, sans-serif';
+  ctx.fillText('GYMTRACK', W/2, H-60);
 }
 
 function drawStatCard(ctx, x, y, w, h, val, label) {
   ctx.save();
-  ctx.fillStyle = 'rgba(255,255,255,0.03)'; ctx.beginPath();
-  ctx.roundRect(x, y, w, h, 16); ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
-  ctx.roundRect(x, y, w, h, 16); ctx.stroke();
+  const cg = ctx.createLinearGradient(x, y, x, y+h);
+  cg.addColorStop(0, 'rgba(255,255,255,0.06)'); cg.addColorStop(1, 'rgba(255,255,255,0.02)');
+  ctx.fillStyle = cg; ctx.beginPath(); ctx.roundRect(x, y, w, h, 16); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.10)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, 16); ctx.stroke();
+
+  const topAccent = ctx.createLinearGradient(x, y, x+w, y);
+  topAccent.addColorStop(0, 'transparent'); topAccent.addColorStop(0.5, 'rgba(212,255,58,0.3)'); topAccent.addColorStop(1, 'transparent');
+  ctx.fillStyle = topAccent; ctx.fillRect(x+8, y, w-16, 2);
+
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#d4ff3a'; ctx.font = '900 52px "Bebas Neue", sans-serif';
-  ctx.fillText(String(val), x + w/2, y + h/2 + 6);
-  ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = '700 18px Inter, sans-serif';
-  ctx.fillText(label, x + w/2, y + h - 16);
+  ctx.fillStyle = '#d4ff3a'; ctx.font = '900 48px "Bebas Neue", sans-serif';
+  ctx.fillText(String(val), x + w/2, y + h/2 + 4);
+  ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '700 16px Inter, sans-serif';
+  ctx.fillText(label, x + w/2, y + h - 14);
   ctx.restore();
 }
 
@@ -8141,22 +8074,40 @@ function shareWorkout(timestamp) {
   const startX = (W - stats.length * cardW - (stats.length-1) * gap) / 2;
   stats.forEach((st, i) => drawStatCard(ctx, startX + i*(cardW+gap), y, cardW, cardH, st.val, st.label));
 
-  y += cardH + 60;
+  y += cardH + 50;
+
+  ctx.fillStyle = 'rgba(255,255,255,0.04)';
+  const listPad = 100;
+  const listH = Math.min(w.exercises.length * 78 + 40, H - y - 220);
+  ctx.beginPath(); ctx.roundRect(listPad, y - 20, W - listPad*2, listH, 20); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.roundRect(listPad, y - 20, W - listPad*2, listH, 20); ctx.stroke();
+
   ctx.textAlign = 'left';
-  w.exercises.forEach(ex => {
+  w.exercises.forEach((ex, idx) => {
     if (y > H - 250) return;
-    ctx.fillStyle = '#f5f5f5'; ctx.font = '600 32px Inter, sans-serif';
-    ctx.fillText(ex.name, 120, y);
+    ctx.fillStyle = 'rgba(212,255,58,0.15)'; ctx.font = '900 24px "Bebas Neue", sans-serif';
+    ctx.fillText(String(idx+1).padStart(2, '0'), 130, y + 4);
+
+    ctx.fillStyle = '#f5f5f5'; ctx.font = '600 30px Inter, sans-serif';
+    ctx.fillText(ex.name, 190, y);
     if (!ex.isCardio) {
       const best = ex.sets.filter(s => s.done).sort((a,b) => (b.weight||0) - (a.weight||0))[0];
       if (best) {
-        ctx.fillStyle = '#d4ff3a'; ctx.font = '600 28px "JetBrains Mono", monospace';
-        ctx.fillText(`${best.weight} kg × ${best.reps}`, 120, y + 38);
+        ctx.fillStyle = '#d4ff3a'; ctx.font = '600 24px "JetBrains Mono", monospace';
+        ctx.fillText(`${best.weight} kg × ${best.reps}`, 190, y + 34);
       }
+      const setCount = ex.sets.filter(s => s.done).length;
+      ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = '600 22px Inter, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(setCount + ' sets', W - 130, y);
+      ctx.textAlign = 'left';
     }
-    ctx.fillStyle = 'rgba(255,255,255,0.06)';
-    ctx.fillRect(120, y + 52, W - 240, 1);
-    y += 78;
+    const lineG = ctx.createLinearGradient(130, 0, W-130, 0);
+    lineG.addColorStop(0, 'transparent'); lineG.addColorStop(0.1, 'rgba(255,255,255,0.06)'); lineG.addColorStop(0.9, 'rgba(255,255,255,0.06)'); lineG.addColorStop(1, 'transparent');
+    ctx.fillStyle = lineG;
+    ctx.fillRect(130, y + 50, W - 260, 1);
+    y += 72;
   });
 
   drawShareFooter(ctx, W, H, w.points);
@@ -8265,123 +8216,11 @@ function shareCardio(sessionId) {
 
 
 // =============================================
-// GPX / TCX IMPORT (Strava, Garmin, etc.)
-// =============================================
-function handleGpxImport(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(e.target.result, 'text/xml');
-      const isGpx = xml.querySelector('gpx');
-      const isTcx = xml.querySelector('TrainingCenterDatabase');
-
-      let trackpoints = [], totalDist = 0, totalElev = 0, startTime = null, endTime = null, sportType = 'Laufen';
-
-      if (isGpx) {
-        const trkpts = xml.querySelectorAll('trkpt');
-        let prevLat = null, prevLon = null, prevAlt = null;
-        trkpts.forEach(pt => {
-          const lat = parseFloat(pt.getAttribute('lat'));
-          const lon = parseFloat(pt.getAttribute('lon'));
-          const eleEl = pt.querySelector('ele');
-          const timeEl = pt.querySelector('time');
-          const alt = eleEl ? parseFloat(eleEl.textContent) : 0;
-          const time = timeEl ? new Date(timeEl.textContent).getTime() : 0;
-          if (!startTime && time) startTime = time;
-          if (time) endTime = time;
-          if (prevLat !== null) {
-            totalDist += haversine(prevLat, prevLon, lat, lon);
-            if (alt > (prevAlt || 0)) totalElev += alt - prevAlt;
-          }
-          trackpoints.push({ lat, lon, alt, time });
-          prevLat = lat; prevLon = lon; prevAlt = alt;
-        });
-        const nameEl = xml.querySelector('trk > name');
-        if (nameEl) {
-          const n = nameEl.textContent.toLowerCase();
-          if (n.includes('ride') || n.includes('cycling') || n.includes('bike') || n.includes('rad')) sportType = 'Radfahren';
-          else if (n.includes('swim') || n.includes('schwimm')) sportType = 'Schwimmen';
-          else if (n.includes('hike') || n.includes('wander')) sportType = 'Wandern';
-        }
-      } else if (isTcx) {
-        const tps = xml.querySelectorAll('Trackpoint');
-        let prevLat = null, prevLon = null, prevAlt = null;
-        tps.forEach(pt => {
-          const posEl = pt.querySelector('Position');
-          if (!posEl) return;
-          const lat = parseFloat(posEl.querySelector('LatitudeDegrees').textContent);
-          const lon = parseFloat(posEl.querySelector('LongitudeDegrees').textContent);
-          const altEl = pt.querySelector('AltitudeMeters');
-          const timeEl = pt.querySelector('Time');
-          const alt = altEl ? parseFloat(altEl.textContent) : 0;
-          const time = timeEl ? new Date(timeEl.textContent).getTime() : 0;
-          if (!startTime && time) startTime = time;
-          if (time) endTime = time;
-          if (prevLat !== null) {
-            totalDist += haversine(prevLat, prevLon, lat, lon);
-            if (alt > (prevAlt || 0)) totalElev += alt - prevAlt;
-          }
-          trackpoints.push({ lat, lon, alt, time });
-          prevLat = lat; prevLon = lon; prevAlt = alt;
-        });
-        const actEl = xml.querySelector('Activity');
-        if (actEl) {
-          const sport = (actEl.getAttribute('Sport') || '').toLowerCase();
-          if (sport.includes('bik') || sport.includes('cycl')) sportType = 'Radfahren';
-          else if (sport.includes('swim')) sportType = 'Schwimmen';
-        }
-      } else {
-        showToast('Unsupported file format'); return;
-      }
-
-      if (trackpoints.length < 2) { showToast('No trackpoints found'); return; }
-
-      const durationMin = startTime && endTime ? Math.round((endTime - startTime) / 60000) : 0;
-      const distKm = Math.round(totalDist * 100) / 100;
-      const pace = distKm > 0 && durationMin > 0 ? (durationMin / distKm).toFixed(2) : '';
-      const kcal = calculateKcal(sportType, durationMin, distKm, totalElev);
-      const reduced = downsampleTrack(trackpoints, 200);
-
-      const session = {
-        id: 'cardio_' + Date.now(),
-        timestamp: startTime || Date.now(),
-        createdAt: Date.now(),
-        type: sportType,
-        source: 'gpx-import',
-        duration: durationMin,
-        distance: distKm,
-        elevation: Math.round(totalElev),
-        pace, kcal,
-        trackpoints: reduced,
-      };
-
-      if (!state.cardioSessions) state.cardioSessions = [];
-      const xp = calculateCardioXP(session);
-      session.points = xp;
-      state.totalPoints += xp;
-      state.cardioSessions.push(session);
-      saveState();
-      renderCardio();
-      showToast(`GPX imported! ${distKm} km, ${durationMin} min +${xp} XP`);
-    } catch(err) {
-      showToast('Import error: ' + err.message);
-    }
-  };
-  reader.readAsText(file);
-  event.target.value = '';
-}
-
-// =============================================
 // RENDER HOME — hook new widgets
 // =============================================
 const _originalRenderHome = renderHome;
 renderHome = function() {
   _originalRenderHome();
-  renderChallenges();
-  renderTodayWidget();
   updateOfflineStatus();
 };
 
