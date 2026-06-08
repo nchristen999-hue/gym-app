@@ -1553,8 +1553,8 @@
   .photo-compare .compare-label { position: absolute; bottom: 8px; padding: 4px 10px; background: rgba(0,0,0,0.7); color: #fff; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; z-index: 3; }
 
   /* ===== WORKOUT SHARING ===== */
-  .share-btn { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
-  .share-btn:active { transform: scale(0.95); border-color: var(--accent); }
+  .share-btn { background: linear-gradient(135deg, var(--surface-2), var(--surface)); border: 1px solid var(--border); color: var(--accent); padding: 10px 16px; border-radius: 12px; font-weight: 700; font-size: 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1); margin-top: 8px; }
+  .share-btn:active { transform: scale(0.95); background: var(--accent); color: #000; border-color: var(--accent); }
   .share-preview { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
 
   /* ===== CHALLENGES ===== */
@@ -2064,7 +2064,11 @@
         <div class="template-list" id="cardioTemplateList"></div>
       </div>
 
-      <button class="cardio-toggle-btn" id="cardioToggleBtn" onclick="toggleCardioForm()" data-i18n="newCardioSession">+ New Cardio Session</button>
+      <div style="display:flex;gap:8px;margin-bottom:0;">
+        <button class="cardio-toggle-btn" id="cardioToggleBtn" onclick="toggleCardioForm()" style="flex:1;margin:0;" data-i18n="newCardioSession">+ New Cardio Session</button>
+        <button class="cardio-toggle-btn" onclick="document.getElementById('gpxFileInput').click()" style="margin:0;white-space:nowrap;">📁 GPX Import</button>
+      </div>
+      <input type="file" accept=".gpx,.tcx" id="gpxFileInput" style="display:none;" onchange="handleGpxImport(event)" />
 
       <div class="cardio-form" id="cardioForm" style="display:none;">
         <div class="card-title" style="margin-bottom:10px;" data-i18n="sport">Sport</div>
@@ -2292,12 +2296,11 @@
       <div class="water-widget" id="waterWidget" style="margin-top:16px;">
         <div class="water-header">
           <div class="water-title">💧 <span data-i18n="waterTracker">Water Tracker</span></div>
-          <div class="water-count"><span id="waterCount">0</span> <span class="water-unit">/ 8</span></div>
+          <div class="water-count"><span id="waterCount">0</span><span class="water-unit">L / 3L</span></div>
         </div>
-        <div class="water-glasses" id="waterGlasses"></div>
-        <div class="water-btns">
-          <button class="water-btn" onclick="removeWater()">−</button>
-          <button class="water-btn" onclick="addWater()">+</button>
+        <div class="water-btns" style="justify-content:center;gap:16px;">
+          <button class="water-btn" onclick="removeWater()">− 0.25L</button>
+          <button class="water-btn" onclick="addWater()" style="background:var(--accent);color:#000;">+ 0.25L</button>
         </div>
         <div class="water-progress"><div class="water-progress-fill" id="waterProgressFill" style="width:0%"></div></div>
       </div>
@@ -4709,6 +4712,7 @@ function renderHistory() {
             ${c.kcal ? `<span><strong>${c.kcal}</strong> kcal</span>` : ''}
             ${c.points ? `<span class="history-points">+${c.points} XP</span>` : ''}
           </div>
+          <button class="share-btn" onclick="event.stopPropagation();shareCardio('${c.id}')">📤 Share</button>
         </div>
       `;
     }
@@ -7765,37 +7769,30 @@ function getTodayKey() { return new Date().toISOString().split('T')[0]; }
 function getTodayWater() {
   const today = getTodayKey();
   const entry = (state.waterLog || []).find(e => e.date === today);
-  return entry ? entry.glasses : 0;
+  if (!entry) return 0;
+  if (entry.liters != null) return entry.liters;
+  return (entry.glasses || 0) * 0.25;
 }
 
-function setTodayWater(count) {
+function setTodayWater(liters) {
   const today = getTodayKey();
   if (!state.waterLog) state.waterLog = [];
   const idx = state.waterLog.findIndex(e => e.date === today);
-  if (idx >= 0) state.waterLog[idx].glasses = count;
-  else state.waterLog.push({ date: today, glasses: count });
+  if (idx >= 0) state.waterLog[idx].liters = liters;
+  else state.waterLog.push({ date: today, liters });
   saveState();
   renderWaterWidget();
   renderTodayWidget();
 }
 
-function addWater() { setTodayWater(Math.min(getTodayWater() + 1, 16)); }
-function removeWater() { setTodayWater(Math.max(getTodayWater() - 1, 0)); }
-function toggleWaterGlass(i) { setTodayWater(getTodayWater() === i + 1 ? i : i + 1); }
+function addWater() { setTodayWater(Math.min(+(getTodayWater() + 0.25).toFixed(2), 6)); }
+function removeWater() { setTodayWater(Math.max(+(getTodayWater() - 0.25).toFixed(2), 0)); }
 
 function renderWaterWidget() {
-  const count = getTodayWater();
-  const goal = 8;
-  document.getElementById('waterCount').textContent = count;
-  document.getElementById('waterProgressFill').style.width = Math.min(100, (count / goal) * 100) + '%';
-  const container = document.getElementById('waterGlasses');
-  let html = '';
-  for (let i = 0; i < goal; i++) {
-    const filled = i < count;
-    const pct = filled ? 100 : 0;
-    html += `<div class="water-glass ${filled ? 'filled' : ''}" onclick="toggleWaterGlass(${i})"><div class="water-fill" style="height:${pct}%"></div></div>`;
-  }
-  container.innerHTML = html;
+  const liters = getTodayWater();
+  const goal = 3;
+  document.getElementById('waterCount').textContent = liters.toFixed(2).replace(/\.?0+$/, '');
+  document.getElementById('waterProgressFill').style.width = Math.min(100, (liters / goal) * 100) + '%';
 }
 
 // =============================================
@@ -7868,7 +7865,7 @@ window.addEventListener('offline', updateOfflineStatus);
 function renderTodayWidget() {
   const stats = calculateStats();
   document.getElementById('todayStreak').textContent = stats.streak + 'd';
-  document.getElementById('todayWater').textContent = getTodayWater() + '/8';
+  document.getElementById('todayWater').textContent = getTodayWater().toFixed(1) + '/3L';
   const sleep = getTodaySleep();
   document.getElementById('todaySleep').textContent = sleep !== null ? sleep + 'h' : '--';
   const todayDay = new Date().getDay();
@@ -7884,11 +7881,11 @@ function getDailyChallenges() {
   const seed = today.split('-').join('');
   const pool = [
     { id: 'workout1', icon: '💪', name: { en:'Complete a workout', de:'Absolviere ein Workout' }, check: () => (state.workouts || []).some(w => { const d = new Date(w.activityDate || w.timestamp); return d.toISOString().split('T')[0] === today; }) },
-    { id: 'water8', icon: '💧', name: { en:'Drink 8 glasses of water', de:'Trinke 8 Gläser Wasser' }, check: () => getTodayWater() >= 8 },
+    { id: 'water3l', icon: '💧', name: { en:'Drink 3L of water', de:'Trinke 3L Wasser' }, check: () => getTodayWater() >= 3 },
     { id: 'sleep7', icon: '😴', name: { en:'Log 7+ hours sleep', de:'Logge 7+ Stunden Schlaf' }, check: () => { const s = getTodaySleep(); return s !== null && s >= 7; } },
     { id: 'cardio1', icon: '🏃', name: { en:'Do a cardio session', de:'Mache eine Cardio-Einheit' }, check: () => (state.cardioSessions || []).some(c => { const d = new Date(c.date || c.timestamp || 0); return d.toISOString().split('T')[0] === today; }) },
     { id: 'log_food', icon: '🍎', name: { en:'Log your meals', de:'Logge deine Mahlzeiten' }, check: () => (state.nutritionLog || []).some(e => e.date === today) },
-    { id: 'water4', icon: '💧', name: { en:'Drink 4 glasses of water', de:'Trinke 4 Gläser Wasser' }, check: () => getTodayWater() >= 4 },
+    { id: 'water1l', icon: '💧', name: { en:'Drink 1.5L of water', de:'Trinke 1.5L Wasser' }, check: () => getTodayWater() >= 1.5 },
   ];
   const hash = parseInt(seed) % pool.length;
   const selected = [];
@@ -8033,96 +8030,349 @@ function initCompareSlider() {
 }
 
 // =============================================
-// WORKOUT SHARING (Canvas-based image export)
+// SHARING — premium canvas exports
 // =============================================
-function shareWorkout(timestamp) {
-  const w = (state.workouts || []).find(w2 => w2.timestamp === timestamp);
-  if (!w) return;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = 1080; canvas.height = 1920;
-  const ctx = canvas.getContext('2d');
-
+function drawShareBase(ctx, W, H) {
   ctx.fillStyle = '#0a0a0a';
-  ctx.fillRect(0, 0, 1080, 1920);
+  ctx.fillRect(0, 0, W, H);
+  const g1 = ctx.createRadialGradient(W*0.2, H*0.08, 0, W*0.5, H*0.5, W*0.9);
+  g1.addColorStop(0, 'rgba(212,255,58,0.10)'); g1.addColorStop(0.5, 'rgba(212,255,58,0.03)'); g1.addColorStop(1, 'transparent');
+  ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H);
+  const g2 = ctx.createRadialGradient(W*0.8, H*0.9, 0, W*0.5, H*0.5, W);
+  g2.addColorStop(0, 'rgba(212,255,58,0.06)'); g2.addColorStop(1, 'transparent');
+  ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(212,255,58,0.08)'; ctx.lineWidth = 1;
+  ctx.strokeRect(60, 60, W-120, H-120);
+  ctx.strokeRect(80, 80, W-160, H-160);
+}
 
-  const grd = ctx.createRadialGradient(300, 200, 0, 540, 960, 800);
-  grd.addColorStop(0, 'rgba(212,255,58,0.12)'); grd.addColorStop(1, 'transparent');
-  ctx.fillStyle = grd; ctx.fillRect(0, 0, 1080, 1920);
-
-  ctx.fillStyle = '#d4ff3a';
-  ctx.font = '900 72px "Bebas Neue", sans-serif';
+function drawShareHeader(ctx, W, y) {
   ctx.textAlign = 'center';
-  ctx.fillText('GYMTRACK', 540, 200);
+  ctx.fillStyle = '#d4ff3a'; ctx.font = '900 64px "Bebas Neue", sans-serif';
+  ctx.letterSpacing = '8px';
+  ctx.fillText('GYMTRACK', W/2, y);
+  ctx.letterSpacing = '0px';
+  ctx.fillStyle = 'rgba(212,255,58,0.3)'; ctx.font = '700 16px Inter, sans-serif';
+  ctx.fillText('━━━━━━━━━━━━━━━━━━━━━━', W/2, y + 30);
+  return y + 50;
+}
 
-  ctx.fillStyle = '#f5f5f5';
-  ctx.font = '700 56px Inter, sans-serif';
-  ctx.fillText(w.name || 'Workout', 540, 350);
-
-  const d = new Date(w.activityDate || w.timestamp);
-  ctx.fillStyle = '#888';
-  ctx.font = '500 36px "JetBrains Mono", monospace';
-  ctx.fillText(d.toLocaleDateString(getLoc(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }), 540, 420);
-
-  let y = 540;
-  ctx.fillStyle = '#d4ff3a'; ctx.font = '700 40px Inter, sans-serif';
-  const totalSets = w.exercises.reduce((s, ex) => s + (ex.isCardio ? 0 : ex.sets.filter(st => st.done).length), 0);
-  const totalVol = w.exercises.reduce((s, ex) => s + (ex.isCardio ? 0 : ex.sets.reduce((s2, st) => s2 + (st.done ? (st.weight||0)*(st.reps||0) : 0), 0)), 0);
-  const dur = w.duration ? Math.round(w.duration / 60) : 0;
-
-  const statsRow = [
-    { label: 'EXERCISES', val: w.exercises.length },
-    { label: 'SETS', val: totalSets },
-    { label: 'VOLUME', val: totalVol.toLocaleString() + ' kg' },
-    { label: 'MINUTES', val: dur },
-  ];
-
-  const colW = 1080 / statsRow.length;
-  statsRow.forEach((st, i) => {
-    const cx = colW * i + colW / 2;
-    ctx.fillStyle = '#d4ff3a'; ctx.font = '900 64px "Bebas Neue", sans-serif';
-    ctx.fillText(String(st.val), cx, y);
-    ctx.fillStyle = '#888'; ctx.font = '700 24px Inter, sans-serif';
-    ctx.fillText(st.label, cx, y + 40);
-  });
-
-  y += 120;
-  ctx.textAlign = 'left';
-  w.exercises.forEach((ex, i) => {
-    if (y > 1700) return;
-    ctx.fillStyle = '#f5f5f5'; ctx.font = '600 36px Inter, sans-serif';
-    ctx.fillText(ex.name, 100, y);
-    if (!ex.isCardio) {
-      const best = ex.sets.filter(s => s.done).sort((a,b) => (b.weight||0) - (a.weight||0))[0];
-      if (best) {
-        ctx.fillStyle = '#888'; ctx.font = '500 28px "JetBrains Mono", monospace';
-        ctx.fillText(`${best.weight}kg × ${best.reps}`, 100, y + 36);
-      }
-    }
-    y += 80;
-  });
-
-  ctx.textAlign = 'center';
-  if (w.points) {
-    ctx.fillStyle = '#d4ff3a'; ctx.font = '900 48px "Bebas Neue", sans-serif';
-    ctx.fillText('+' + w.points + ' XP', 540, 1800);
+function drawShareFooter(ctx, W, H, xp) {
+  if (xp) {
+    ctx.save();
+    ctx.textAlign = 'center';
+    const fG = ctx.createLinearGradient(W/2 - 100, 0, W/2 + 100, 0);
+    fG.addColorStop(0, 'rgba(212,255,58,0.05)'); fG.addColorStop(0.5, 'rgba(212,255,58,0.15)'); fG.addColorStop(1, 'rgba(212,255,58,0.05)');
+    ctx.fillStyle = fG; ctx.beginPath();
+    ctx.roundRect(W/2-140, H-160, 280, 60, 30);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(212,255,58,0.3)'; ctx.lineWidth = 1;
+    ctx.roundRect(W/2-140, H-160, 280, 60, 30); ctx.stroke();
+    ctx.fillStyle = '#d4ff3a'; ctx.font = '900 36px "Bebas Neue", sans-serif';
+    ctx.fillText('+' + xp + ' XP', W/2, H-120);
+    ctx.restore();
   }
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.font = '500 20px Inter, sans-serif';
+  ctx.fillText('gymtrack.app', W/2, H-60);
+}
 
+function drawStatCard(ctx, x, y, w, h, val, label) {
+  ctx.save();
+  ctx.fillStyle = 'rgba(255,255,255,0.03)'; ctx.beginPath();
+  ctx.roundRect(x, y, w, h, 16); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
+  ctx.roundRect(x, y, w, h, 16); ctx.stroke();
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#d4ff3a'; ctx.font = '900 52px "Bebas Neue", sans-serif';
+  ctx.fillText(String(val), x + w/2, y + h/2 + 6);
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = '700 18px Inter, sans-serif';
+  ctx.fillText(label, x + w/2, y + h - 16);
+  ctx.restore();
+}
+
+function exportCanvasImage(canvas, filename) {
   canvas.toBlob(blob => {
     if (navigator.share && navigator.canShare) {
-      const file = new File([blob], 'gymtrack-workout.png', { type: 'image/png' });
-      navigator.share({ files: [file], title: 'GYMTRACK Workout' }).catch(() => {});
+      const file = new File([blob], filename, { type: 'image/png' });
+      navigator.share({ files: [file], title: 'GYMTRACK' }).catch(() => {});
     } else {
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'gymtrack-workout.png';
-      a.click();
+      const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
       URL.revokeObjectURL(url);
     }
     showToast(t('workoutShared'));
   }, 'image/png');
 }
 
+function shareWorkout(timestamp) {
+  const w = (state.workouts || []).find(w2 => w2.timestamp === timestamp);
+  if (!w) return;
+
+  const W = 1080, H = 1920;
+  const canvas = document.createElement('canvas'); canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  drawShareBase(ctx, W, H);
+  let y = drawShareHeader(ctx, W, 160);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#f5f5f5'; ctx.font = '700 48px Inter, sans-serif';
+  y += 60;
+  ctx.fillText(w.name || 'Workout', W/2, y);
+
+  const d = new Date(w.activityDate || w.timestamp);
+  ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.font = '500 28px "JetBrains Mono", monospace';
+  y += 44;
+  ctx.fillText(d.toLocaleDateString(getLoc(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }), W/2, y);
+
+  const totalSets = w.exercises.reduce((s, ex) => s + (ex.isCardio ? 0 : ex.sets.filter(st => st.done).length), 0);
+  const totalVol = w.exercises.reduce((s, ex) => s + (ex.isCardio ? 0 : ex.sets.reduce((s2, st) => s2 + (st.done ? (st.weight||0)*(st.reps||0) : 0), 0)), 0);
+  const dur = w.duration ? Math.round(w.duration / 60) : 0;
+
+  y += 60;
+  const stats = [
+    { val: w.exercises.length, label: 'EXERCISES' },
+    { val: totalSets, label: 'SETS' },
+    { val: totalVol >= 1000 ? (totalVol/1000).toFixed(1)+'t' : totalVol+'kg', label: 'VOLUME' },
+    { val: dur, label: 'MINUTES' },
+  ];
+  const cardW = 220, cardH = 100, gap = 20;
+  const startX = (W - stats.length * cardW - (stats.length-1) * gap) / 2;
+  stats.forEach((st, i) => drawStatCard(ctx, startX + i*(cardW+gap), y, cardW, cardH, st.val, st.label));
+
+  y += cardH + 60;
+  ctx.textAlign = 'left';
+  w.exercises.forEach(ex => {
+    if (y > H - 250) return;
+    ctx.fillStyle = '#f5f5f5'; ctx.font = '600 32px Inter, sans-serif';
+    ctx.fillText(ex.name, 120, y);
+    if (!ex.isCardio) {
+      const best = ex.sets.filter(s => s.done).sort((a,b) => (b.weight||0) - (a.weight||0))[0];
+      if (best) {
+        ctx.fillStyle = '#d4ff3a'; ctx.font = '600 28px "JetBrains Mono", monospace';
+        ctx.fillText(`${best.weight} kg × ${best.reps}`, 120, y + 38);
+      }
+    }
+    ctx.fillStyle = 'rgba(255,255,255,0.06)';
+    ctx.fillRect(120, y + 52, W - 240, 1);
+    y += 78;
+  });
+
+  drawShareFooter(ctx, W, H, w.points);
+  exportCanvasImage(canvas, 'gymtrack-workout.png');
+}
+
+function shareCardio(sessionId) {
+  const c = (state.cardioSessions || []).find(s => s.id === sessionId);
+  if (!c) return;
+
+  const hasRoute = c.trackpoints && c.trackpoints.length > 2;
+  const W = 1080, H = 1920;
+  const canvas = document.createElement('canvas'); canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  drawShareBase(ctx, W, H);
+  let y = drawShareHeader(ctx, W, 160);
+
+  const icon = (typeof CARDIO_ICONS !== 'undefined' && CARDIO_ICONS[c.type]) || '🏃';
+  ctx.textAlign = 'center';
+  ctx.font = '80px sans-serif';
+  y += 80;
+  ctx.fillText(icon, W/2, y);
+
+  ctx.fillStyle = '#f5f5f5'; ctx.font = '700 48px Inter, sans-serif';
+  y += 60;
+  ctx.fillText(tSport(c.type || 'Cardio'), W/2, y);
+
+  const d = new Date(c.date || c.timestamp || c.createdAt);
+  ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.font = '500 28px "JetBrains Mono", monospace';
+  y += 44;
+  ctx.fillText(d.toLocaleDateString(getLoc(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }), W/2, y);
+
+  if (hasRoute) {
+    y += 40;
+    const pts = c.trackpoints;
+    const lats = pts.map(p => p.lat), lons = pts.map(p => p.lon);
+    const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+    const minLon = Math.min(...lons), maxLon = Math.max(...lons);
+    const pad = 60;
+    const mapX = 120, mapY = y, mapW = W - 240, mapH = 500;
+
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    ctx.beginPath(); ctx.roundRect(mapX, mapY, mapW, mapH, 20); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(mapX, mapY, mapW, mapH, 20); ctx.stroke();
+
+    const latRange = maxLat - minLat || 0.001;
+    const lonRange = maxLon - minLon || 0.001;
+    const scale = Math.min((mapW - pad*2) / lonRange, (mapH - pad*2) / latRange);
+
+    ctx.save();
+    ctx.beginPath(); ctx.roundRect(mapX, mapY, mapW, mapH, 20); ctx.clip();
+
+    ctx.strokeStyle = 'rgba(212,255,58,0.15)'; ctx.lineWidth = 8;
+    ctx.beginPath();
+    pts.forEach((p, i) => {
+      const px = mapX + pad + (p.lon - minLon) * scale + ((mapW - pad*2) - lonRange * scale) / 2;
+      const py = mapY + mapH - pad - (p.lat - minLat) * scale - ((mapH - pad*2) - latRange * scale) / 2;
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+
+    ctx.strokeStyle = '#d4ff3a'; ctx.lineWidth = 3; ctx.shadowColor = '#d4ff3a'; ctx.shadowBlur = 8;
+    ctx.beginPath();
+    pts.forEach((p, i) => {
+      const px = mapX + pad + (p.lon - minLon) * scale + ((mapW - pad*2) - lonRange * scale) / 2;
+      const py = mapY + mapH - pad - (p.lat - minLat) * scale - ((mapH - pad*2) - latRange * scale) / 2;
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    const startP = pts[0], endP = pts[pts.length-1];
+    const sx = mapX + pad + (startP.lon - minLon) * scale + ((mapW - pad*2) - lonRange * scale) / 2;
+    const sy = mapY + mapH - pad - (startP.lat - minLat) * scale - ((mapH - pad*2) - latRange * scale) / 2;
+    const ex = mapX + pad + (endP.lon - minLon) * scale + ((mapW - pad*2) - lonRange * scale) / 2;
+    const ey = mapY + mapH - pad - (endP.lat - minLat) * scale - ((mapH - pad*2) - latRange * scale) / 2;
+    ctx.fillStyle = '#00ff88'; ctx.beginPath(); ctx.arc(sx, sy, 8, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#ff4444'; ctx.beginPath(); ctx.arc(ex, ey, 8, 0, Math.PI*2); ctx.fill();
+
+    ctx.restore();
+    y += mapH + 40;
+  } else {
+    y += 40;
+  }
+
+  const sArr = [];
+  if (c.duration) sArr.push({ val: Math.round(c.duration), label: 'MIN' });
+  if (c.distance) sArr.push({ val: (+c.distance).toFixed(1), label: 'KM' });
+  if (c.kcal) sArr.push({ val: c.kcal, label: 'KCAL' });
+  if (c.pace) sArr.push({ val: c.pace, label: 'PACE' });
+  if (c.elevation) sArr.push({ val: Math.round(c.elevation), label: 'ELEV M' });
+
+  if (sArr.length) {
+    const cW = Math.min(220, (W - 240 - (sArr.length-1)*20) / sArr.length);
+    const cH = 100;
+    const sX = (W - sArr.length * cW - (sArr.length-1) * 20) / 2;
+    sArr.forEach((st, i) => drawStatCard(ctx, sX + i*(cW+20), y, cW, cH, st.val, st.label));
+    y += cH + 40;
+  }
+
+  drawShareFooter(ctx, W, H, c.points);
+  exportCanvasImage(canvas, 'gymtrack-cardio.png');
+}
+
+
+// =============================================
+// GPX / TCX IMPORT (Strava, Garmin, etc.)
+// =============================================
+function handleGpxImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(e.target.result, 'text/xml');
+      const isGpx = xml.querySelector('gpx');
+      const isTcx = xml.querySelector('TrainingCenterDatabase');
+
+      let trackpoints = [], totalDist = 0, totalElev = 0, startTime = null, endTime = null, sportType = 'Laufen';
+
+      if (isGpx) {
+        const trkpts = xml.querySelectorAll('trkpt');
+        let prevLat = null, prevLon = null, prevAlt = null;
+        trkpts.forEach(pt => {
+          const lat = parseFloat(pt.getAttribute('lat'));
+          const lon = parseFloat(pt.getAttribute('lon'));
+          const eleEl = pt.querySelector('ele');
+          const timeEl = pt.querySelector('time');
+          const alt = eleEl ? parseFloat(eleEl.textContent) : 0;
+          const time = timeEl ? new Date(timeEl.textContent).getTime() : 0;
+          if (!startTime && time) startTime = time;
+          if (time) endTime = time;
+          if (prevLat !== null) {
+            totalDist += haversine(prevLat, prevLon, lat, lon);
+            if (alt > (prevAlt || 0)) totalElev += alt - prevAlt;
+          }
+          trackpoints.push({ lat, lon, alt, time });
+          prevLat = lat; prevLon = lon; prevAlt = alt;
+        });
+        const nameEl = xml.querySelector('trk > name');
+        if (nameEl) {
+          const n = nameEl.textContent.toLowerCase();
+          if (n.includes('ride') || n.includes('cycling') || n.includes('bike') || n.includes('rad')) sportType = 'Radfahren';
+          else if (n.includes('swim') || n.includes('schwimm')) sportType = 'Schwimmen';
+          else if (n.includes('hike') || n.includes('wander')) sportType = 'Wandern';
+        }
+      } else if (isTcx) {
+        const tps = xml.querySelectorAll('Trackpoint');
+        let prevLat = null, prevLon = null, prevAlt = null;
+        tps.forEach(pt => {
+          const posEl = pt.querySelector('Position');
+          if (!posEl) return;
+          const lat = parseFloat(posEl.querySelector('LatitudeDegrees').textContent);
+          const lon = parseFloat(posEl.querySelector('LongitudeDegrees').textContent);
+          const altEl = pt.querySelector('AltitudeMeters');
+          const timeEl = pt.querySelector('Time');
+          const alt = altEl ? parseFloat(altEl.textContent) : 0;
+          const time = timeEl ? new Date(timeEl.textContent).getTime() : 0;
+          if (!startTime && time) startTime = time;
+          if (time) endTime = time;
+          if (prevLat !== null) {
+            totalDist += haversine(prevLat, prevLon, lat, lon);
+            if (alt > (prevAlt || 0)) totalElev += alt - prevAlt;
+          }
+          trackpoints.push({ lat, lon, alt, time });
+          prevLat = lat; prevLon = lon; prevAlt = alt;
+        });
+        const actEl = xml.querySelector('Activity');
+        if (actEl) {
+          const sport = (actEl.getAttribute('Sport') || '').toLowerCase();
+          if (sport.includes('bik') || sport.includes('cycl')) sportType = 'Radfahren';
+          else if (sport.includes('swim')) sportType = 'Schwimmen';
+        }
+      } else {
+        showToast('Unsupported file format'); return;
+      }
+
+      if (trackpoints.length < 2) { showToast('No trackpoints found'); return; }
+
+      const durationMin = startTime && endTime ? Math.round((endTime - startTime) / 60000) : 0;
+      const distKm = Math.round(totalDist * 100) / 100;
+      const pace = distKm > 0 && durationMin > 0 ? (durationMin / distKm).toFixed(2) : '';
+      const kcal = calculateKcal(sportType, durationMin, distKm, totalElev);
+      const reduced = downsampleTrack(trackpoints, 200);
+
+      const session = {
+        id: 'cardio_' + Date.now(),
+        timestamp: startTime || Date.now(),
+        createdAt: Date.now(),
+        type: sportType,
+        source: 'gpx-import',
+        duration: durationMin,
+        distance: distKm,
+        elevation: Math.round(totalElev),
+        pace, kcal,
+        trackpoints: reduced,
+      };
+
+      if (!state.cardioSessions) state.cardioSessions = [];
+      const xp = calculateCardioXP(session);
+      session.points = xp;
+      state.totalPoints += xp;
+      state.cardioSessions.push(session);
+      saveState();
+      renderCardio();
+      showToast(`GPX imported! ${distKm} km, ${durationMin} min +${xp} XP`);
+    } catch(err) {
+      showToast('Import error: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
 
 // =============================================
 // RENDER HOME — hook new widgets
