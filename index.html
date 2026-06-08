@@ -1496,6 +1496,104 @@
   .theme-option.active { border-color: var(--accent) !important; box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(212,255,58,0.15); }
   .theme-option:active { transform: scale(0.97); }
 
+  /* ===== WATER TRACKER ===== */
+  .water-widget { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+  .water-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .water-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); font-weight: 700; }
+  .water-count { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--accent); line-height: 1; }
+  .water-count .water-unit { font-size: 14px; color: var(--text-dim); }
+  .water-glasses { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .water-glass { width: 32px; height: 40px; border-radius: 6px; border: 2px solid var(--border); background: var(--surface-2); cursor: pointer; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }
+  .water-glass.filled { border-color: #3b82f6; }
+  .water-glass .water-fill { width: 100%; background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%); border-radius: 0 0 3px 3px; transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+  .water-glass:active { transform: scale(0.9); }
+  .water-btns { display: flex; gap: 8px; }
+  .water-btn { flex: 1; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 8px; border-radius: 10px; font-weight: 700; font-size: 18px; cursor: pointer; transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+  .water-btn:active { transform: scale(0.95); background: var(--accent); color: #000; }
+  .water-progress { height: 4px; background: var(--surface-2); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+  .water-progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #60a5fa); border-radius: 2px; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+
+  /* ===== SLEEP TRACKER ===== */
+  .sleep-widget { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+  .sleep-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .sleep-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); font-weight: 700; }
+  .sleep-val { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #a78bfa; line-height: 1; }
+  .sleep-val .sleep-unit { font-size: 14px; color: var(--text-dim); }
+  .sleep-input-row { display: flex; gap: 8px; align-items: center; }
+  .sleep-input { flex: 1; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 16px; text-align: center; }
+  .sleep-input:focus { outline: none; border-color: #a78bfa; }
+  .sleep-save-btn { background: #a78bfa; color: #000; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+  .sleep-save-btn:active { transform: scale(0.95); }
+  .sleep-bar-row { display: flex; gap: 3px; align-items: flex-end; height: 40px; margin-top: 10px; }
+  .sleep-bar { flex: 1; background: var(--surface-2); border-radius: 3px 3px 0 0; transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1); min-height: 2px; }
+  .sleep-bar.good { background: #a78bfa; }
+  .sleep-bar.today { background: #c4b5fd; }
+  .sleep-bar-labels { display: flex; gap: 3px; }
+  .sleep-bar-label { flex: 1; font-size: 8px; color: var(--text-dim); text-align: center; }
+
+  /* ===== OFFLINE INDICATOR ===== */
+  .offline-banner { position: fixed; top: 0; left: 0; right: 0; background: #ef4444; color: #fff; text-align: center; padding: 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; z-index: 9999; transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+  .offline-banner.show { transform: translateY(0); }
+
+  /* ===== PROGRESS PHOTOS ===== */
+  .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .photo-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+  .photo-card:active { transform: scale(0.97); }
+  .photo-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+  .photo-card-info { padding: 8px 10px; }
+  .photo-card-date { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+  .photo-card-note { font-size: 12px; margin-top: 2px; color: var(--text); }
+  .photo-add-btn { background: var(--surface-2); border: 2px dashed var(--border); border-radius: 12px; aspect-ratio: 3/4; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: var(--text-dim); gap: 6px; font-size: 12px; font-weight: 600; transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+  .photo-add-btn:active { transform: scale(0.95); border-color: var(--accent); color: var(--accent); }
+  .photo-compare { position: relative; width: 100%; aspect-ratio: 3/4; overflow: hidden; border-radius: 12px; margin-bottom: 16px; touch-action: none; }
+  .photo-compare img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+  .photo-compare .compare-slider { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--accent); z-index: 2; cursor: ew-resize; }
+  .photo-compare .compare-slider::after { content: '⟷'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--accent); color: #000; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+  .photo-compare .compare-before { clip-path: inset(0 0 0 0); }
+  .photo-compare .compare-label { position: absolute; bottom: 8px; padding: 4px 10px; background: rgba(0,0,0,0.7); color: #fff; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; z-index: 3; }
+
+  /* ===== WORKOUT SHARING ===== */
+  .share-btn { background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 10px; font-weight: 600; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+  .share-btn:active { transform: scale(0.95); border-color: var(--accent); }
+  .share-preview { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+
+  /* ===== CHALLENGES ===== */
+  .challenge-widget { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+  .challenge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .challenge-badge { display: inline-block; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px; }
+  .challenge-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+  .challenge-icon { font-size: 24px; flex-shrink: 0; }
+  .challenge-info { flex: 1; min-width: 0; }
+  .challenge-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .challenge-desc { font-size: 11px; color: var(--text-dim); }
+  .challenge-progress { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+  .challenge-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .challenge-bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+  .challenge-pct { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); font-weight: 700; }
+  .challenge-done { color: var(--accent); font-size: 20px; flex-shrink: 0; }
+
+  /* ===== LEADERBOARD ===== */
+  .lb-widget { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+  .lb-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-rank { font-family: 'Bebas Neue', sans-serif; font-size: 22px; width: 32px; text-align: center; color: var(--text-dim); }
+  .lb-rank.top1 { color: #ffd700; }
+  .lb-rank.top2 { color: #c0c0c0; }
+  .lb-rank.top3 { color: #cd7f32; }
+  .lb-name { flex: 1; font-weight: 600; font-size: 14px; }
+  .lb-name.me { color: var(--accent); }
+  .lb-score { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--accent); }
+  .lb-optin { text-align: center; padding: 20px; }
+  .lb-optin-btn { background: var(--accent); color: #000; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+  .lb-optin-btn:active { transform: scale(0.95); }
+
+  /* ===== TODAY WIDGET ===== */
+  .today-widget { background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .today-item { display: flex; align-items: center; gap: 8px; }
+  .today-icon { font-size: 20px; }
+  .today-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); font-weight: 700; }
+  .today-val { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; }
+
   /* =========================================================
      THEME: RETRO-ATHLETIC
      Royal/Cream/Yellow/Cherry · Saira Condensed + Space Mono
@@ -1648,6 +1746,7 @@
     <div class="auth-info" id="authInfo"></div>
   </div>
 </div>
+<div class="offline-banner" id="offlineBanner">⚡ Offline — changes sync when back online</div>
 <div class="app" id="mainApp" style="display:none;">
   <header>
     <div class="logo">GYM<span class="accent">TRACK</span></div>
@@ -1719,6 +1818,51 @@
           <div class="stat-label">Cardio Sessions</div>
           <div class="stat-value" id="homeCardioCount">0</div>
         </div>
+      </div>
+
+      <!-- TODAY WIDGET -->
+      <div class="today-widget" id="todayWidget">
+        <div class="today-item"><span class="today-icon">🔥</span><div><div class="today-label" data-i18n="streak">Streak</div><div class="today-val" id="todayStreak">0</div></div></div>
+        <div class="today-item"><span class="today-icon">💧</span><div><div class="today-label" data-i18n="water">Water</div><div class="today-val" id="todayWater">0/8</div></div></div>
+        <div class="today-item"><span class="today-icon">😴</span><div><div class="today-label" data-i18n="sleep">Sleep</div><div class="today-val" id="todaySleep">--</div></div></div>
+        <div class="today-item"><span class="today-icon">📋</span><div><div class="today-label" data-i18n="nextWorkout">Next</div><div class="today-val" id="todayNext">--</div></div></div>
+      </div>
+
+      <!-- WATER TRACKER -->
+      <div class="water-widget" id="waterWidget">
+        <div class="water-header">
+          <div class="water-title">💧 <span data-i18n="waterTracker">Water Tracker</span></div>
+          <div class="water-count"><span id="waterCount">0</span> <span class="water-unit">/ 8</span></div>
+        </div>
+        <div class="water-glasses" id="waterGlasses"></div>
+        <div class="water-btns">
+          <button class="water-btn" onclick="removeWater()">−</button>
+          <button class="water-btn" onclick="addWater()">+</button>
+        </div>
+        <div class="water-progress"><div class="water-progress-fill" id="waterProgressFill" style="width:0%"></div></div>
+      </div>
+
+      <!-- SLEEP TRACKER -->
+      <div class="sleep-widget" id="sleepWidget">
+        <div class="sleep-header">
+          <div class="sleep-title">😴 <span data-i18n="sleepTracker">Sleep Tracker</span></div>
+          <div class="sleep-val"><span id="sleepAvg">--</span> <span class="sleep-unit">h avg</span></div>
+        </div>
+        <div class="sleep-input-row">
+          <input type="number" class="sleep-input" id="sleepHoursInput" placeholder="7.5" step="0.5" min="0" max="24" />
+          <button class="sleep-save-btn" onclick="saveSleep()" data-i18n="save">Save</button>
+        </div>
+        <div class="sleep-bar-row" id="sleepBars"></div>
+        <div class="sleep-bar-labels" id="sleepBarLabels"></div>
+      </div>
+
+      <!-- DAILY CHALLENGES -->
+      <div class="challenge-widget" id="challengeWidget">
+        <div class="challenge-header">
+          <div class="water-title">⚡ <span data-i18n="dailyChallenges">Daily Challenges</span></div>
+          <div class="challenge-badge" data-i18n="today">Today</div>
+        </div>
+        <div id="challengeList"></div>
       </div>
 
       <!-- MUSCLE MAP WIDGET -->
@@ -2139,6 +2283,45 @@
       <div id="nutLogList"></div>
     </div>
 
+    <!-- PROGRESS PHOTOS VIEW -->
+    <div class="view" id="view-photos">
+      <div class="card-title" style="margin-bottom:16px;">
+        <span data-i18n="progressPhotos">Progress Photos</span>
+        <span class="card-title-action" onclick="triggerPhotoUpload()">+ <span data-i18n="addPhoto">Add Photo</span></span>
+      </div>
+      <input type="file" accept="image/*" capture="environment" id="photoFileInput" style="display:none;" onchange="handlePhotoUpload(event)" />
+      <div id="photoCompareSection" style="display:none;">
+        <div class="card-title" style="margin-bottom:8px;"><span data-i18n="compare">Compare</span></div>
+        <div class="photo-compare" id="photoCompare">
+          <img id="compareAfter" src="" />
+          <img id="compareBefore" src="" class="compare-before" />
+          <div class="compare-slider" id="compareSlider" style="left:50%;"></div>
+          <div class="photo-compare-label" style="left:8px;" data-i18n="before">Before</div>
+          <div class="photo-compare-label" style="right:8px;" data-i18n="after">After</div>
+        </div>
+      </div>
+      <div class="photo-grid" id="photoGrid"></div>
+      <div id="photoEmpty" class="empty-state">
+        <div class="icon">📸</div>
+        <div data-i18n="noPhotosYet">No progress photos yet</div>
+        <div style="font-size:12px;margin-top:8px;color:var(--text-dim);" data-i18n="addFirstPhoto">Take your first photo to track your transformation</div>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD VIEW -->
+    <div class="view" id="view-leaderboard">
+      <div class="card-title" style="margin-bottom:16px;">🏆 <span data-i18n="leaderboard">Leaderboard</span></div>
+      <div id="lbOptIn" class="lb-optin" style="display:none;">
+        <div style="font-size:48px;margin-bottom:12px;">🏆</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:8px;" data-i18n="joinLeaderboard">Join the Leaderboard</div>
+        <div style="font-size:13px;color:var(--text-dim);margin-bottom:16px;" data-i18n="lbDesc">Share your XP anonymously and compete with others</div>
+        <button class="lb-optin-btn" onclick="optInLeaderboard()" data-i18n="joinNow">Join Now</button>
+      </div>
+      <div id="lbContent" class="lb-widget" style="display:none;">
+        <div id="lbList"></div>
+      </div>
+    </div>
+
   </main>
 
   <div class="more-menu-backdrop" id="moreMenuBackdrop" onclick="closeMoreMenu()"></div>
@@ -2146,6 +2329,8 @@
     <button class="more-menu-item" data-mview="history" data-pro="true"><span class="mm-icon">📅</span><span data-i18n="history">History</span><span class="mm-lock tab-lock" id="lockHistory">🔒</span></button>
     <button class="more-menu-item" data-mview="medals" data-pro="true"><span class="mm-icon">🏆</span><span data-i18n="medals">Medals</span><span class="mm-lock tab-lock" id="lockMedals">🔒</span></button>
     <button class="more-menu-item" data-mview="progress" data-pro="true"><span class="mm-icon">📈</span><span data-i18n="stats">Stats</span><span class="mm-lock tab-lock" id="lockProgress">🔒</span></button>
+    <button class="more-menu-item" data-mview="photos"><span class="mm-icon">📸</span><span data-i18n="progressPhotos">Photos</span></button>
+    <button class="more-menu-item" data-mview="leaderboard"><span class="mm-icon">🏆</span><span data-i18n="leaderboard">Leaderboard</span></button>
   </div>
   <nav class="tabs">
     <div class="inner">
@@ -2694,6 +2879,40 @@ const TRANSLATIONS = {
   save: { en:'Save', de:'Speichern', es:'Guardar', fr:'Sauvegarder', it:'Salva' },
   pastSessions: { en:'Past Sessions', de:'Vergangene Einheiten', es:'Sesiones pasadas', fr:'Sessions passées', it:'Sessioni passate' },
   activityDate: { en:'Activity Date', de:'Aktivitätsdatum', es:'Fecha de actividad', fr:'Date d\'activité', it:'Data attività' },
+
+  // ── WATER & SLEEP ──
+  waterTracker: { en:'Water Tracker', de:'Wasser-Tracker', es:'Seguimiento de agua', fr:'Suivi d\'eau', it:'Tracker acqua' },
+  water: { en:'Water', de:'Wasser', es:'Agua', fr:'Eau', it:'Acqua' },
+  sleepTracker: { en:'Sleep Tracker', de:'Schlaf-Tracker', es:'Seguimiento de sueño', fr:'Suivi de sommeil', it:'Tracker sonno' },
+  sleep: { en:'Sleep', de:'Schlaf', es:'Sueño', fr:'Sommeil', it:'Sonno' },
+  sleepSaved: { en:'Sleep logged!', de:'Schlaf gespeichert!', es:'¡Sueño registrado!', fr:'Sommeil enregistré !', it:'Sonno registrato!' },
+  streak: { en:'Streak', de:'Serie', es:'Racha', fr:'Série', it:'Serie' },
+  nextWorkout: { en:'Next', de:'Nächstes', es:'Próximo', fr:'Prochain', it:'Prossimo' },
+
+  // ── CHALLENGES ──
+  dailyChallenges: { en:'Daily Challenges', de:'Tages-Challenges', es:'Desafíos diarios', fr:'Défis du jour', it:'Sfide giornaliere' },
+  challengeComplete: { en:'Challenge complete!', de:'Challenge geschafft!', es:'¡Desafío completado!', fr:'Défi accompli !', it:'Sfida completata!' },
+  today: { en:'Today', de:'Heute', es:'Hoy', fr:'Aujourd\'hui', it:'Oggi' },
+
+  // ── PROGRESS PHOTOS ──
+  progressPhotos: { en:'Photos', de:'Fotos', es:'Fotos', fr:'Photos', it:'Foto' },
+  addPhoto: { en:'Add Photo', de:'Foto hinzufügen', es:'Añadir foto', fr:'Ajouter photo', it:'Aggiungi foto' },
+  noPhotosYet: { en:'No progress photos yet', de:'Noch keine Fortschritts-Fotos', es:'Aún no hay fotos', fr:'Pas encore de photos', it:'Nessuna foto' },
+  addFirstPhoto: { en:'Take your first photo to track your transformation', de:'Mache dein erstes Foto um deine Transformation zu tracken', es:'Toma tu primera foto para seguir tu transformación', fr:'Prenez votre première photo pour suivre votre transformation', it:'Scatta la tua prima foto per tracciare la tua trasformazione' },
+  compare: { en:'Compare', de:'Vergleich', es:'Comparar', fr:'Comparer', it:'Confronta' },
+  before: { en:'Before', de:'Vorher', es:'Antes', fr:'Avant', it:'Prima' },
+  after: { en:'After', de:'Nachher', es:'Después', fr:'Après', it:'Dopo' },
+  photoSaved: { en:'Photo saved!', de:'Foto gespeichert!', es:'¡Foto guardada!', fr:'Photo sauvegardée !', it:'Foto salvata!' },
+
+  // ── LEADERBOARD ──
+  leaderboard: { en:'Leaderboard', de:'Rangliste', es:'Clasificación', fr:'Classement', it:'Classifica' },
+  joinLeaderboard: { en:'Join the Leaderboard', de:'Rangliste beitreten', es:'Únete a la clasificación', fr:'Rejoindre le classement', it:'Unisciti alla classifica' },
+  lbDesc: { en:'Share your XP anonymously and compete with others', de:'Teile deine XP anonym und trete gegen andere an', es:'Comparte tu XP de forma anónima y compite con otros', fr:'Partagez votre XP anonymement et rivalisez', it:'Condividi i tuoi XP in modo anonimo e sfida gli altri' },
+  joinNow: { en:'Join Now', de:'Jetzt beitreten', es:'Unirse ahora', fr:'Rejoindre', it:'Unisciti' },
+
+  // ── SHARING ──
+  shareWorkout: { en:'Share', de:'Teilen', es:'Compartir', fr:'Partager', it:'Condividi' },
+  workoutShared: { en:'Image saved! Share it on your story 📤', de:'Bild gespeichert! Teile es in deiner Story 📤', es:'¡Imagen guardada! Compártela 📤', fr:'Image sauvegardée ! Partagez-la 📤', it:'Immagine salvata! Condividila 📤' },
   durationMin: { en:'Duration (min)', de:'Dauer (Min)', es:'Duración (min)', fr:'Durée (min)', it:'Durata (min)' },
   distanceKm: { en:'Distance (km)', de:'Distanz (km)', es:'Distancia (km)', fr:'Distance (km)', it:'Distanza (km)' },
   elevationM: { en:'Elevation (m)', de:'Höhenmeter (m)', es:'Desnivel (m)', fr:'Dénivelé (m)', it:'Dislivello (m)' },
@@ -3799,6 +4018,11 @@ let state = {
   nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 },
   nutProfile: null,
   weightLog: [],
+  waterLog: [],
+  sleepLog: [],
+  progressPhotos: [],
+  leaderboardOptIn: false,
+  completedChallenges: [],
 };
 let timerInterval = null;
 let templateBuilder = { editingId: null, name: '', exercises: [] };
@@ -3869,6 +4093,7 @@ function logoutProfile() {
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
     customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [], cardioTemplates: [],
     nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, nutProfile: null, weightLog: [],
+    waterLog: [], sleepLog: [], progressPhotos: [], leaderboardOptIn: false, completedChallenges: [],
   };
   if (isFirebaseReady()) firebaseAuth.signOut().catch(() => {});
   document.getElementById('mainApp').style.display = 'none';
@@ -3908,6 +4133,7 @@ function loadState() {
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
     customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [], cardioTemplates: [],
     nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, nutProfile: null, weightLog: [],
+    waterLog: [], sleepLog: [], progressPhotos: [], leaderboardOptIn: false, completedChallenges: [],
   };
   const saved = localStorage.getItem(storageKey());
   if (saved) {
@@ -3948,6 +4174,11 @@ function saveState() {
     nutritionGoals: state.nutritionGoals,
     nutProfile: state.nutProfile,
     weightLog: state.weightLog,
+    waterLog: state.waterLog,
+    sleepLog: state.sleepLog,
+    progressPhotos: state.progressPhotos,
+    leaderboardOptIn: state.leaderboardOptIn,
+    completedChallenges: state.completedChallenges,
   }));
 }
 
@@ -4469,6 +4700,7 @@ function renderHistory() {
           <span><strong>${dur}</strong></span>
           <span class="history-points">+${(w.points || 0).toLocaleString(getLoc())} XP</span>
         </div>
+        <button class="share-btn" onclick="event.stopPropagation();shareWorkout(${JSON.stringify(w.timestamp)})">📤 Share</button>
       </div>
     `;
   }).join('');
@@ -5384,7 +5616,7 @@ function drawChart(canvas, data) {
   }
 }
 
-const MORE_VIEWS = ['history', 'medals', 'progress'];
+const MORE_VIEWS = ['history', 'medals', 'progress', 'photos', 'leaderboard'];
 
 function showView(name) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -5405,6 +5637,8 @@ function showView(name) {
   if (name === 'nutrition') renderNutrition();
   if (name === 'medals') renderMedals();
   if (name === 'progress') renderProgress();
+  if (name === 'photos') renderPhotos();
+  if (name === 'leaderboard') renderLeaderboard();
 }
 
 function toggleMoreMenu(e) {
@@ -7490,6 +7724,444 @@ async function syncSessionToHealth(session) {
     }
   }
 })();
+
+// =============================================
+// WATER TRACKER
+// =============================================
+function getTodayKey() { return new Date().toISOString().split('T')[0]; }
+
+function getTodayWater() {
+  const today = getTodayKey();
+  const entry = (state.waterLog || []).find(e => e.date === today);
+  return entry ? entry.glasses : 0;
+}
+
+function setTodayWater(count) {
+  const today = getTodayKey();
+  if (!state.waterLog) state.waterLog = [];
+  const idx = state.waterLog.findIndex(e => e.date === today);
+  if (idx >= 0) state.waterLog[idx].glasses = count;
+  else state.waterLog.push({ date: today, glasses: count });
+  saveState();
+  renderWaterWidget();
+  renderTodayWidget();
+}
+
+function addWater() { setTodayWater(Math.min(getTodayWater() + 1, 16)); }
+function removeWater() { setTodayWater(Math.max(getTodayWater() - 1, 0)); }
+function toggleWaterGlass(i) { setTodayWater(getTodayWater() === i + 1 ? i : i + 1); }
+
+function renderWaterWidget() {
+  const count = getTodayWater();
+  const goal = 8;
+  document.getElementById('waterCount').textContent = count;
+  document.getElementById('waterProgressFill').style.width = Math.min(100, (count / goal) * 100) + '%';
+  const container = document.getElementById('waterGlasses');
+  let html = '';
+  for (let i = 0; i < goal; i++) {
+    const filled = i < count;
+    const pct = filled ? 100 : 0;
+    html += `<div class="water-glass ${filled ? 'filled' : ''}" onclick="toggleWaterGlass(${i})"><div class="water-fill" style="height:${pct}%"></div></div>`;
+  }
+  container.innerHTML = html;
+}
+
+// =============================================
+// SLEEP TRACKER
+// =============================================
+function getTodaySleep() {
+  const today = getTodayKey();
+  const entry = (state.sleepLog || []).find(e => e.date === today);
+  return entry ? entry.hours : null;
+}
+
+function saveSleep() {
+  const input = document.getElementById('sleepHoursInput');
+  const hours = parseFloat(input.value);
+  if (isNaN(hours) || hours < 0 || hours > 24) return;
+  const today = getTodayKey();
+  if (!state.sleepLog) state.sleepLog = [];
+  const idx = state.sleepLog.findIndex(e => e.date === today);
+  if (idx >= 0) state.sleepLog[idx].hours = hours;
+  else state.sleepLog.push({ date: today, hours });
+  saveState();
+  input.value = '';
+  renderSleepWidget();
+  renderTodayWidget();
+  showToast(t('sleepSaved'));
+}
+
+function renderSleepWidget() {
+  const logs = (state.sleepLog || []).slice(-7);
+  const avg = logs.length ? (logs.reduce((s, l) => s + l.hours, 0) / logs.length).toFixed(1) : '--';
+  document.getElementById('sleepAvg').textContent = avg;
+
+  const todaySleep = getTodaySleep();
+  if (todaySleep !== null) {
+    document.getElementById('sleepHoursInput').placeholder = todaySleep + 'h';
+  }
+
+  const bars = document.getElementById('sleepBars');
+  const labels = document.getElementById('sleepBarLabels');
+  const dayNames = (TRANSLATIONS.days && TRANSLATIONS.days[currentLang]) || ['Mo','Tu','We','Th','Fr','Sa','Su'];
+  const last7 = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const key = d.toISOString().split('T')[0];
+    const entry = (state.sleepLog || []).find(e => e.date === key);
+    last7.push({ day: dayNames[d.getDay() === 0 ? 6 : d.getDay() - 1], hours: entry ? entry.hours : 0, isToday: i === 0 });
+  }
+  const maxH = Math.max(10, ...last7.map(d => d.hours));
+  bars.innerHTML = last7.map(d => {
+    const pct = (d.hours / maxH) * 100;
+    const cls = d.isToday ? 'today' : (d.hours >= 7 ? 'good' : '');
+    return `<div class="sleep-bar ${cls}" style="height:${Math.max(5, pct)}%"></div>`;
+  }).join('');
+  labels.innerHTML = last7.map(d => `<div class="sleep-bar-label">${d.day}</div>`).join('');
+}
+
+// =============================================
+// OFFLINE INDICATOR
+// =============================================
+function updateOfflineStatus() {
+  const banner = document.getElementById('offlineBanner');
+  if (banner) banner.classList.toggle('show', !navigator.onLine);
+}
+window.addEventListener('online', updateOfflineStatus);
+window.addEventListener('offline', updateOfflineStatus);
+
+// =============================================
+// TODAY WIDGET
+// =============================================
+function renderTodayWidget() {
+  const stats = calculateStats();
+  document.getElementById('todayStreak').textContent = stats.streak + 'd';
+  document.getElementById('todayWater').textContent = getTodayWater() + '/8';
+  const sleep = getTodaySleep();
+  document.getElementById('todaySleep').textContent = sleep !== null ? sleep + 'h' : '--';
+  const todayDay = new Date().getDay();
+  const dayPlan = ['Rest', 'Push', 'Pull', 'Legs', 'Push', 'Pull', 'Legs'];
+  document.getElementById('todayNext').textContent = dayPlan[todayDay] || '--';
+}
+
+// =============================================
+// DAILY CHALLENGES
+// =============================================
+function getDailyChallenges() {
+  const today = getTodayKey();
+  const seed = today.split('-').join('');
+  const pool = [
+    { id: 'workout1', icon: '💪', name: { en:'Complete a workout', de:'Absolviere ein Workout' }, check: () => (state.workouts || []).some(w => { const d = new Date(w.activityDate || w.timestamp); return d.toISOString().split('T')[0] === today; }) },
+    { id: 'water8', icon: '💧', name: { en:'Drink 8 glasses of water', de:'Trinke 8 Gläser Wasser' }, check: () => getTodayWater() >= 8 },
+    { id: 'sleep7', icon: '😴', name: { en:'Log 7+ hours sleep', de:'Logge 7+ Stunden Schlaf' }, check: () => { const s = getTodaySleep(); return s !== null && s >= 7; } },
+    { id: 'cardio1', icon: '🏃', name: { en:'Do a cardio session', de:'Mache eine Cardio-Einheit' }, check: () => (state.cardioSessions || []).some(c => { const d = new Date(c.date || c.timestamp || 0); return d.toISOString().split('T')[0] === today; }) },
+    { id: 'log_food', icon: '🍎', name: { en:'Log your meals', de:'Logge deine Mahlzeiten' }, check: () => (state.nutritionLog || []).some(e => e.date === today) },
+    { id: 'water4', icon: '💧', name: { en:'Drink 4 glasses of water', de:'Trinke 4 Gläser Wasser' }, check: () => getTodayWater() >= 4 },
+  ];
+  const hash = parseInt(seed) % pool.length;
+  const selected = [];
+  for (let i = 0; i < 3 && i < pool.length; i++) {
+    selected.push(pool[(hash + i) % pool.length]);
+  }
+  return selected;
+}
+
+function renderChallenges() {
+  const challenges = getDailyChallenges();
+  const list = document.getElementById('challengeList');
+  list.innerHTML = challenges.map(ch => {
+    const done = ch.check();
+    const name = ch.name[currentLang] || ch.name.en;
+    return `
+      <div class="challenge-item">
+        <div class="challenge-icon">${ch.icon}</div>
+        <div class="challenge-info">
+          <div class="challenge-name">${name}</div>
+          <div class="challenge-progress">
+            <div class="challenge-bar"><div class="challenge-bar-fill" style="width:${done ? 100 : 0}%"></div></div>
+            <div class="challenge-pct">${done ? '100%' : '0%'}</div>
+          </div>
+        </div>
+        ${done ? '<div class="challenge-done">✓</div>' : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+// =============================================
+// PROGRESS PHOTOS
+// =============================================
+function triggerPhotoUpload() {
+  document.getElementById('photoFileInput').click();
+}
+
+function handlePhotoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const maxW = 600;
+      const scale = Math.min(1, maxW / img.width);
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+      if (!state.progressPhotos) state.progressPhotos = [];
+      state.progressPhotos.push({
+        id: Date.now(),
+        date: getTodayKey(),
+        timestamp: Date.now(),
+        dataUrl: dataUrl,
+        note: ''
+      });
+      saveState();
+      renderPhotos();
+      showToast(t('photoSaved'));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+function renderPhotos() {
+  const photos = (state.progressPhotos || []).sort((a, b) => b.timestamp - a.timestamp);
+  const grid = document.getElementById('photoGrid');
+  const empty = document.getElementById('photoEmpty');
+  const compareSection = document.getElementById('photoCompareSection');
+
+  if (photos.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = '';
+    compareSection.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+
+  if (photos.length >= 2) {
+    compareSection.style.display = '';
+    document.getElementById('compareBefore').src = photos[photos.length - 1].dataUrl;
+    document.getElementById('compareAfter').src = photos[0].dataUrl;
+    initCompareSlider();
+  } else {
+    compareSection.style.display = 'none';
+  }
+
+  grid.innerHTML = `
+    <div class="photo-add-btn" onclick="triggerPhotoUpload()">
+      <span style="font-size:24px;">📷</span>
+      <span>${t('addPhoto')}</span>
+    </div>
+  ` + photos.map(p => {
+    const d = new Date(p.timestamp);
+    const dateStr = d.toLocaleDateString(getLoc(), { day: '2-digit', month: 'short', year: 'numeric' });
+    return `
+      <div class="photo-card">
+        <img src="${p.dataUrl}" alt="Progress" loading="lazy" />
+        <div class="photo-card-info">
+          <div class="photo-card-date">${dateStr}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function initCompareSlider() {
+  const slider = document.getElementById('compareSlider');
+  const compare = document.getElementById('photoCompare');
+  const before = document.getElementById('compareBefore');
+  if (!slider || !compare) return;
+
+  function updateSlider(x) {
+    const rect = compare.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(100, ((x - rect.left) / rect.width) * 100));
+    slider.style.left = pct + '%';
+    before.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+  }
+
+  slider.addEventListener('touchmove', e => { e.preventDefault(); updateSlider(e.touches[0].clientX); }, { passive: false });
+  slider.addEventListener('mousedown', () => {
+    const move = e => updateSlider(e.clientX);
+    const up = () => { document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up); };
+    document.addEventListener('mousemove', move);
+    document.addEventListener('mouseup', up);
+  });
+}
+
+// =============================================
+// WORKOUT SHARING (Canvas-based image export)
+// =============================================
+function shareWorkout(timestamp) {
+  const w = (state.workouts || []).find(w2 => w2.timestamp === timestamp);
+  if (!w) return;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080; canvas.height = 1920;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(0, 0, 1080, 1920);
+
+  const grd = ctx.createRadialGradient(300, 200, 0, 540, 960, 800);
+  grd.addColorStop(0, 'rgba(212,255,58,0.12)'); grd.addColorStop(1, 'transparent');
+  ctx.fillStyle = grd; ctx.fillRect(0, 0, 1080, 1920);
+
+  ctx.fillStyle = '#d4ff3a';
+  ctx.font = '900 72px "Bebas Neue", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('GYMTRACK', 540, 200);
+
+  ctx.fillStyle = '#f5f5f5';
+  ctx.font = '700 56px Inter, sans-serif';
+  ctx.fillText(w.name || 'Workout', 540, 350);
+
+  const d = new Date(w.activityDate || w.timestamp);
+  ctx.fillStyle = '#888';
+  ctx.font = '500 36px "JetBrains Mono", monospace';
+  ctx.fillText(d.toLocaleDateString(getLoc(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }), 540, 420);
+
+  let y = 540;
+  ctx.fillStyle = '#d4ff3a'; ctx.font = '700 40px Inter, sans-serif';
+  const totalSets = w.exercises.reduce((s, ex) => s + (ex.isCardio ? 0 : ex.sets.filter(st => st.done).length), 0);
+  const totalVol = w.exercises.reduce((s, ex) => s + (ex.isCardio ? 0 : ex.sets.reduce((s2, st) => s2 + (st.done ? (st.weight||0)*(st.reps||0) : 0), 0)), 0);
+  const dur = w.duration ? Math.round(w.duration / 60) : 0;
+
+  const statsRow = [
+    { label: 'EXERCISES', val: w.exercises.length },
+    { label: 'SETS', val: totalSets },
+    { label: 'VOLUME', val: totalVol.toLocaleString() + ' kg' },
+    { label: 'MINUTES', val: dur },
+  ];
+
+  const colW = 1080 / statsRow.length;
+  statsRow.forEach((st, i) => {
+    const cx = colW * i + colW / 2;
+    ctx.fillStyle = '#d4ff3a'; ctx.font = '900 64px "Bebas Neue", sans-serif';
+    ctx.fillText(String(st.val), cx, y);
+    ctx.fillStyle = '#888'; ctx.font = '700 24px Inter, sans-serif';
+    ctx.fillText(st.label, cx, y + 40);
+  });
+
+  y += 120;
+  ctx.textAlign = 'left';
+  w.exercises.forEach((ex, i) => {
+    if (y > 1700) return;
+    ctx.fillStyle = '#f5f5f5'; ctx.font = '600 36px Inter, sans-serif';
+    ctx.fillText(ex.name, 100, y);
+    if (!ex.isCardio) {
+      const best = ex.sets.filter(s => s.done).sort((a,b) => (b.weight||0) - (a.weight||0))[0];
+      if (best) {
+        ctx.fillStyle = '#888'; ctx.font = '500 28px "JetBrains Mono", monospace';
+        ctx.fillText(`${best.weight}kg × ${best.reps}`, 100, y + 36);
+      }
+    }
+    y += 80;
+  });
+
+  ctx.textAlign = 'center';
+  if (w.points) {
+    ctx.fillStyle = '#d4ff3a'; ctx.font = '900 48px "Bebas Neue", sans-serif';
+    ctx.fillText('+' + w.points + ' XP', 540, 1800);
+  }
+
+  canvas.toBlob(blob => {
+    if (navigator.share && navigator.canShare) {
+      const file = new File([blob], 'gymtrack-workout.png', { type: 'image/png' });
+      navigator.share({ files: [file], title: 'GYMTRACK Workout' }).catch(() => {});
+    } else {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'gymtrack-workout.png';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    showToast(t('workoutShared'));
+  }, 'image/png');
+}
+
+// =============================================
+// LEADERBOARD
+// =============================================
+function renderLeaderboard() {
+  if (!state.leaderboardOptIn) {
+    document.getElementById('lbOptIn').style.display = '';
+    document.getElementById('lbContent').style.display = 'none';
+    return;
+  }
+  document.getElementById('lbOptIn').style.display = 'none';
+  document.getElementById('lbContent').style.display = '';
+
+  if (isFirebaseReady() && firebaseDb && currentUser) {
+    syncLeaderboardScore();
+    loadLeaderboard();
+  } else {
+    renderLocalLeaderboard();
+  }
+}
+
+function optInLeaderboard() {
+  state.leaderboardOptIn = true;
+  saveState();
+  renderLeaderboard();
+  showToast('Welcome to the leaderboard! 🏆');
+}
+
+function syncLeaderboardScore() {
+  if (!firebaseDb || !currentUser) return;
+  const displayName = activeProfile || 'Anon';
+  firebaseDb.collection('leaderboard').doc(currentUser.uid).set({
+    name: displayName.substring(0, 12),
+    xp: state.totalPoints || 0,
+    workouts: (state.workouts || []).length,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true }).catch(() => {});
+}
+
+function loadLeaderboard() {
+  if (!firebaseDb) { renderLocalLeaderboard(); return; }
+  firebaseDb.collection('leaderboard').orderBy('xp', 'desc').limit(20).get().then(snap => {
+    const entries = [];
+    snap.forEach(doc => entries.push({ id: doc.id, ...doc.data() }));
+    renderLeaderboardList(entries);
+  }).catch(() => renderLocalLeaderboard());
+}
+
+function renderLocalLeaderboard() {
+  const entries = [{ id: 'me', name: activeProfile || 'You', xp: state.totalPoints || 0 }];
+  renderLeaderboardList(entries);
+}
+
+function renderLeaderboardList(entries) {
+  const list = document.getElementById('lbList');
+  list.innerHTML = entries.map((e, i) => {
+    const rank = i + 1;
+    const rankCls = rank === 1 ? 'top1' : rank === 2 ? 'top2' : rank === 3 ? 'top3' : '';
+    const isMe = currentUser ? e.id === currentUser.uid : e.id === 'me';
+    return `
+      <div class="lb-row">
+        <div class="lb-rank ${rankCls}">${rank <= 3 ? ['🥇','🥈','🥉'][rank-1] : '#' + rank}</div>
+        <div class="lb-name ${isMe ? 'me' : ''}">${escapeHtml(e.name)}${isMe ? ' (You)' : ''}</div>
+        <div class="lb-score">${(e.xp || 0).toLocaleString()} XP</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// =============================================
+// RENDER HOME — hook new widgets
+// =============================================
+const _originalRenderHome = renderHome;
+renderHome = function() {
+  _originalRenderHome();
+  renderWaterWidget();
+  renderSleepWidget();
+  renderChallenges();
+  renderTodayWidget();
+  updateOfflineStatus();
+};
 
 // PWA Service Worker — auto-reload on update
 try {
