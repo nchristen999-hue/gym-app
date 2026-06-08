@@ -1154,8 +1154,8 @@
     margin-bottom: 12px;
   }
   .muscle-map-svg {
-    width: 130px;
-    height: 280px;
+    width: 140px;
+    height: 310px;
   }
   .muscle-map-svg .muscle-part {
     fill: rgba(255,255,255,0.06);
@@ -1573,19 +1573,6 @@
   .challenge-done { color: var(--accent); font-size: 20px; flex-shrink: 0; }
 
   /* ===== LEADERBOARD ===== */
-  .lb-widget { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
-  .lb-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .lb-row:last-child { border-bottom: none; }
-  .lb-rank { font-family: 'Bebas Neue', sans-serif; font-size: 22px; width: 32px; text-align: center; color: var(--text-dim); }
-  .lb-rank.top1 { color: #ffd700; }
-  .lb-rank.top2 { color: #c0c0c0; }
-  .lb-rank.top3 { color: #cd7f32; }
-  .lb-name { flex: 1; font-weight: 600; font-size: 14px; }
-  .lb-name.me { color: var(--accent); }
-  .lb-score { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: var(--accent); }
-  .lb-optin { text-align: center; padding: 20px; }
-  .lb-optin-btn { background: var(--accent); color: #000; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
-  .lb-optin-btn:active { transform: scale(0.95); }
 
   /* ===== TODAY WIDGET ===== */
   .today-widget { background: linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -1828,33 +1815,6 @@
         <div class="today-item"><span class="today-icon">📋</span><div><div class="today-label" data-i18n="nextWorkout">Next</div><div class="today-val" id="todayNext">--</div></div></div>
       </div>
 
-      <!-- WATER TRACKER -->
-      <div class="water-widget" id="waterWidget">
-        <div class="water-header">
-          <div class="water-title">💧 <span data-i18n="waterTracker">Water Tracker</span></div>
-          <div class="water-count"><span id="waterCount">0</span> <span class="water-unit">/ 8</span></div>
-        </div>
-        <div class="water-glasses" id="waterGlasses"></div>
-        <div class="water-btns">
-          <button class="water-btn" onclick="removeWater()">−</button>
-          <button class="water-btn" onclick="addWater()">+</button>
-        </div>
-        <div class="water-progress"><div class="water-progress-fill" id="waterProgressFill" style="width:0%"></div></div>
-      </div>
-
-      <!-- SLEEP TRACKER -->
-      <div class="sleep-widget" id="sleepWidget">
-        <div class="sleep-header">
-          <div class="sleep-title">😴 <span data-i18n="sleepTracker">Sleep Tracker</span></div>
-          <div class="sleep-val"><span id="sleepAvg">--</span> <span class="sleep-unit">h avg</span></div>
-        </div>
-        <div class="sleep-input-row">
-          <input type="number" class="sleep-input" id="sleepHoursInput" placeholder="7.5" step="0.5" min="0" max="24" />
-          <button class="sleep-save-btn" onclick="saveSleep()" data-i18n="save">Save</button>
-        </div>
-        <div class="sleep-bar-row" id="sleepBars"></div>
-        <div class="sleep-bar-labels" id="sleepBarLabels"></div>
-      </div>
 
       <!-- DAILY CHALLENGES -->
       <div class="challenge-widget" id="challengeWidget">
@@ -1878,71 +1838,109 @@
         <div class="muscle-map-body">
           <!-- FRONT VIEW -->
           <div>
-            <svg class="muscle-map-svg" id="muscleMapFront" viewBox="0 0 130 280">
-              <!-- Chest / Brust -->
-              <path class="muscle-part" data-muscle="Brust" d="M46,72 Q50,68 65,68 Q80,68 84,72 L84,92 Q80,97 65,98 Q50,97 46,92 Z" />
-              <!-- Shoulders / Schultern (front) -->
-              <path class="muscle-part" data-muscle="Schultern" d="M38,64 Q30,62 28,70 L30,86 Q34,82 40,78 L46,72 Q42,66 38,64 Z" />
-              <path class="muscle-part" data-muscle="Schultern" d="M92,64 Q100,62 102,70 L100,86 Q96,82 90,78 L84,72 Q88,66 92,64 Z" />
-              <!-- Bizeps (front) -->
-              <path class="muscle-part" data-muscle="Bizeps" d="M28,88 Q24,86 22,92 L20,110 Q22,116 26,114 L30,100 Q32,92 30,88 Z" />
-              <path class="muscle-part" data-muscle="Bizeps" d="M102,88 Q106,86 108,92 L110,110 Q108,116 104,114 L100,100 Q98,92 100,88 Z" />
-              <!-- Unterarm (front) -->
-              <path class="muscle-part" data-muscle="Unterarm" d="M20,112 Q18,124 18,140 Q19,148 22,146 L24,130 Q25,118 24,112 Z" />
-              <path class="muscle-part" data-muscle="Unterarm" d="M110,112 Q112,124 112,140 Q111,148 108,146 L106,130 Q105,118 106,112 Z" />
-              <!-- Core / Core (abs) -->
-              <path class="muscle-part" data-muscle="Core" d="M50,100 Q54,98 65,98 Q76,98 80,100 L80,138 Q76,142 65,142 Q54,142 50,138 Z" />
-              <!-- Legs / Beine (quads front) -->
-              <path class="muscle-part" data-muscle="Beine" d="M44,144 Q48,142 56,142 L56,210 Q52,215 46,216 L40,210 Q38,180 44,144 Z" />
-              <path class="muscle-part" data-muscle="Beine" d="M86,144 Q82,142 74,142 L74,210 Q78,215 84,216 L90,210 Q92,180 86,144 Z" />
-              <!-- Head outline -->
-              <ellipse class="body-outline" cx="65" cy="40" rx="18" ry="22" />
+            <svg class="muscle-map-svg" id="muscleMapFront" viewBox="0 0 200 440">
+              <!-- Head -->
+              <ellipse class="body-outline" cx="100" cy="38" rx="22" ry="28" />
+              <!-- Ears -->
+              <ellipse class="body-outline" cx="77" cy="38" rx="4" ry="8" />
+              <ellipse class="body-outline" cx="123" cy="38" rx="4" ry="8" />
               <!-- Neck -->
-              <line class="body-outline" x1="55" y1="58" x2="55" y2="66" />
-              <line class="body-outline" x1="75" y1="58" x2="75" y2="66" />
-              <!-- Forearms -->
-              <path class="body-outline" d="M18,120 Q16,140 20,155" />
-              <path class="body-outline" d="M112,120 Q114,140 110,155" />
-              <!-- Lower legs -->
-              <path class="body-outline" d="M44,218 Q42,240 44,265" />
-              <path class="body-outline" d="M86,218 Q88,240 86,265" />
-              <path class="body-outline" d="M54,218 Q53,240 52,265" />
-              <path class="body-outline" d="M76,218 Q77,240 78,265" />
+              <path class="body-outline" d="M88,64 L88,78 M112,64 L112,78" />
+              <!-- Traps (front visible) -->
+              <path class="muscle-part" data-muscle="Schultern" d="M88,66 Q85,72 76,76 L68,80 Q60,82 55,86 L58,92 Q70,84 88,80 L88,66 Z" />
+              <path class="muscle-part" data-muscle="Schultern" d="M112,66 Q115,72 124,76 L132,80 Q140,82 145,86 L142,92 Q130,84 112,80 L112,66 Z" />
+              <!-- Shoulders / Delts -->
+              <path class="muscle-part" data-muscle="Schultern" d="M55,86 Q44,88 38,98 Q36,106 38,114 L44,110 Q46,100 52,94 L58,92 Q55,88 55,86 Z" />
+              <path class="muscle-part" data-muscle="Schultern" d="M145,86 Q156,88 162,98 Q164,106 162,114 L156,110 Q154,100 148,94 L142,92 Q145,88 145,86 Z" />
+              <!-- Chest / Pecs -->
+              <path class="muscle-part" data-muscle="Brust" d="M68,92 Q72,88 86,86 L100,86 Q92,90 86,96 L78,108 Q72,112 68,108 L64,102 Q64,96 68,92 Z" />
+              <path class="muscle-part" data-muscle="Brust" d="M132,92 Q128,88 114,86 L100,86 Q108,90 114,96 L122,108 Q128,112 132,108 L136,102 Q136,96 132,92 Z" />
+              <!-- Biceps L -->
+              <path class="muscle-part" data-muscle="Bizeps" d="M38,116 Q34,118 32,126 L28,148 Q26,158 28,164 L34,162 Q36,154 38,142 L42,128 Q44,120 42,116 Z" />
+              <!-- Biceps R -->
+              <path class="muscle-part" data-muscle="Bizeps" d="M162,116 Q166,118 168,126 L172,148 Q174,158 172,164 L166,162 Q164,154 162,142 L158,128 Q156,120 158,116 Z" />
+              <!-- Forearms L -->
+              <path class="muscle-part" data-muscle="Unterarm" d="M28,166 Q24,176 22,190 L20,210 Q22,218 26,216 L28,200 Q30,184 34,170 Z" />
+              <!-- Forearms R -->
+              <path class="muscle-part" data-muscle="Unterarm" d="M172,166 Q176,176 178,190 L180,210 Q178,218 174,216 L172,200 Q170,184 166,170 Z" />
+              <!-- Abs / Core -->
+              <path class="muscle-part" data-muscle="Core" d="M80,110 Q84,108 100,108 Q116,108 120,110 L122,148 Q120,160 118,170 L116,182 Q112,188 100,190 Q88,188 84,182 L82,170 Q80,160 78,148 Z" />
+              <!-- Obliques -->
+              <path class="muscle-part" data-muscle="Core" d="M68,112 Q72,114 78,116 L78,150 Q76,168 74,180 L68,176 Q64,160 62,140 Q62,124 68,112 Z" />
+              <path class="muscle-part" data-muscle="Core" d="M132,112 Q128,114 122,116 L122,150 Q124,168 126,180 L132,176 Q136,160 138,140 Q138,124 132,112 Z" />
+              <!-- Quads L -->
+              <path class="muscle-part" data-muscle="Beine" d="M74,192 Q78,188 88,188 L96,190 L94,240 Q92,268 88,290 L82,296 Q74,290 70,274 Q66,254 66,230 Q66,210 74,192 Z" />
+              <!-- Quads R -->
+              <path class="muscle-part" data-muscle="Beine" d="M126,192 Q122,188 112,188 L104,190 L106,240 Q108,268 112,290 L118,296 Q126,290 130,274 Q134,254 134,230 Q134,210 126,192 Z" />
+              <!-- Knees outline -->
+              <ellipse class="body-outline" cx="82" cy="302" rx="12" ry="8" />
+              <ellipse class="body-outline" cx="118" cy="302" rx="12" ry="8" />
+              <!-- Shins / Calves (front) -->
+              <path class="body-outline" d="M74,310 Q72,340 74,370 Q76,392 78,410 L86,410 Q88,392 90,370 Q92,340 90,310" />
+              <path class="body-outline" d="M110,310 Q108,340 110,370 Q112,392 114,410 L122,410 Q124,392 126,370 Q128,340 126,310" />
+              <!-- Feet -->
+              <path class="body-outline" d="M76,410 Q72,416 70,420 L72,424 Q78,426 86,424 L88,420 Q88,414 86,410" />
+              <path class="body-outline" d="M114,410 Q112,416 110,420 L112,424 Q118,426 124,424 L126,420 Q126,414 122,410" />
+              <!-- Hands -->
+              <path class="body-outline" d="M18,212 Q14,220 16,228 L22,226 Q26,222 26,216" />
+              <path class="body-outline" d="M182,212 Q186,220 184,228 L178,226 Q174,222 174,216" />
             </svg>
             <div class="muscle-map-label" data-i18n="front">Front</div>
           </div>
           <!-- BACK VIEW -->
           <div>
-            <svg class="muscle-map-svg" id="muscleMapBack" viewBox="0 0 130 280">
-              <!-- Back / Rücken (upper back + lats) -->
-              <path class="muscle-part" data-muscle="Rücken" d="M46,72 Q50,68 65,68 Q80,68 84,72 L86,100 Q80,106 65,106 Q50,106 44,100 Z" />
-              <!-- Shoulders / Schultern (rear) -->
-              <path class="muscle-part" data-muscle="Schultern" d="M38,64 Q30,62 28,70 L30,86 Q34,82 40,78 L46,72 Q42,66 38,64 Z" />
-              <path class="muscle-part" data-muscle="Schultern" d="M92,64 Q100,62 102,70 L100,86 Q96,82 90,78 L84,72 Q88,66 92,64 Z" />
-              <!-- Trizeps (back) -->
-              <path class="muscle-part" data-muscle="Trizeps" d="M28,88 Q24,86 22,92 L20,110 Q22,116 26,114 L30,100 Q32,92 30,88 Z" />
-              <path class="muscle-part" data-muscle="Trizeps" d="M102,88 Q106,86 108,92 L110,110 Q108,116 104,114 L100,100 Q98,92 100,88 Z" />
-              <!-- Unterarm (back) -->
-              <path class="muscle-part" data-muscle="Unterarm" d="M20,112 Q18,124 18,140 Q19,148 22,146 L24,130 Q25,118 24,112 Z" />
-              <path class="muscle-part" data-muscle="Unterarm" d="M110,112 Q112,124 112,140 Q111,148 108,146 L106,130 Q105,118 106,112 Z" />
-              <!-- Lower back / Core (rear) -->
-              <path class="muscle-part" data-muscle="Core" d="M48,108 Q54,106 65,106 Q76,106 82,108 L80,138 Q76,142 65,142 Q54,142 50,138 Z" />
-              <!-- Legs / Beine (hamstrings + glutes) -->
-              <path class="muscle-part" data-muscle="Beine" d="M44,144 Q48,142 56,142 L56,210 Q52,215 46,216 L40,210 Q38,180 44,144 Z" />
-              <path class="muscle-part" data-muscle="Beine" d="M86,144 Q82,142 74,142 L74,210 Q78,215 84,216 L90,210 Q92,180 86,144 Z" />
-              <!-- Head outline -->
-              <ellipse class="body-outline" cx="65" cy="40" rx="18" ry="22" />
+            <svg class="muscle-map-svg" id="muscleMapBack" viewBox="0 0 200 440">
+              <!-- Head -->
+              <ellipse class="body-outline" cx="100" cy="38" rx="22" ry="28" />
+              <!-- Ears -->
+              <ellipse class="body-outline" cx="77" cy="38" rx="4" ry="8" />
+              <ellipse class="body-outline" cx="123" cy="38" rx="4" ry="8" />
               <!-- Neck -->
-              <line class="body-outline" x1="55" y1="58" x2="55" y2="66" />
-              <line class="body-outline" x1="75" y1="58" x2="75" y2="66" />
-              <!-- Forearms -->
-              <path class="body-outline" d="M18,120 Q16,140 20,155" />
-              <path class="body-outline" d="M112,120 Q114,140 110,155" />
-              <!-- Lower legs -->
-              <path class="body-outline" d="M44,218 Q42,240 44,265" />
-              <path class="body-outline" d="M86,218 Q88,240 86,265" />
-              <path class="body-outline" d="M54,218 Q53,240 52,265" />
-              <path class="body-outline" d="M76,218 Q77,240 78,265" />
+              <path class="body-outline" d="M88,64 L88,78 M112,64 L112,78" />
+              <!-- Traps -->
+              <path class="muscle-part" data-muscle="Rücken" d="M88,66 Q85,72 76,76 L68,80 Q60,82 55,86 L58,92 Q70,84 88,80 L88,66 Z" />
+              <path class="muscle-part" data-muscle="Rücken" d="M112,66 Q115,72 124,76 L132,80 Q140,82 145,86 L142,92 Q130,84 112,80 L112,66 Z" />
+              <!-- Rear Delts -->
+              <path class="muscle-part" data-muscle="Schultern" d="M55,86 Q44,88 38,98 Q36,106 38,114 L44,110 Q46,100 52,94 L58,92 Q55,88 55,86 Z" />
+              <path class="muscle-part" data-muscle="Schultern" d="M145,86 Q156,88 162,98 Q164,106 162,114 L156,110 Q154,100 148,94 L142,92 Q145,88 145,86 Z" />
+              <!-- Upper Back / Lats -->
+              <path class="muscle-part" data-muscle="Rücken" d="M68,92 Q80,86 100,86 Q120,86 132,92 L136,108 Q132,118 126,126 L120,132 Q112,136 100,136 Q88,136 80,132 L74,126 Q68,118 64,108 Z" />
+              <!-- Lats (lower) -->
+              <path class="muscle-part" data-muscle="Rücken" d="M64,110 Q60,120 58,132 L60,148 Q62,152 66,150 L70,138 Q72,126 68,116 Z" />
+              <path class="muscle-part" data-muscle="Rücken" d="M136,110 Q140,120 142,132 L140,148 Q138,152 134,150 L130,138 Q128,126 132,116 Z" />
+              <!-- Triceps L -->
+              <path class="muscle-part" data-muscle="Trizeps" d="M38,116 Q34,118 32,126 L28,148 Q26,158 28,164 L34,162 Q36,154 38,142 L42,128 Q44,120 42,116 Z" />
+              <!-- Triceps R -->
+              <path class="muscle-part" data-muscle="Trizeps" d="M162,116 Q166,118 168,126 L172,148 Q174,158 172,164 L166,162 Q164,154 162,142 L158,128 Q156,120 158,116 Z" />
+              <!-- Forearms L -->
+              <path class="muscle-part" data-muscle="Unterarm" d="M28,166 Q24,176 22,190 L20,210 Q22,218 26,216 L28,200 Q30,184 34,170 Z" />
+              <!-- Forearms R -->
+              <path class="muscle-part" data-muscle="Unterarm" d="M172,166 Q176,176 178,190 L180,210 Q178,218 174,216 L172,200 Q170,184 166,170 Z" />
+              <!-- Lower Back / Erectors -->
+              <path class="muscle-part" data-muscle="Core" d="M80,138 Q88,136 100,136 Q112,136 120,138 L122,168 Q118,178 116,184 Q112,188 100,190 Q88,188 84,184 L82,178 Q78,168 78,148 Z" />
+              <!-- Glutes -->
+              <path class="muscle-part" data-muscle="Beine" d="M74,186 Q80,182 90,182 L100,184 L94,210 Q88,218 80,216 Q72,212 68,204 Q66,196 74,186 Z" />
+              <path class="muscle-part" data-muscle="Beine" d="M126,186 Q120,182 110,182 L100,184 L106,210 Q112,218 120,216 Q128,212 132,204 Q134,196 126,186 Z" />
+              <!-- Hamstrings L -->
+              <path class="muscle-part" data-muscle="Beine" d="M68,218 Q72,212 82,214 L90,218 L88,268 Q86,286 84,296 L78,298 Q72,294 68,280 Q64,260 64,240 Z" />
+              <!-- Hamstrings R -->
+              <path class="muscle-part" data-muscle="Beine" d="M132,218 Q128,212 118,214 L110,218 L112,268 Q114,286 116,296 L122,298 Q128,294 132,280 Q136,260 136,240 Z" />
+              <!-- Calves L -->
+              <path class="muscle-part" data-muscle="Beine" d="M72,310 Q74,304 82,302 L90,306 L88,350 Q86,372 82,390 L78,392 Q74,386 72,370 Q70,346 72,310 Z" />
+              <!-- Calves R -->
+              <path class="muscle-part" data-muscle="Beine" d="M128,310 Q126,304 118,302 L110,306 L112,350 Q114,372 118,390 L122,392 Q126,386 128,370 Q130,346 128,310 Z" />
+              <!-- Knees outline -->
+              <ellipse class="body-outline" cx="82" cy="302" rx="12" ry="8" />
+              <ellipse class="body-outline" cx="118" cy="302" rx="12" ry="8" />
+              <!-- Feet -->
+              <path class="body-outline" d="M76,410 Q72,416 70,420 L72,424 Q78,426 86,424 L88,420 Q88,414 86,410" />
+              <path class="body-outline" d="M114,410 Q112,416 110,420 L112,424 Q118,426 124,424 L126,420 Q126,414 122,410" />
+              <!-- Achilles / lower leg outline -->
+              <path class="body-outline" d="M78,392 Q80,400 78,410 M86,392 Q84,400 86,410" />
+              <path class="body-outline" d="M118,392 Q116,400 114,410 M122,392 Q124,400 122,410" />
+              <!-- Hands -->
+              <path class="body-outline" d="M18,212 Q14,220 16,228 L22,226 Q26,222 26,216" />
+              <path class="body-outline" d="M182,212 Q186,220 184,228 L178,226 Q174,222 174,216" />
             </svg>
             <div class="muscle-map-label" data-i18n="back">Back</div>
           </div>
@@ -2013,6 +2011,14 @@
         <div class="calendar-grid" id="calendarGrid"></div>
         <div class="calendar-stats" id="calendarStats"></div>
         <div class="calendar-legend" id="calendarLegend"></div>
+      </div>
+      <div class="history-filters" style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap;">
+        <div class="cardio-type-pills" style="flex:1;margin:0;">
+          <div class="cardio-type-pill active" data-hfilter="all" onclick="setHistoryFilter('all')">🏅 <span data-i18n="all">All</span></div>
+          <div class="cardio-type-pill" data-hfilter="workout" onclick="setHistoryFilter('workout')">💪 <span data-i18n="strengthTraining">Kraft</span></div>
+          <div class="cardio-type-pill" data-hfilter="cardio" onclick="setHistoryFilter('cardio')">🏃 Cardio</div>
+        </div>
+        <input type="date" id="historyDateFilter" class="input-field" style="width:auto;max-width:150px;padding:8px 10px;font-size:12px;margin:0;" onchange="renderHistory()" />
       </div>
       <div id="historyList"></div>
     </div>
@@ -2281,6 +2287,34 @@
         <span data-i18n="foodLog">Essen-Log</span>
       </div>
       <div id="nutLogList"></div>
+
+      <!-- WATER TRACKER -->
+      <div class="water-widget" id="waterWidget" style="margin-top:16px;">
+        <div class="water-header">
+          <div class="water-title">💧 <span data-i18n="waterTracker">Water Tracker</span></div>
+          <div class="water-count"><span id="waterCount">0</span> <span class="water-unit">/ 8</span></div>
+        </div>
+        <div class="water-glasses" id="waterGlasses"></div>
+        <div class="water-btns">
+          <button class="water-btn" onclick="removeWater()">−</button>
+          <button class="water-btn" onclick="addWater()">+</button>
+        </div>
+        <div class="water-progress"><div class="water-progress-fill" id="waterProgressFill" style="width:0%"></div></div>
+      </div>
+
+      <!-- SLEEP TRACKER -->
+      <div class="sleep-widget" id="sleepWidget">
+        <div class="sleep-header">
+          <div class="sleep-title">😴 <span data-i18n="sleepTracker">Sleep Tracker</span></div>
+          <div class="sleep-val"><span id="sleepAvg">--</span> <span class="sleep-unit">h avg</span></div>
+        </div>
+        <div class="sleep-input-row">
+          <input type="number" class="sleep-input" id="sleepHoursInput" placeholder="7.5" step="0.5" min="0" max="24" />
+          <button class="sleep-save-btn" onclick="saveSleep()" data-i18n="save">Save</button>
+        </div>
+        <div class="sleep-bar-row" id="sleepBars"></div>
+        <div class="sleep-bar-labels" id="sleepBarLabels"></div>
+      </div>
     </div>
 
     <!-- PROGRESS PHOTOS VIEW -->
@@ -2308,19 +2342,6 @@
       </div>
     </div>
 
-    <!-- LEADERBOARD VIEW -->
-    <div class="view" id="view-leaderboard">
-      <div class="card-title" style="margin-bottom:16px;">🏆 <span data-i18n="leaderboard">Leaderboard</span></div>
-      <div id="lbOptIn" class="lb-optin" style="display:none;">
-        <div style="font-size:48px;margin-bottom:12px;">🏆</div>
-        <div style="font-size:16px;font-weight:700;margin-bottom:8px;" data-i18n="joinLeaderboard">Join the Leaderboard</div>
-        <div style="font-size:13px;color:var(--text-dim);margin-bottom:16px;" data-i18n="lbDesc">Share your XP anonymously and compete with others</div>
-        <button class="lb-optin-btn" onclick="optInLeaderboard()" data-i18n="joinNow">Join Now</button>
-      </div>
-      <div id="lbContent" class="lb-widget" style="display:none;">
-        <div id="lbList"></div>
-      </div>
-    </div>
 
   </main>
 
@@ -2330,7 +2351,6 @@
     <button class="more-menu-item" data-mview="medals" data-pro="true"><span class="mm-icon">🏆</span><span data-i18n="medals">Medals</span><span class="mm-lock tab-lock" id="lockMedals">🔒</span></button>
     <button class="more-menu-item" data-mview="progress" data-pro="true"><span class="mm-icon">📈</span><span data-i18n="stats">Stats</span><span class="mm-lock tab-lock" id="lockProgress">🔒</span></button>
     <button class="more-menu-item" data-mview="photos"><span class="mm-icon">📸</span><span data-i18n="progressPhotos">Photos</span></button>
-    <button class="more-menu-item" data-mview="leaderboard"><span class="mm-icon">🏆</span><span data-i18n="leaderboard">Leaderboard</span></button>
   </div>
   <nav class="tabs">
     <div class="inner">
@@ -2904,11 +2924,6 @@ const TRANSLATIONS = {
   after: { en:'After', de:'Nachher', es:'Después', fr:'Après', it:'Dopo' },
   photoSaved: { en:'Photo saved!', de:'Foto gespeichert!', es:'¡Foto guardada!', fr:'Photo sauvegardée !', it:'Foto salvata!' },
 
-  // ── LEADERBOARD ──
-  leaderboard: { en:'Leaderboard', de:'Rangliste', es:'Clasificación', fr:'Classement', it:'Classifica' },
-  joinLeaderboard: { en:'Join the Leaderboard', de:'Rangliste beitreten', es:'Únete a la clasificación', fr:'Rejoindre le classement', it:'Unisciti alla classifica' },
-  lbDesc: { en:'Share your XP anonymously and compete with others', de:'Teile deine XP anonym und trete gegen andere an', es:'Comparte tu XP de forma anónima y compite con otros', fr:'Partagez votre XP anonymement et rivalisez', it:'Condividi i tuoi XP in modo anonimo e sfida gli altri' },
-  joinNow: { en:'Join Now', de:'Jetzt beitreten', es:'Unirse ahora', fr:'Rejoindre', it:'Unisciti' },
 
   // ── SHARING ──
   shareWorkout: { en:'Share', de:'Teilen', es:'Compartir', fr:'Partager', it:'Condividi' },
@@ -4021,7 +4036,6 @@ let state = {
   waterLog: [],
   sleepLog: [],
   progressPhotos: [],
-  leaderboardOptIn: false,
   completedChallenges: [],
 };
 let timerInterval = null;
@@ -4093,7 +4107,7 @@ function logoutProfile() {
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
     customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [], cardioTemplates: [],
     nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, nutProfile: null, weightLog: [],
-    waterLog: [], sleepLog: [], progressPhotos: [], leaderboardOptIn: false, completedChallenges: [],
+    waterLog: [], sleepLog: [], progressPhotos: [], completedChallenges: [],
   };
   if (isFirebaseReady()) firebaseAuth.signOut().catch(() => {});
   document.getElementById('mainApp').style.display = 'none';
@@ -4133,7 +4147,7 @@ function loadState() {
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
     customExercises: [], bodyWeights: [], restTimeDuration: 90, cardioSessions: [], cardioTemplates: [],
     nutritionLog: [], customFoods: [], nutritionGoals: { kcal: 2000, protein: 150, carbs: 250, fat: 65 }, nutProfile: null, weightLog: [],
-    waterLog: [], sleepLog: [], progressPhotos: [], leaderboardOptIn: false, completedChallenges: [],
+    waterLog: [], sleepLog: [], progressPhotos: [], completedChallenges: [],
   };
   const saved = localStorage.getItem(storageKey());
   if (saved) {
@@ -4177,7 +4191,6 @@ function saveState() {
     waterLog: state.waterLog,
     sleepLog: state.sleepLog,
     progressPhotos: state.progressPhotos,
-    leaderboardOptIn: state.leaderboardOptIn,
     completedChallenges: state.completedChallenges,
   }));
 }
@@ -4646,11 +4659,31 @@ function toggleCardioEx(exIdx) {
   renderWorkout();
 }
 
+let historyTypeFilter = 'all';
+function setHistoryFilter(type) {
+  historyTypeFilter = type;
+  document.querySelectorAll('[data-hfilter]').forEach(p => p.classList.toggle('active', p.dataset.hfilter === type));
+  renderHistory();
+}
+
 function renderHistory() {
   const list = document.getElementById('historyList');
   const workouts = (state.workouts || []).map(w => ({ kind: 'workout', timestamp: w.activityDate || w.timestamp, data: w }));
   const cardios = (state.cardioSessions || []).map(c => ({ kind: 'cardio', timestamp: c.date || c.timestamp || 0, data: c }));
-  const merged = [...workouts, ...cardios].sort((a,b) => b.timestamp - a.timestamp);
+  let merged = [...workouts, ...cardios].sort((a,b) => b.timestamp - a.timestamp);
+
+  if (historyTypeFilter === 'workout') merged = merged.filter(i => i.kind === 'workout');
+  else if (historyTypeFilter === 'cardio') merged = merged.filter(i => i.kind === 'cardio');
+
+  const dateInput = document.getElementById('historyDateFilter');
+  if (dateInput && dateInput.value) {
+    const filterDate = dateInput.value;
+    merged = merged.filter(i => {
+      const d = new Date(i.timestamp);
+      const ds = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      return ds === filterDate;
+    });
+  }
 
   if (merged.length === 0) {
     list.innerHTML = `<div class="empty-state"><div class="icon">📅</div><div>${t('noWorkoutsYet')}</div></div>`;
@@ -5616,7 +5649,7 @@ function drawChart(canvas, data) {
   }
 }
 
-const MORE_VIEWS = ['history', 'medals', 'progress', 'photos', 'leaderboard'];
+const MORE_VIEWS = ['history', 'medals', 'progress', 'photos'];
 
 function showView(name) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -5638,7 +5671,6 @@ function showView(name) {
   if (name === 'medals') renderMedals();
   if (name === 'progress') renderProgress();
   if (name === 'photos') renderPhotos();
-  if (name === 'leaderboard') renderLeaderboard();
 }
 
 function toggleMoreMenu(e) {
@@ -7959,14 +7991,23 @@ function renderPhotos() {
     const d = new Date(p.timestamp);
     const dateStr = d.toLocaleDateString(getLoc(), { day: '2-digit', month: 'short', year: 'numeric' });
     return `
-      <div class="photo-card">
+      <div class="photo-card" style="position:relative;">
         <img src="${p.dataUrl}" alt="Progress" loading="lazy" />
+        <button onclick="event.stopPropagation();deletePhoto(${p.timestamp})" style="position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.7);border:none;color:#ff4444;font-size:16px;width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
         <div class="photo-card-info">
           <div class="photo-card-date">${dateStr}</div>
         </div>
       </div>
     `;
   }).join('');
+}
+
+function deletePhoto(timestamp) {
+  if (!confirm(t('confirmDelete') || 'Delete this photo?')) return;
+  state.progressPhotos = (state.progressPhotos || []).filter(p => p.timestamp !== timestamp);
+  saveState();
+  renderPhotos();
+  showToast(t('deleted') || 'Deleted');
 }
 
 function initCompareSlider() {
@@ -8082,73 +8123,6 @@ function shareWorkout(timestamp) {
   }, 'image/png');
 }
 
-// =============================================
-// LEADERBOARD
-// =============================================
-function renderLeaderboard() {
-  if (!state.leaderboardOptIn) {
-    document.getElementById('lbOptIn').style.display = '';
-    document.getElementById('lbContent').style.display = 'none';
-    return;
-  }
-  document.getElementById('lbOptIn').style.display = 'none';
-  document.getElementById('lbContent').style.display = '';
-
-  if (isFirebaseReady() && firebaseDb && currentUser) {
-    syncLeaderboardScore();
-    loadLeaderboard();
-  } else {
-    renderLocalLeaderboard();
-  }
-}
-
-function optInLeaderboard() {
-  state.leaderboardOptIn = true;
-  saveState();
-  renderLeaderboard();
-  showToast('Welcome to the leaderboard! 🏆');
-}
-
-function syncLeaderboardScore() {
-  if (!firebaseDb || !currentUser) return;
-  const displayName = activeProfile || 'Anon';
-  firebaseDb.collection('leaderboard').doc(currentUser.uid).set({
-    name: displayName.substring(0, 12),
-    xp: state.totalPoints || 0,
-    workouts: (state.workouts || []).length,
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true }).catch(() => {});
-}
-
-function loadLeaderboard() {
-  if (!firebaseDb) { renderLocalLeaderboard(); return; }
-  firebaseDb.collection('leaderboard').orderBy('xp', 'desc').limit(20).get().then(snap => {
-    const entries = [];
-    snap.forEach(doc => entries.push({ id: doc.id, ...doc.data() }));
-    renderLeaderboardList(entries);
-  }).catch(() => renderLocalLeaderboard());
-}
-
-function renderLocalLeaderboard() {
-  const entries = [{ id: 'me', name: activeProfile || 'You', xp: state.totalPoints || 0 }];
-  renderLeaderboardList(entries);
-}
-
-function renderLeaderboardList(entries) {
-  const list = document.getElementById('lbList');
-  list.innerHTML = entries.map((e, i) => {
-    const rank = i + 1;
-    const rankCls = rank === 1 ? 'top1' : rank === 2 ? 'top2' : rank === 3 ? 'top3' : '';
-    const isMe = currentUser ? e.id === currentUser.uid : e.id === 'me';
-    return `
-      <div class="lb-row">
-        <div class="lb-rank ${rankCls}">${rank <= 3 ? ['🥇','🥈','🥉'][rank-1] : '#' + rank}</div>
-        <div class="lb-name ${isMe ? 'me' : ''}">${escapeHtml(e.name)}${isMe ? ' (You)' : ''}</div>
-        <div class="lb-score">${(e.xp || 0).toLocaleString()} XP</div>
-      </div>
-    `;
-  }).join('');
-}
 
 // =============================================
 // RENDER HOME — hook new widgets
@@ -8156,11 +8130,16 @@ function renderLeaderboardList(entries) {
 const _originalRenderHome = renderHome;
 renderHome = function() {
   _originalRenderHome();
-  renderWaterWidget();
-  renderSleepWidget();
   renderChallenges();
   renderTodayWidget();
   updateOfflineStatus();
+};
+
+const _originalRenderNutrition = renderNutrition;
+renderNutrition = function() {
+  _originalRenderNutrition();
+  renderWaterWidget();
+  renderSleepWidget();
 };
 
 // PWA Service Worker — auto-reload on update
