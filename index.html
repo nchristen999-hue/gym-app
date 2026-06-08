@@ -7931,99 +7931,6 @@ function initCompareSlider() {
 // =============================================
 // SHARING — premium canvas exports
 // =============================================
-function drawShareBase(ctx, W, H) {
-  const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, '#0a0a0a'); bg.addColorStop(0.4, '#0d1117'); bg.addColorStop(1, '#0a0a0a');
-  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-
-  const g1 = ctx.createRadialGradient(W*0.15, H*0.1, 0, W*0.15, H*0.1, W*0.6);
-  g1.addColorStop(0, 'rgba(212,255,58,0.14)'); g1.addColorStop(0.4, 'rgba(212,255,58,0.04)'); g1.addColorStop(1, 'transparent');
-  ctx.fillStyle = g1; ctx.fillRect(0, 0, W, H);
-  const g2 = ctx.createRadialGradient(W*0.85, H*0.85, 0, W*0.85, H*0.85, W*0.5);
-  g2.addColorStop(0, 'rgba(212,255,58,0.08)'); g2.addColorStop(1, 'transparent');
-  ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
-  const g3 = ctx.createRadialGradient(W*0.5, H*0.5, 0, W*0.5, H*0.5, W*0.3);
-  g3.addColorStop(0, 'rgba(100,200,255,0.03)'); g3.addColorStop(1, 'transparent');
-  ctx.fillStyle = g3; ctx.fillRect(0, 0, W, H);
-
-  ctx.save();
-  ctx.globalAlpha = 0.03;
-  for (let i = 0; i < H; i += 4) { ctx.fillStyle = i%8===0 ? '#fff' : 'transparent'; ctx.fillRect(0, i, W, 1); }
-  ctx.globalAlpha = 1;
-  ctx.restore();
-
-  ctx.strokeStyle = 'rgba(212,255,58,0.06)'; ctx.lineWidth = 1;
-  ctx.strokeRect(50, 50, W-100, H-100);
-
-  const accentBar = ctx.createLinearGradient(50, 0, W-50, 0);
-  accentBar.addColorStop(0, 'transparent'); accentBar.addColorStop(0.3, 'rgba(212,255,58,0.4)'); accentBar.addColorStop(0.7, 'rgba(212,255,58,0.4)'); accentBar.addColorStop(1, 'transparent');
-  ctx.fillStyle = accentBar; ctx.fillRect(50, 50, W-100, 3);
-  ctx.fillRect(50, H-53, W-100, 3);
-}
-
-function drawShareHeader(ctx, W, y) {
-  ctx.textAlign = 'center';
-  ctx.save();
-  ctx.shadowColor = 'rgba(212,255,58,0.4)'; ctx.shadowBlur = 30;
-  ctx.fillStyle = '#d4ff3a'; ctx.font = '900 72px "Bebas Neue", sans-serif';
-  ctx.fillText('GYMTRACK', W/2, y);
-  ctx.shadowBlur = 0;
-  ctx.restore();
-
-  const lineG = ctx.createLinearGradient(W*0.2, 0, W*0.8, 0);
-  lineG.addColorStop(0, 'transparent'); lineG.addColorStop(0.5, 'rgba(212,255,58,0.5)'); lineG.addColorStop(1, 'transparent');
-  ctx.fillStyle = lineG; ctx.fillRect(W*0.2, y+12, W*0.6, 2);
-
-  ctx.fillStyle = 'rgba(212,255,58,0.25)'; ctx.font = '700 14px Inter, sans-serif';
-  ctx.fillText('YOUR TRAINING SUMMARY', W/2, y + 40);
-  return y + 60;
-}
-
-function drawShareFooter(ctx, W, H, xp) {
-  if (xp) {
-    ctx.save();
-    ctx.textAlign = 'center';
-    const pillG = ctx.createLinearGradient(W/2-120, H-170, W/2+120, H-110);
-    pillG.addColorStop(0, 'rgba(212,255,58,0.08)'); pillG.addColorStop(0.5, 'rgba(212,255,58,0.18)'); pillG.addColorStop(1, 'rgba(212,255,58,0.08)');
-    ctx.fillStyle = pillG; ctx.beginPath(); ctx.roundRect(W/2-120, H-170, 240, 56, 28); ctx.fill();
-    ctx.strokeStyle = 'rgba(212,255,58,0.35)'; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.roundRect(W/2-120, H-170, 240, 56, 28); ctx.stroke();
-    ctx.shadowColor = 'rgba(212,255,58,0.3)'; ctx.shadowBlur = 15;
-    ctx.fillStyle = '#d4ff3a'; ctx.font = '900 32px "Bebas Neue", sans-serif';
-    ctx.fillText('⚡ +' + xp + ' XP', W/2, H-134);
-    ctx.shadowBlur = 0;
-    ctx.restore();
-  }
-
-  const footG = ctx.createLinearGradient(W*0.3, 0, W*0.7, 0);
-  footG.addColorStop(0, 'transparent'); footG.addColorStop(0.5, 'rgba(255,255,255,0.08)'); footG.addColorStop(1, 'transparent');
-  ctx.fillStyle = footG; ctx.fillRect(W*0.3, H-90, W*0.4, 1);
-
-  ctx.textAlign = 'center';
-  ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.font = '600 18px Inter, sans-serif';
-  ctx.fillText('GYMTRACK', W/2, H-60);
-}
-
-function drawStatCard(ctx, x, y, w, h, val, label) {
-  ctx.save();
-  const cg = ctx.createLinearGradient(x, y, x, y+h);
-  cg.addColorStop(0, 'rgba(255,255,255,0.06)'); cg.addColorStop(1, 'rgba(255,255,255,0.02)');
-  ctx.fillStyle = cg; ctx.beginPath(); ctx.roundRect(x, y, w, h, 16); ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.10)'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.roundRect(x, y, w, h, 16); ctx.stroke();
-
-  const topAccent = ctx.createLinearGradient(x, y, x+w, y);
-  topAccent.addColorStop(0, 'transparent'); topAccent.addColorStop(0.5, 'rgba(212,255,58,0.3)'); topAccent.addColorStop(1, 'transparent');
-  ctx.fillStyle = topAccent; ctx.fillRect(x+8, y, w-16, 2);
-
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#d4ff3a'; ctx.font = '900 48px "Bebas Neue", sans-serif';
-  ctx.fillText(String(val), x + w/2, y + h/2 + 4);
-  ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '700 16px Inter, sans-serif';
-  ctx.fillText(label, x + w/2, y + h - 14);
-  ctx.restore();
-}
-
 function exportCanvasImage(canvas, filename) {
   canvas.toBlob(blob => {
     if (navigator.share && navigator.canShare) {
@@ -8046,71 +7953,70 @@ function shareWorkout(timestamp) {
   const canvas = document.createElement('canvas'); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d');
 
-  drawShareBase(ctx, W, H);
-  let y = drawShareHeader(ctx, W, 160);
+  ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, 0, W, H);
+  const grd = ctx.createRadialGradient(W*0.3, H*0.15, 0, W/2, H/2, W);
+  grd.addColorStop(0, 'rgba(212,255,58,0.07)'); grd.addColorStop(1, 'transparent');
+  ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
 
+  let y = 140;
   ctx.textAlign = 'center';
-  ctx.fillStyle = '#f5f5f5'; ctx.font = '700 48px Inter, sans-serif';
-  y += 60;
+  ctx.fillStyle = '#d4ff3a'; ctx.font = '900 80px "Bebas Neue", sans-serif';
+  ctx.fillText('GYMTRACK', W/2, y);
+
+  y += 80;
+  ctx.fillStyle = '#ffffff'; ctx.font = '700 60px Inter, sans-serif';
   ctx.fillText(w.name || 'Workout', W/2, y);
 
+  y += 50;
   const d = new Date(w.activityDate || w.timestamp);
-  ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.font = '500 28px "JetBrains Mono", monospace';
-  y += 44;
+  ctx.fillStyle = '#888'; ctx.font = '500 32px "JetBrains Mono", monospace';
   ctx.fillText(d.toLocaleDateString(getLoc(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }), W/2, y);
 
   const totalSets = w.exercises.reduce((s, ex) => s + (ex.isCardio ? 0 : ex.sets.filter(st => st.done).length), 0);
   const totalVol = w.exercises.reduce((s, ex) => s + (ex.isCardio ? 0 : ex.sets.reduce((s2, st) => s2 + (st.done ? (st.weight||0)*(st.reps||0) : 0), 0)), 0);
   const dur = w.duration ? Math.round(w.duration / 60) : 0;
 
-  y += 60;
+  y += 80;
   const stats = [
     { val: w.exercises.length, label: 'EXERCISES' },
     { val: totalSets, label: 'SETS' },
     { val: totalVol >= 1000 ? (totalVol/1000).toFixed(1)+'t' : totalVol+'kg', label: 'VOLUME' },
-    { val: dur, label: 'MINUTES' },
+    { val: dur + ' min', label: 'DURATION' },
   ];
-  const cardW = 220, cardH = 100, gap = 20;
+  const cardW = 230, cardH = 130, gap = 16;
   const startX = (W - stats.length * cardW - (stats.length-1) * gap) / 2;
-  stats.forEach((st, i) => drawStatCard(ctx, startX + i*(cardW+gap), y, cardW, cardH, st.val, st.label));
+  stats.forEach((st, i) => {
+    const cx = startX + i * (cardW + gap);
+    ctx.fillStyle = 'rgba(255,255,255,0.04)';
+    ctx.beginPath(); ctx.roundRect(cx, y, cardW, cardH, 16); ctx.fill();
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#d4ff3a'; ctx.font = '900 56px "Bebas Neue", sans-serif';
+    ctx.fillText(String(st.val), cx + cardW/2, y + cardH/2 + 8);
+    ctx.fillStyle = '#888'; ctx.font = '700 20px Inter, sans-serif';
+    ctx.fillText(st.label, cx + cardW/2, y + cardH - 16);
+  });
 
-  y += cardH + 50;
-
-  ctx.fillStyle = 'rgba(255,255,255,0.04)';
-  const listPad = 100;
-  const listH = Math.min(w.exercises.length * 78 + 40, H - y - 220);
-  ctx.beginPath(); ctx.roundRect(listPad, y - 20, W - listPad*2, listH, 20); ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.roundRect(listPad, y - 20, W - listPad*2, listH, 20); ctx.stroke();
-
+  y += cardH + 60;
   ctx.textAlign = 'left';
-  w.exercises.forEach((ex, idx) => {
-    if (y > H - 250) return;
-    ctx.fillStyle = 'rgba(212,255,58,0.15)'; ctx.font = '900 24px "Bebas Neue", sans-serif';
-    ctx.fillText(String(idx+1).padStart(2, '0'), 130, y + 4);
-
-    ctx.fillStyle = '#f5f5f5'; ctx.font = '600 30px Inter, sans-serif';
-    ctx.fillText(ex.name, 190, y);
+  w.exercises.forEach(ex => {
+    if (y > H - 160) return;
+    ctx.fillStyle = '#ffffff'; ctx.font = '600 38px Inter, sans-serif';
+    ctx.fillText(ex.name, 100, y);
     if (!ex.isCardio) {
       const best = ex.sets.filter(s => s.done).sort((a,b) => (b.weight||0) - (a.weight||0))[0];
       if (best) {
-        ctx.fillStyle = '#d4ff3a'; ctx.font = '600 24px "JetBrains Mono", monospace';
-        ctx.fillText(`${best.weight} kg × ${best.reps}`, 190, y + 34);
+        ctx.fillStyle = '#d4ff3a'; ctx.font = '500 30px "JetBrains Mono", monospace';
+        ctx.fillText(`${best.weight} kg × ${best.reps}`, 100, y + 44);
       }
-      const setCount = ex.sets.filter(s => s.done).length;
-      ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = '600 22px Inter, sans-serif';
-      ctx.textAlign = 'right';
-      ctx.fillText(setCount + ' sets', W - 130, y);
-      ctx.textAlign = 'left';
     }
-    const lineG = ctx.createLinearGradient(130, 0, W-130, 0);
-    lineG.addColorStop(0, 'transparent'); lineG.addColorStop(0.1, 'rgba(255,255,255,0.06)'); lineG.addColorStop(0.9, 'rgba(255,255,255,0.06)'); lineG.addColorStop(1, 'transparent');
-    ctx.fillStyle = lineG;
-    ctx.fillRect(130, y + 50, W - 260, 1);
-    y += 72;
+    ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(100, y + 60, W - 200, 1);
+    y += 90;
   });
 
-  drawShareFooter(ctx, W, H, w.points);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.font = '500 22px Inter, sans-serif';
+  ctx.fillText('GYMTRACK', W/2, H - 60);
+
   exportCanvasImage(canvas, 'gymtrack-workout.png');
 }
 
@@ -8123,22 +8029,28 @@ function shareCardio(sessionId) {
   const canvas = document.createElement('canvas'); canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d');
 
-  drawShareBase(ctx, W, H);
-  let y = drawShareHeader(ctx, W, 160);
+  ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, 0, W, H);
+  const grd = ctx.createRadialGradient(W*0.3, H*0.15, 0, W/2, H/2, W);
+  grd.addColorStop(0, 'rgba(212,255,58,0.07)'); grd.addColorStop(1, 'transparent');
+  ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
+
+  let y = 140;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#d4ff3a'; ctx.font = '900 80px "Bebas Neue", sans-serif';
+  ctx.fillText('GYMTRACK', W/2, y);
 
   const icon = (typeof CARDIO_ICONS !== 'undefined' && CARDIO_ICONS[c.type]) || '🏃';
-  ctx.textAlign = 'center';
-  ctx.font = '80px sans-serif';
-  y += 80;
+  y += 100;
+  ctx.font = '100px sans-serif';
   ctx.fillText(icon, W/2, y);
 
-  ctx.fillStyle = '#f5f5f5'; ctx.font = '700 48px Inter, sans-serif';
-  y += 60;
+  y += 70;
+  ctx.fillStyle = '#ffffff'; ctx.font = '700 60px Inter, sans-serif';
   ctx.fillText(tSport(c.type || 'Cardio'), W/2, y);
 
+  y += 50;
   const d = new Date(c.date || c.timestamp || c.createdAt);
-  ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.font = '500 28px "JetBrains Mono", monospace';
-  y += 44;
+  ctx.fillStyle = '#888'; ctx.font = '500 32px "JetBrains Mono", monospace';
   ctx.fillText(d.toLocaleDateString(getLoc(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }), W/2, y);
 
   if (hasRoute) {
@@ -8195,22 +8107,34 @@ function shareCardio(sessionId) {
     y += 40;
   }
 
+  y += 60;
   const sArr = [];
-  if (c.duration) sArr.push({ val: Math.round(c.duration), label: 'MIN' });
-  if (c.distance) sArr.push({ val: (+c.distance).toFixed(1), label: 'KM' });
+  if (c.duration) sArr.push({ val: Math.round(c.duration) + ' min', label: 'DURATION' });
+  if (c.distance) sArr.push({ val: (+c.distance).toFixed(1) + ' km', label: 'DISTANCE' });
   if (c.kcal) sArr.push({ val: c.kcal, label: 'KCAL' });
   if (c.pace) sArr.push({ val: c.pace, label: 'PACE' });
-  if (c.elevation) sArr.push({ val: Math.round(c.elevation), label: 'ELEV M' });
+  if (c.elevation) sArr.push({ val: Math.round(c.elevation) + ' m', label: 'ELEVATION' });
 
   if (sArr.length) {
-    const cW = Math.min(220, (W - 240 - (sArr.length-1)*20) / sArr.length);
-    const cH = 100;
-    const sX = (W - sArr.length * cW - (sArr.length-1) * 20) / 2;
-    sArr.forEach((st, i) => drawStatCard(ctx, sX + i*(cW+20), y, cW, cH, st.val, st.label));
-    y += cH + 40;
+    const cW = Math.min(230, (W - 200 - (sArr.length-1)*16) / sArr.length);
+    const cH = 130;
+    const sX = (W - sArr.length * cW - (sArr.length-1) * 16) / 2;
+    sArr.forEach((st, i) => {
+      const cx = sX + i * (cW + 16);
+      ctx.fillStyle = 'rgba(255,255,255,0.04)';
+      ctx.beginPath(); ctx.roundRect(cx, y, cW, cH, 16); ctx.fill();
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#d4ff3a'; ctx.font = '900 50px "Bebas Neue", sans-serif';
+      ctx.fillText(String(st.val), cx + cW/2, y + cH/2 + 8);
+      ctx.fillStyle = '#888'; ctx.font = '700 18px Inter, sans-serif';
+      ctx.fillText(st.label, cx + cW/2, y + cH - 16);
+    });
   }
 
-  drawShareFooter(ctx, W, H, c.points);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.font = '500 22px Inter, sans-serif';
+  ctx.fillText('GYMTRACK', W/2, H - 60);
+
   exportCanvasImage(canvas, 'gymtrack-cardio.png');
 }
 
