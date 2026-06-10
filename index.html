@@ -1390,6 +1390,28 @@
   .auth-forgot a { color: var(--accent); font-size: 12px; text-decoration: none; font-weight: 600; }
   .auth-info { font-size: 12px; color: var(--text-dim); text-align: center; margin-top: 16px; }
 
+  .auth-divider {
+    display: flex; align-items: center; gap: 14px;
+    margin: 20px 0;
+    color: var(--text-dim); font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .auth-divider::before, .auth-divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+  .auth-google-btn {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    padding: 14px; border-radius: 12px;
+    font-family: inherit; font-weight: 600; font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .auth-google-btn:hover { border-color: var(--accent); background: rgba(212,255,58,0.04); }
+  .auth-google-btn:active { transform: scale(0.97); }
+  .auth-google-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
   /* ===== EMAIL VERIFICATION SCREEN ===== */
   .verify-screen {
     position: fixed; inset: 0; z-index: 10000;
@@ -2059,6 +2081,7 @@
   body.theme-retro .auth-input-group input { background: var(--surface-2); border: 2px solid var(--text); color: var(--text); font-family: 'Space Mono', monospace; border-radius: 4px; }
   body.theme-retro .auth-input-group input:focus { border-color: var(--accent); background: #fff; }
   body.theme-retro .auth-btn { background: var(--accent); color: #fff; border: 3px solid var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 900; box-shadow: 4px 4px 0 var(--text); }
+  body.theme-retro .auth-google-btn { border: 2px solid var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 800; }
   body.theme-retro .verify-screen { background: var(--bg); }
   body.theme-retro .verify-card { background: var(--surface); border: 3px solid var(--text); border-radius: 12px; backdrop-filter: none; }
   body.theme-retro .verify-card::before { display: none; }
@@ -2315,6 +2338,12 @@
       </div>
       <button type="submit" class="auth-btn" id="registerBtn" data-i18n="authCreateAccount">Create account</button>
     </form>
+
+    <div class="auth-divider" data-i18n="authOr">or</div>
+    <button class="auth-google-btn" onclick="doGoogleSignIn()" id="googleSignInBtn">
+      <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      <span data-i18n="authGoogleSignIn">Continue with Google</span>
+    </button>
 
     <div class="auth-info" id="authInfo"></div>
   </div>
@@ -3922,6 +3951,8 @@ const TRANSLATIONS = {
   verifySuccessTitle: { en:'Verified!', de:'Verifiziert!', es:'¡Verificado!', fr:'Vérifié !', it:'Verificato!' },
   verifySuccessMsg: { en:'Your account is secured. Let\'s train.', de:'Dein Konto ist gesichert. Los geht\'s.', es:'Tu cuenta está asegurada. A entrenar.', fr:'Ton compte est sécurisé. C\'est parti.', it:'Il tuo account è protetto. Alleniamoci.' },
   verifyNotYet: { en:'Email not verified yet. Check your inbox and click the link.', de:'E-Mail noch nicht bestätigt. Prüfe dein Postfach und klicke den Link.', es:'Correo aún no verificado. Revisa tu bandeja y haz clic en el enlace.', fr:'E-mail pas encore vérifié. Vérifie ta boîte et clique sur le lien.', it:'Email non ancora verificata. Controlla la posta e clicca il link.' },
+  authOr: { en:'or', de:'oder', es:'o', fr:'ou', it:'o' },
+  authGoogleSignIn: { en:'Continue with Google', de:'Weiter mit Google', es:'Continuar con Google', fr:'Continuer avec Google', it:'Continua con Google' },
 
   // ── NUTRITION ──
   nutrition: { en:'Nutrition', de:'Ernährung', es:'Nutrición', fr:'Nutrition', it:'Nutrizione' },
@@ -4259,6 +4290,38 @@ async function doPasswordReset() {
   } catch(e) {
     showAuthError(e.message);
   }
+}
+
+// =============================================
+// GOOGLE SIGN-IN
+// =============================================
+async function doGoogleSignIn() {
+  if (!isFirebaseReady()) return showAuthError(t('authFirebaseNotReady'));
+  const btn = document.getElementById('googleSignInBtn');
+  btn.disabled = true;
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const cred = await firebaseAuth.signInWithPopup(provider);
+    currentUser = cred.user;
+    await checkProStatus();
+    const name = cred.user.displayName || cred.user.email.split('@')[0];
+    const profiles = getProfiles();
+    if (!profiles.includes(name)) { profiles.push(name); saveProfiles(profiles); }
+    if (cred.additionalUserInfo && cred.additionalUserInfo.isNewUser) {
+      await firebaseDb.collection('users').doc(cred.user.uid).set({
+        email: cred.user.email,
+        displayName: name,
+        provider: 'google',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+    selectProfile(name);
+  } catch(e) {
+    if (e.code !== 'auth/popup-closed-by-user') {
+      showAuthError(e.message);
+    }
+  }
+  btn.disabled = false;
 }
 
 // =============================================
