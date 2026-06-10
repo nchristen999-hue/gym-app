@@ -1395,204 +1395,367 @@
     position: fixed; inset: 0; z-index: 10000;
     display: none; align-items: center; justify-content: center;
     padding: 24px;
-    background: var(--bg);
-    background-image:
-      radial-gradient(circle at 30% 20%, rgba(212,255,58,0.06) 0%, transparent 50%),
-      radial-gradient(circle at 70% 80%, rgba(212,255,58,0.04) 0%, transparent 50%);
+    background: #050505;
+    overflow: hidden;
   }
   .verify-screen.active { display: flex; }
+
+  .verify-bg-mesh {
+    position: absolute; inset: 0; z-index: 0; overflow: hidden;
+  }
+  .verify-bg-orb {
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0;
+    animation: vOrbFade 8s ease-in-out infinite;
+  }
+  .verify-bg-orb:nth-child(1) {
+    width: 300px; height: 300px; top: -10%; left: -5%;
+    background: radial-gradient(circle, rgba(212,255,58,0.18), transparent 70%);
+    animation-delay: 0s;
+  }
+  .verify-bg-orb:nth-child(2) {
+    width: 250px; height: 250px; bottom: -5%; right: -5%;
+    background: radial-gradient(circle, rgba(74,222,128,0.12), transparent 70%);
+    animation-delay: 3s;
+  }
+  .verify-bg-orb:nth-child(3) {
+    width: 200px; height: 200px; top: 40%; left: 50%;
+    background: radial-gradient(circle, rgba(212,255,58,0.08), transparent 70%);
+    animation-delay: 5s;
+  }
+  @keyframes vOrbFade {
+    0%, 100% { opacity: 0; transform: scale(0.8) translate(0, 0); }
+    30% { opacity: 1; }
+    50% { opacity: 1; transform: scale(1.2) translate(10px, -10px); }
+    70% { opacity: 1; }
+  }
+
+  .verify-grid-lines {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(212,255,58,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(212,255,58,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, black 20%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, black 20%, transparent 70%);
+  }
+
+  .verify-scan-line {
+    position: absolute; left: 0; right: 0; height: 1px; z-index: 1;
+    background: linear-gradient(90deg, transparent, rgba(212,255,58,0.4), transparent);
+    box-shadow: 0 0 20px 2px rgba(212,255,58,0.15);
+    animation: vScanLine 4s linear infinite;
+  }
+  @keyframes vScanLine {
+    0% { top: -2%; opacity: 0; }
+    5% { opacity: 1; }
+    95% { opacity: 1; }
+    100% { top: 102%; opacity: 0; }
+  }
+
   .verify-container {
-    width: 100%; max-width: 380px; text-align: center;
+    width: 100%; max-width: 400px; text-align: center;
     position: relative; z-index: 2;
   }
 
+  .verify-card {
+    background: rgba(10,10,10,0.7);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(212,255,58,0.1);
+    border-radius: 24px;
+    padding: 40px 28px 32px;
+    position: relative;
+    overflow: hidden;
+    animation: vCardIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes vCardIn {
+    0% { opacity: 0; transform: translateY(30px) scale(0.96); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .verify-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
   .verify-icon-wrap {
-    width: 120px; height: 120px; margin: 0 auto 32px;
+    width: 110px; height: 110px; margin: 0 auto 28px;
     position: relative;
     display: flex; align-items: center; justify-content: center;
   }
   .verify-icon-ring {
     position: absolute; inset: 0;
-    border: 2px solid rgba(212,255,58,0.15);
     border-radius: 50%;
-    animation: verifyPulseRing 3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    border: 1.5px solid transparent;
+    border-top-color: rgba(212,255,58,0.3);
+    border-right-color: rgba(212,255,58,0.1);
+    animation: vRingSpin 3s linear infinite;
   }
-  .verify-icon-ring:nth-child(2) { animation-delay: 1s; }
-  .verify-icon-ring:nth-child(3) { animation-delay: 2s; }
-  @keyframes verifyPulseRing {
-    0% { transform: scale(1); opacity: 0.6; }
-    100% { transform: scale(1.8); opacity: 0; }
+  .verify-icon-ring:nth-child(2) {
+    inset: 8px; animation-direction: reverse; animation-duration: 4s;
+    border-top-color: rgba(74,222,128,0.25);
+    border-right-color: rgba(74,222,128,0.08);
+  }
+  .verify-icon-ring:nth-child(3) {
+    inset: 16px; animation-duration: 5s;
+    border-top-color: rgba(212,255,58,0.2);
+    border-right-color: transparent;
+  }
+  @keyframes vRingSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
   .verify-icon-inner {
-    width: 80px; height: 80px;
-    background: linear-gradient(135deg, rgba(212,255,58,0.12) 0%, rgba(212,255,58,0.04) 100%);
-    border: 1px solid rgba(212,255,58,0.25);
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, rgba(212,255,58,0.15) 0%, rgba(212,255,58,0.03) 100%);
+    border: 1px solid rgba(212,255,58,0.2);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 36px;
-    animation: verifyFloat 4s ease-in-out infinite;
-    backdrop-filter: blur(8px);
+    animation: vIconFloat 5s ease-in-out infinite;
   }
-  @keyframes verifyFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+  .verify-icon-inner svg {
+    width: 28px; height: 28px; stroke: var(--accent); fill: none;
+    stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+  }
+  @keyframes vIconFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-4px) rotate(1deg); }
+    75% { transform: translateY(4px) rotate(-1deg); }
   }
 
   .verify-badge {
     font-family: 'Saira Condensed', sans-serif;
     font-weight: 900; font-style: italic;
-    font-size: 11px; letter-spacing: 3px;
+    font-size: 10px; letter-spacing: 4px;
     text-transform: uppercase;
     color: var(--accent);
-    background: rgba(212,255,58,0.08);
-    border: 1px solid rgba(212,255,58,0.2);
-    border-radius: 6px;
-    padding: 6px 16px;
-    display: inline-block;
-    margin-bottom: 20px;
-    transform: skewX(-3deg);
+    margin-bottom: 24px;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    animation: vBadgeIn 0.6s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
+  .verify-badge::before, .verify-badge::after {
+    content: ''; width: 20px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent));
+  }
+  .verify-badge::after {
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+  @keyframes vBadgeIn {
+    0% { opacity: 0; letter-spacing: 8px; }
+    100% { opacity: 1; letter-spacing: 4px; }
+  }
+
   .verify-title {
     font-family: 'Saira Condensed', sans-serif;
     font-weight: 900; font-style: italic;
-    font-size: 32px; letter-spacing: 1px;
+    font-size: 36px; letter-spacing: 1px;
     color: var(--text);
-    margin-bottom: 8px;
-    transform: skewX(-2deg);
+    margin-bottom: 6px;
+    line-height: 1.1;
+    animation: vTitleIn 0.7s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes vTitleIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
   }
   .verify-subtitle {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-dim);
     line-height: 1.6;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
+    animation: vTitleIn 0.7s 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
   .verify-email-display {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 14px; font-weight: 700;
+    font-size: 13px; font-weight: 700;
     color: var(--accent);
-    background: rgba(212,255,58,0.06);
-    border: 1px solid rgba(212,255,58,0.15);
-    border-radius: 10px;
+    background: rgba(212,255,58,0.04);
+    border: 1px solid rgba(212,255,58,0.12);
+    border-radius: 12px;
     padding: 12px 16px;
-    margin: 16px 0 24px;
+    margin: 14px 0 24px;
     word-break: break-all;
+    position: relative;
+    animation: vTitleIn 0.7s 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .verify-email-display::before {
+    content: ''; position: absolute; inset: -1px; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(212,255,58,0.15), transparent 50%);
+    z-index: -1;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude; -webkit-mask-composite: xor;
+    padding: 1px;
   }
 
   .verify-steps {
-    display: flex; gap: 2px;
-    margin-bottom: 28px;
+    display: flex; gap: 0; margin-bottom: 28px;
+    animation: vTitleIn 0.7s 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    position: relative;
   }
   .verify-step {
-    flex: 1;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 14px 8px 12px;
-    text-align: center;
+    flex: 1; padding: 16px 8px 12px; text-align: center;
+    position: relative;
     transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .verify-step:first-child { border-radius: 12px 0 0 12px; }
-  .verify-step:last-child { border-radius: 0 12px 12px 0; }
-  .verify-step.done { background: rgba(212,255,58,0.08); border-color: rgba(212,255,58,0.25); }
-  .verify-step.active { background: rgba(212,255,58,0.04); border-color: rgba(212,255,58,0.15); }
+  .verify-step::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: var(--border); transition: background 0.4s;
+  }
+  .verify-step.done::after { background: var(--accent); }
+  .verify-step.active::after {
+    background: var(--accent);
+    animation: vStepPulse 2s ease-in-out infinite;
+  }
+  @keyframes vStepPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
   .verify-step-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px; color: var(--text-dim);
-    line-height: 1;
+    font-family: 'Saira Condensed', sans-serif;
+    font-size: 22px; font-weight: 800; color: rgba(255,255,255,0.15);
+    line-height: 1; transition: color 0.4s;
   }
   .verify-step.done .verify-step-num { color: var(--accent); }
   .verify-step.active .verify-step-num { color: var(--accent); }
   .verify-step-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 8px; letter-spacing: 1px;
+    font-size: 8px; letter-spacing: 2px;
     text-transform: uppercase;
-    color: var(--text-dim);
-    margin-top: 4px;
+    color: rgba(255,255,255,0.2);
+    margin-top: 6px; transition: color 0.4s;
   }
   .verify-step.done .verify-step-label { color: var(--accent); }
+  .verify-step.active .verify-step-label { color: rgba(212,255,58,0.7); }
 
-  .verify-actions { display: flex; flex-direction: column; gap: 10px; }
-  .verify-resend-btn {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 14px;
-    border-radius: 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  .verify-actions {
+    display: flex; flex-direction: column; gap: 10px;
+    animation: vTitleIn 0.7s 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
-  .verify-resend-btn:not(:disabled):hover { border-color: var(--accent); color: var(--accent); }
-  .verify-resend-btn:active:not(:disabled) { transform: scale(0.97); }
-  .verify-resend-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .verify-check-btn {
-    width: 100%;
-    background: var(--accent);
-    color: #000;
-    border: none;
-    padding: 16px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+    width: 100%; position: relative;
+    background: var(--accent); color: #000; border: none;
+    padding: 16px; border-radius: 14px;
+    font-family: 'Saira Condensed', sans-serif;
+    font-weight: 800; font-size: 15px;
+    letter-spacing: 2px; text-transform: uppercase;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: hidden;
+  }
+  .verify-check-btn::after {
+    content: ''; position: absolute; top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: vBtnShine 3s ease-in-out infinite;
+  }
+  @keyframes vBtnShine {
+    0%, 70%, 100% { left: -100%; }
+    40% { left: 150%; }
   }
   .verify-check-btn:active { transform: scale(0.97); }
-  .verify-logout-link {
-    display: block;
-    margin-top: 16px;
-    font-size: 11px;
+
+  .verify-resend-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
     color: var(--text-dim);
+    padding: 14px;
+    border-radius: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600; font-size: 11px;
+    letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .verify-resend-btn:not(:disabled):hover {
+    border-color: rgba(212,255,58,0.3); color: var(--accent);
+    background: rgba(212,255,58,0.04);
+  }
+  .verify-resend-btn:active:not(:disabled) { transform: scale(0.97); }
+  .verify-resend-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .verify-logout-link {
+    display: block; margin-top: 20px;
+    font-size: 10px; color: rgba(255,255,255,0.25);
     text-decoration: none;
     font-family: 'JetBrains Mono', monospace;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px; text-transform: uppercase;
     cursor: pointer;
-    transition: color 0.2s;
+    transition: color 0.3s;
+    animation: vTitleIn 0.7s 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
-  .verify-logout-link:hover { color: var(--text); }
+  .verify-logout-link:hover { color: var(--text-dim); }
+
+  .verify-particles {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
+  }
+  .verify-particle {
+    position: absolute; width: 2px; height: 2px;
+    background: var(--accent); border-radius: 50%;
+    animation: vParticle 6s linear infinite;
+  }
+  @keyframes vParticle {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.6; transform: translateY(90vh) scale(1); }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-10vh) scale(0); opacity: 0; }
+  }
 
   /* Verified success state */
   .verify-success-icon {
-    width: 80px; height: 80px;
-    margin: 0 auto 24px;
-    background: rgba(212,255,58,0.12);
-    border: 2px solid var(--accent);
-    border-radius: 50%;
+    width: 100px; height: 100px;
+    margin: 0 auto 28px;
+    position: relative;
     display: flex; align-items: center; justify-content: center;
-    font-size: 36px;
-    animation: verifySuccessPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   }
-  @keyframes verifySuccessPop {
+  .verify-success-circle {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 2px solid var(--accent);
+    animation: vSuccessCircle 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  @keyframes vSuccessCircle {
     0% { transform: scale(0); opacity: 0; }
-    60% { transform: scale(1.15); }
+    60% { transform: scale(1.1); }
     100% { transform: scale(1); opacity: 1; }
   }
-  .verify-success-check {
-    animation: verifyCheckDraw 0.5s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  .verify-success-circle::after {
+    content: ''; position: absolute; inset: -6px; border-radius: 50%;
+    border: 1px solid rgba(212,255,58,0.2);
+    animation: vSuccessRipple 1.5s 0.4s ease-out both;
   }
-  @keyframes verifyCheckDraw {
-    0% { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+  @keyframes vSuccessRipple {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+  .verify-success-glow {
+    position: absolute; inset: -20px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(212,255,58,0.15), transparent 60%);
+    animation: vSuccessGlow 2s ease-in-out infinite;
+  }
+  @keyframes vSuccessGlow {
+    0%, 100% { opacity: 0.4; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.1); }
+  }
+  .verify-success-check {
+    font-size: 40px; color: var(--accent); z-index: 1;
+    animation: vCheckPop 0.5s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  @keyframes vCheckPop {
+    0% { opacity: 0; transform: scale(0) rotate(-20deg); }
     100% { opacity: 1; transform: scale(1) rotate(0); }
   }
+
   .verify-confetti {
-    position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+    position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 10;
   }
   .verify-confetti-dot {
-    position: absolute;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    animation: confettiFall 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+    position: absolute; border-radius: 2px;
+    animation: vConfetti 2s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
-  @keyframes confettiFall {
-    0% { transform: translateY(-40px) rotate(0deg) scale(0); opacity: 1; }
-    100% { transform: translateY(80px) rotate(720deg) scale(1); opacity: 0; }
+  @keyframes vConfetti {
+    0% { transform: translateY(0) rotate(0deg) scale(0); opacity: 1; }
+    20% { opacity: 1; transform: translateY(-60px) rotate(180deg) scale(1); }
+    100% { transform: translateY(120px) rotate(720deg) scale(0.5); opacity: 0; }
   }
 
   /* Pro Lock Overlay */
@@ -1897,10 +2060,14 @@
   body.theme-retro .auth-input-group input:focus { border-color: var(--accent); background: #fff; }
   body.theme-retro .auth-btn { background: var(--accent); color: #fff; border: 3px solid var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 900; box-shadow: 4px 4px 0 var(--text); }
   body.theme-retro .verify-screen { background: var(--bg); }
+  body.theme-retro .verify-card { background: var(--surface); border: 3px solid var(--text); border-radius: 12px; backdrop-filter: none; }
+  body.theme-retro .verify-card::before { display: none; }
   body.theme-retro .verify-title { font-family: 'Saira Condensed', sans-serif; }
   body.theme-retro .verify-badge { font-family: 'Saira Condensed', sans-serif; }
   body.theme-retro .verify-check-btn { border: 3px solid var(--text); border-radius: 6px; box-shadow: 4px 4px 0 var(--text); }
   body.theme-retro .verify-resend-btn { border: 2px solid var(--text); border-radius: 6px; }
+  body.theme-retro .verify-bg-mesh, body.theme-retro .verify-grid-lines,
+  body.theme-retro .verify-scan-line, body.theme-retro .verify-particles { display: none; }
   body.theme-retro .settings-overlay { background: var(--bg); }
   body.theme-retro .settings-header { background: var(--bg); border-bottom: 3px solid var(--text); }
   body.theme-retro .settings-action-btn { border: 2px solid var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 800; color: var(--text); }
@@ -2155,53 +2322,70 @@
 
 <!-- EMAIL VERIFICATION SCREEN -->
 <div class="verify-screen" id="verifyScreen">
+  <div class="verify-bg-mesh">
+    <div class="verify-bg-orb"></div>
+    <div class="verify-bg-orb"></div>
+    <div class="verify-bg-orb"></div>
+  </div>
+  <div class="verify-grid-lines"></div>
+  <div class="verify-scan-line"></div>
+  <div class="verify-particles" id="verifyParticles"></div>
+
   <div class="verify-container" id="verifyContent">
     <!-- Pending state (default) -->
     <div id="verifyPending">
-      <div class="verify-icon-wrap">
-        <div class="verify-icon-ring"></div>
-        <div class="verify-icon-ring"></div>
-        <div class="verify-icon-ring"></div>
-        <div class="verify-icon-inner">✉️</div>
-      </div>
-
-      <div class="verify-badge" data-i18n="verifyBadge">VERIFICATION REQUIRED</div>
-
-      <div class="verify-title" data-i18n="verifyTitle">Check Your Email</div>
-      <div class="verify-subtitle" data-i18n="verifySubtitle">We sent a verification link to</div>
-      <div class="verify-email-display" id="verifyEmailDisplay">--</div>
-
-      <div class="verify-steps">
-        <div class="verify-step done">
-          <div class="verify-step-num">✓</div>
-          <div class="verify-step-label" data-i18n="verifyStep1">Account</div>
+      <div class="verify-card">
+        <div class="verify-icon-wrap">
+          <div class="verify-icon-ring"></div>
+          <div class="verify-icon-ring"></div>
+          <div class="verify-icon-ring"></div>
+          <div class="verify-icon-inner">
+            <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M2 7l10 7 10-7"/></svg>
+          </div>
         </div>
-        <div class="verify-step active">
-          <div class="verify-step-num">2</div>
-          <div class="verify-step-label" data-i18n="verifyStep2">Verify</div>
-        </div>
-        <div class="verify-step">
-          <div class="verify-step-num">3</div>
-          <div class="verify-step-label" data-i18n="verifyStep3">Train</div>
-        </div>
-      </div>
 
-      <div class="verify-actions">
-        <button class="verify-check-btn" onclick="checkEmailVerified()" data-i18n="verifyCheck">I've verified — let me in</button>
-        <button class="verify-resend-btn" id="verifyResendBtn" onclick="resendVerification()" data-i18n="verifyResend">Resend verification email</button>
-      </div>
+        <div class="verify-badge" data-i18n="verifyBadge">VERIFICATION REQUIRED</div>
 
-      <a class="verify-logout-link" onclick="verifyLogout()" data-i18n="verifyLogout">Sign in with a different account</a>
+        <div class="verify-title" data-i18n="verifyTitle">Check Your Email</div>
+        <div class="verify-subtitle" data-i18n="verifySubtitle">We sent a verification link to</div>
+        <div class="verify-email-display" id="verifyEmailDisplay">--</div>
+
+        <div class="verify-steps">
+          <div class="verify-step done">
+            <div class="verify-step-num">✓</div>
+            <div class="verify-step-label" data-i18n="verifyStep1">Account</div>
+          </div>
+          <div class="verify-step active">
+            <div class="verify-step-num">2</div>
+            <div class="verify-step-label" data-i18n="verifyStep2">Verify</div>
+          </div>
+          <div class="verify-step">
+            <div class="verify-step-num">3</div>
+            <div class="verify-step-label" data-i18n="verifyStep3">Train</div>
+          </div>
+        </div>
+
+        <div class="verify-actions">
+          <button class="verify-check-btn" onclick="checkEmailVerified()" data-i18n="verifyCheck">I've verified — let me in</button>
+          <button class="verify-resend-btn" id="verifyResendBtn" onclick="resendVerification()" data-i18n="verifyResend">Resend verification email</button>
+        </div>
+
+        <a class="verify-logout-link" onclick="verifyLogout()" data-i18n="verifyLogout">Sign in with a different account</a>
+      </div>
     </div>
 
     <!-- Success state -->
     <div id="verifySuccess" style="display:none;">
       <div class="verify-confetti" id="verifyConfetti"></div>
-      <div class="verify-success-icon">
-        <span class="verify-success-check">✓</span>
+      <div class="verify-card" style="border-color:rgba(212,255,58,0.25);">
+        <div class="verify-success-icon">
+          <div class="verify-success-glow"></div>
+          <div class="verify-success-circle"></div>
+          <span class="verify-success-check">✓</span>
+        </div>
+        <div class="verify-title" style="color:var(--accent);" data-i18n="verifySuccessTitle">Verified!</div>
+        <div class="verify-subtitle" data-i18n="verifySuccessMsg">Your account is secured. Let's train.</div>
       </div>
-      <div class="verify-title" style="color:var(--accent);" data-i18n="verifySuccessTitle">Verified!</div>
-      <div class="verify-subtitle" data-i18n="verifySuccessMsg">Your account is secured. Let's train.</div>
     </div>
   </div>
 </div>
@@ -4091,11 +4275,29 @@ function showVerifyScreen(email) {
   document.getElementById('verifyScreen').classList.add('active');
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('mainApp').style.display = 'none';
+  spawnVerifyParticles();
   startVerifyAutoCheck();
+}
+
+function spawnVerifyParticles() {
+  const c = document.getElementById('verifyParticles');
+  if (!c || c.children.length > 0) return;
+  for (let i = 0; i < 15; i++) {
+    const p = document.createElement('div');
+    p.className = 'verify-particle';
+    p.style.left = (5 + Math.random() * 90) + '%';
+    p.style.animationDelay = (Math.random() * 6) + 's';
+    p.style.animationDuration = (4 + Math.random() * 4) + 's';
+    p.style.opacity = (0.2 + Math.random() * 0.4);
+    p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+    c.appendChild(p);
+  }
 }
 
 function hideVerifyScreen() {
   document.getElementById('verifyScreen').classList.remove('active');
+  const pc = document.getElementById('verifyParticles');
+  if (pc) pc.innerHTML = '';
   if (verifyCheckInterval) { clearInterval(verifyCheckInterval); verifyCheckInterval = null; }
 }
 
@@ -4145,15 +4347,19 @@ function showVerifySuccess() {
 function spawnVerifyConfetti() {
   const container = document.getElementById('verifyConfetti');
   container.innerHTML = '';
-  const colors = ['#d4ff3a', '#4ade80', '#60a5fa', '#f472b6', '#fbbf24', '#a78bfa'];
-  for (let i = 0; i < 24; i++) {
+  const colors = ['#d4ff3a', '#4ade80', '#60a5fa', '#f472b6', '#fbbf24', '#a78bfa', '#34d399', '#fb923c'];
+  for (let i = 0; i < 40; i++) {
     const dot = document.createElement('div');
     dot.className = 'verify-confetti-dot';
-    dot.style.left = (10 + Math.random() * 80) + '%';
-    dot.style.top = (20 + Math.random() * 30) + '%';
+    dot.style.left = (5 + Math.random() * 90) + '%';
+    dot.style.top = (30 + Math.random() * 20) + '%';
     dot.style.background = colors[i % colors.length];
-    dot.style.animationDelay = (Math.random() * 0.6) + 's';
-    dot.style.width = dot.style.height = (4 + Math.random() * 6) + 'px';
+    dot.style.animationDelay = (Math.random() * 0.8) + 's';
+    const size = 4 + Math.random() * 8;
+    dot.style.width = size + 'px';
+    dot.style.height = (Math.random() > 0.5 ? size : size * 2.5) + 'px';
+    dot.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    dot.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
     container.appendChild(dot);
   }
 }
