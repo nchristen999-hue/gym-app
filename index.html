@@ -2396,8 +2396,8 @@
         </div>
 
         <div class="verify-actions">
-          <button class="verify-check-btn" onclick="checkEmailVerified()" data-i18n="verifyCheck">I've verified — let me in</button>
-          <button class="verify-resend-btn" id="verifyResendBtn" onclick="resendVerification()" data-i18n="verifyResend">Resend verification email</button>
+          <button class="verify-check-btn" id="verifyResendBtn" onclick="resendVerification()" data-i18n="verifyResend">Resend verification email</button>
+          <a class="verify-logout-link" onclick="checkEmailVerified()" style="margin-top:8px;" data-i18n="verifyCheck">I've verified — let me in</a>
         </div>
 
         <a class="verify-logout-link" onclick="verifyLogout()" data-i18n="verifyLogout">Sign in with a different account</a>
@@ -4209,7 +4209,7 @@ async function doRegister() {
       plan: ADMIN_EMAILS.includes(email.toLowerCase()) ? 'pro' : 'free',
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    try { await cred.user.sendEmailVerification(); } catch(ev) {}
+    try { await cred.user.sendEmailVerification(); } catch(ev) { console.error('sendEmailVerification error:', ev); showToast('Email error: ' + ev.message); }
     currentUser = cred.user;
     await checkProStatus();
     const profiles = getProfiles();
