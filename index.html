@@ -1390,6 +1390,211 @@
   .auth-forgot a { color: var(--accent); font-size: 12px; text-decoration: none; font-weight: 600; }
   .auth-info { font-size: 12px; color: var(--text-dim); text-align: center; margin-top: 16px; }
 
+  /* ===== EMAIL VERIFICATION SCREEN ===== */
+  .verify-screen {
+    position: fixed; inset: 0; z-index: 10000;
+    display: none; align-items: center; justify-content: center;
+    padding: 24px;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 30% 20%, rgba(212,255,58,0.06) 0%, transparent 50%),
+      radial-gradient(circle at 70% 80%, rgba(212,255,58,0.04) 0%, transparent 50%);
+  }
+  .verify-screen.active { display: flex; }
+  .verify-container {
+    width: 100%; max-width: 380px; text-align: center;
+    position: relative; z-index: 2;
+  }
+
+  .verify-icon-wrap {
+    width: 120px; height: 120px; margin: 0 auto 32px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .verify-icon-ring {
+    position: absolute; inset: 0;
+    border: 2px solid rgba(212,255,58,0.15);
+    border-radius: 50%;
+    animation: verifyPulseRing 3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+  .verify-icon-ring:nth-child(2) { animation-delay: 1s; }
+  .verify-icon-ring:nth-child(3) { animation-delay: 2s; }
+  @keyframes verifyPulseRing {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+  .verify-icon-inner {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, rgba(212,255,58,0.12) 0%, rgba(212,255,58,0.04) 100%);
+    border: 1px solid rgba(212,255,58,0.25);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    animation: verifyFloat 4s ease-in-out infinite;
+    backdrop-filter: blur(8px);
+  }
+  @keyframes verifyFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .verify-badge {
+    font-family: 'Saira Condensed', sans-serif;
+    font-weight: 900; font-style: italic;
+    font-size: 11px; letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(212,255,58,0.08);
+    border: 1px solid rgba(212,255,58,0.2);
+    border-radius: 6px;
+    padding: 6px 16px;
+    display: inline-block;
+    margin-bottom: 20px;
+    transform: skewX(-3deg);
+  }
+  .verify-title {
+    font-family: 'Saira Condensed', sans-serif;
+    font-weight: 900; font-style: italic;
+    font-size: 32px; letter-spacing: 1px;
+    color: var(--text);
+    margin-bottom: 8px;
+    transform: skewX(-2deg);
+  }
+  .verify-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .verify-email-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; font-weight: 700;
+    color: var(--accent);
+    background: rgba(212,255,58,0.06);
+    border: 1px solid rgba(212,255,58,0.15);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 16px 0 24px;
+    word-break: break-all;
+  }
+
+  .verify-steps {
+    display: flex; gap: 2px;
+    margin-bottom: 28px;
+  }
+  .verify-step {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 8px 12px;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .verify-step:first-child { border-radius: 12px 0 0 12px; }
+  .verify-step:last-child { border-radius: 0 12px 12px 0; }
+  .verify-step.done { background: rgba(212,255,58,0.08); border-color: rgba(212,255,58,0.25); }
+  .verify-step.active { background: rgba(212,255,58,0.04); border-color: rgba(212,255,58,0.15); }
+  .verify-step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px; color: var(--text-dim);
+    line-height: 1;
+  }
+  .verify-step.done .verify-step-num { color: var(--accent); }
+  .verify-step.active .verify-step-num { color: var(--accent); }
+  .verify-step-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px; letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+  .verify-step.done .verify-step-label { color: var(--accent); }
+
+  .verify-actions { display: flex; flex-direction: column; gap: 10px; }
+  .verify-resend-btn {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px;
+    border-radius: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .verify-resend-btn:not(:disabled):hover { border-color: var(--accent); color: var(--accent); }
+  .verify-resend-btn:active:not(:disabled) { transform: scale(0.97); }
+  .verify-resend-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .verify-check-btn {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .verify-check-btn:active { transform: scale(0.97); }
+  .verify-logout-link {
+    display: block;
+    margin-top: 16px;
+    font-size: 11px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .verify-logout-link:hover { color: var(--text); }
+
+  /* Verified success state */
+  .verify-success-icon {
+    width: 80px; height: 80px;
+    margin: 0 auto 24px;
+    background: rgba(212,255,58,0.12);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    animation: verifySuccessPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  @keyframes verifySuccessPop {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .verify-success-check {
+    animation: verifyCheckDraw 0.5s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes verifyCheckDraw {
+    0% { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0); }
+  }
+  .verify-confetti {
+    position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+  }
+  .verify-confetti-dot {
+    position: absolute;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    animation: confettiFall 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-40px) rotate(0deg) scale(0); opacity: 1; }
+    100% { transform: translateY(80px) rotate(720deg) scale(1); opacity: 0; }
+  }
+
   /* Pro Lock Overlay */
   .pro-gated { position: relative; pointer-events: none; }
   .pro-gated > * { filter: blur(3px); opacity: 0.4; }
@@ -1691,6 +1896,11 @@
   body.theme-retro .auth-input-group input { background: var(--surface-2); border: 2px solid var(--text); color: var(--text); font-family: 'Space Mono', monospace; border-radius: 4px; }
   body.theme-retro .auth-input-group input:focus { border-color: var(--accent); background: #fff; }
   body.theme-retro .auth-btn { background: var(--accent); color: #fff; border: 3px solid var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 900; box-shadow: 4px 4px 0 var(--text); }
+  body.theme-retro .verify-screen { background: var(--bg); }
+  body.theme-retro .verify-title { font-family: 'Saira Condensed', sans-serif; }
+  body.theme-retro .verify-badge { font-family: 'Saira Condensed', sans-serif; }
+  body.theme-retro .verify-check-btn { border: 3px solid var(--text); border-radius: 6px; box-shadow: 4px 4px 0 var(--text); }
+  body.theme-retro .verify-resend-btn { border: 2px solid var(--text); border-radius: 6px; }
   body.theme-retro .settings-overlay { background: var(--bg); }
   body.theme-retro .settings-header { background: var(--bg); border-bottom: 3px solid var(--text); }
   body.theme-retro .settings-action-btn { border: 2px solid var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 800; color: var(--text); }
@@ -1942,6 +2152,60 @@
     <div class="auth-info" id="authInfo"></div>
   </div>
 </div>
+
+<!-- EMAIL VERIFICATION SCREEN -->
+<div class="verify-screen" id="verifyScreen">
+  <div class="verify-container" id="verifyContent">
+    <!-- Pending state (default) -->
+    <div id="verifyPending">
+      <div class="verify-icon-wrap">
+        <div class="verify-icon-ring"></div>
+        <div class="verify-icon-ring"></div>
+        <div class="verify-icon-ring"></div>
+        <div class="verify-icon-inner">✉️</div>
+      </div>
+
+      <div class="verify-badge" data-i18n="verifyBadge">VERIFICATION REQUIRED</div>
+
+      <div class="verify-title" data-i18n="verifyTitle">Check Your Email</div>
+      <div class="verify-subtitle" data-i18n="verifySubtitle">We sent a verification link to</div>
+      <div class="verify-email-display" id="verifyEmailDisplay">--</div>
+
+      <div class="verify-steps">
+        <div class="verify-step done">
+          <div class="verify-step-num">✓</div>
+          <div class="verify-step-label" data-i18n="verifyStep1">Account</div>
+        </div>
+        <div class="verify-step active">
+          <div class="verify-step-num">2</div>
+          <div class="verify-step-label" data-i18n="verifyStep2">Verify</div>
+        </div>
+        <div class="verify-step">
+          <div class="verify-step-num">3</div>
+          <div class="verify-step-label" data-i18n="verifyStep3">Train</div>
+        </div>
+      </div>
+
+      <div class="verify-actions">
+        <button class="verify-check-btn" onclick="checkEmailVerified()" data-i18n="verifyCheck">I've verified — let me in</button>
+        <button class="verify-resend-btn" id="verifyResendBtn" onclick="resendVerification()" data-i18n="verifyResend">Resend verification email</button>
+      </div>
+
+      <a class="verify-logout-link" onclick="verifyLogout()" data-i18n="verifyLogout">Sign in with a different account</a>
+    </div>
+
+    <!-- Success state -->
+    <div id="verifySuccess" style="display:none;">
+      <div class="verify-confetti" id="verifyConfetti"></div>
+      <div class="verify-success-icon">
+        <span class="verify-success-check">✓</span>
+      </div>
+      <div class="verify-title" style="color:var(--accent);" data-i18n="verifySuccessTitle">Verified!</div>
+      <div class="verify-subtitle" data-i18n="verifySuccessMsg">Your account is secured. Let's train.</div>
+    </div>
+  </div>
+</div>
+
 <div class="offline-banner" id="offlineBanner">⚡ Offline — changes sync when back online</div>
 <div class="app" id="mainApp" style="display:none;">
   <header>
@@ -3460,6 +3724,20 @@ const TRANSLATIONS = {
   authResetSent: { en:'Password reset email sent! Check your inbox.', de:'Passwort-Reset E-Mail gesendet! Prüfe dein Postfach.', es:'Email de recuperación enviado. Revisa tu bandeja.', fr:'E-mail de réinitialisation envoyé ! Vérifiez votre boîte.', it:'Email di reset inviata! Controlla la posta.' },
   authEnterEmailFirst: { en:'Enter your email first.', de:'Gib zuerst deine E-Mail ein.', es:'Ingresa tu correo primero.', fr:'Entrez d\'abord votre e-mail.', it:'Inserisci prima la tua email.' },
   emailVerifSent: { en:'Verification email sent! Check your inbox.', de:'Bestätigungs-Email gesendet! Prüfe dein Postfach.', es:'Email de verificación enviado.', fr:'Email de vérification envoyé.', it:'Email di verifica inviata.' },
+  verifyBadge: { en:'VERIFICATION REQUIRED', de:'VERIFIZIERUNG NÖTIG', es:'VERIFICACIÓN REQUERIDA', fr:'VÉRIFICATION REQUISE', it:'VERIFICA RICHIESTA' },
+  verifyTitle: { en:'Check Your Email', de:'Prüfe deine E-Mail', es:'Revisa tu correo', fr:'Vérifie ton e-mail', it:'Controlla la tua email' },
+  verifySubtitle: { en:'We sent a verification link to', de:'Wir haben einen Bestätigungslink gesendet an', es:'Enviamos un enlace de verificación a', fr:'Nous avons envoyé un lien de vérification à', it:'Abbiamo inviato un link di verifica a' },
+  verifyStep1: { en:'Account', de:'Konto', es:'Cuenta', fr:'Compte', it:'Account' },
+  verifyStep2: { en:'Verify', de:'Bestätigen', es:'Verificar', fr:'Vérifier', it:'Verificare' },
+  verifyStep3: { en:'Train', de:'Trainieren', es:'Entrenar', fr:'S\'entraîner', it:'Allenare' },
+  verifyCheck: { en:'I\'ve verified — let me in', de:'Ich habe bestätigt — lass mich rein', es:'Ya verifiqué — déjame entrar', fr:'J\'ai vérifié — laisse-moi entrer', it:'Ho verificato — fammi entrare' },
+  verifyResend: { en:'Resend verification email', de:'Bestätigungsmail erneut senden', es:'Reenviar correo de verificación', fr:'Renvoyer l\'e-mail de vérification', it:'Reinvia email di verifica' },
+  verifyResendIn: { en:'Resend in', de:'Erneut senden in', es:'Reenviar en', fr:'Renvoyer dans', it:'Reinvia tra' },
+  verifyResent: { en:'Verification email resent!', de:'Bestätigungsmail erneut gesendet!', es:'¡Correo reenviado!', fr:'E-mail renvoyé !', it:'Email reinviata!' },
+  verifyLogout: { en:'Sign in with a different account', de:'Mit anderem Konto anmelden', es:'Iniciar sesión con otra cuenta', fr:'Se connecter avec un autre compte', it:'Accedi con un altro account' },
+  verifySuccessTitle: { en:'Verified!', de:'Verifiziert!', es:'¡Verificado!', fr:'Vérifié !', it:'Verificato!' },
+  verifySuccessMsg: { en:'Your account is secured. Let\'s train.', de:'Dein Konto ist gesichert. Los geht\'s.', es:'Tu cuenta está asegurada. A entrenar.', fr:'Ton compte est sécurisé. C\'est parti.', it:'Il tuo account è protetto. Alleniamoci.' },
+  verifyNotYet: { en:'Email not verified yet. Check your inbox and click the link.', de:'E-Mail noch nicht bestätigt. Prüfe dein Postfach und klicke den Link.', es:'Correo aún no verificado. Revisa tu bandeja y haz clic en el enlace.', fr:'E-mail pas encore vérifié. Vérifie ta boîte et clique sur le lien.', it:'Email non ancora verificata. Controlla la posta e clicca il link.' },
 
   // ── NUTRITION ──
   nutrition: { en:'Nutrition', de:'Ernährung', es:'Nutrición', fr:'Nutrition', it:'Nutrizione' },
@@ -3720,8 +3998,8 @@ async function doRegister() {
     await checkProStatus();
     const profiles = getProfiles();
     if (!profiles.includes(username)) { profiles.push(username); saveProfiles(profiles); }
-    selectProfile(username);
-    showToast(t('emailVerifSent'));
+    showVerifyScreen(email);
+    startResendCooldown(60);
   } catch(e) {
     const msgs = {
       'auth/email-already-in-use': t('authEmailInUse'),
@@ -3763,6 +4041,11 @@ async function doLogin() {
     const cred = await firebaseAuth.signInWithEmailAndPassword(email, password);
     currentUser = cred.user;
     await checkProStatus();
+    if (!cred.user.emailVerified) {
+      showVerifyScreen(email);
+      btn.disabled = false; btn.textContent = t('authLogin');
+      return;
+    }
     const name = cred.user.displayName || email.split('@')[0];
     const profiles = getProfiles();
     if (!profiles.includes(name)) { profiles.push(name); saveProfiles(profiles); }
@@ -3792,6 +4075,127 @@ async function doPasswordReset() {
   } catch(e) {
     showAuthError(e.message);
   }
+}
+
+// =============================================
+// EMAIL VERIFICATION (MFA)
+// =============================================
+let verifyResendCooldown = 0;
+let verifyResendTimer = null;
+let verifyCheckInterval = null;
+
+function showVerifyScreen(email) {
+  document.getElementById('verifyEmailDisplay').textContent = email || '--';
+  document.getElementById('verifyPending').style.display = '';
+  document.getElementById('verifySuccess').style.display = 'none';
+  document.getElementById('verifyScreen').classList.add('active');
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'none';
+  startVerifyAutoCheck();
+}
+
+function hideVerifyScreen() {
+  document.getElementById('verifyScreen').classList.remove('active');
+  if (verifyCheckInterval) { clearInterval(verifyCheckInterval); verifyCheckInterval = null; }
+}
+
+function startVerifyAutoCheck() {
+  if (verifyCheckInterval) clearInterval(verifyCheckInterval);
+  verifyCheckInterval = setInterval(async () => {
+    if (!currentUser) return;
+    try {
+      await currentUser.reload();
+      if (currentUser.emailVerified) {
+        clearInterval(verifyCheckInterval);
+        verifyCheckInterval = null;
+        showVerifySuccess();
+      }
+    } catch(e) {}
+  }, 5000);
+}
+
+async function checkEmailVerified() {
+  if (!currentUser) return;
+  try {
+    await currentUser.reload();
+    if (currentUser.emailVerified) {
+      showVerifySuccess();
+    } else {
+      showToast(t('verifyNotYet'));
+    }
+  } catch(e) {
+    showToast(e.message);
+  }
+}
+
+function showVerifySuccess() {
+  document.getElementById('verifyPending').style.display = 'none';
+  document.getElementById('verifySuccess').style.display = '';
+  spawnVerifyConfetti();
+  if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
+  setTimeout(() => {
+    hideVerifyScreen();
+    const name = currentUser.displayName || currentUser.email.split('@')[0];
+    const profiles = getProfiles();
+    if (!profiles.includes(name)) { profiles.push(name); saveProfiles(profiles); }
+    selectProfile(name);
+  }, 2200);
+}
+
+function spawnVerifyConfetti() {
+  const container = document.getElementById('verifyConfetti');
+  container.innerHTML = '';
+  const colors = ['#d4ff3a', '#4ade80', '#60a5fa', '#f472b6', '#fbbf24', '#a78bfa'];
+  for (let i = 0; i < 24; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'verify-confetti-dot';
+    dot.style.left = (10 + Math.random() * 80) + '%';
+    dot.style.top = (20 + Math.random() * 30) + '%';
+    dot.style.background = colors[i % colors.length];
+    dot.style.animationDelay = (Math.random() * 0.6) + 's';
+    dot.style.width = dot.style.height = (4 + Math.random() * 6) + 'px';
+    container.appendChild(dot);
+  }
+}
+
+async function resendVerification() {
+  if (!currentUser || verifyResendCooldown > 0) return;
+  try {
+    await currentUser.sendEmailVerification();
+    showToast(t('verifyResent'));
+    startResendCooldown(60);
+  } catch(e) {
+    showToast(e.message);
+  }
+}
+
+function startResendCooldown(seconds) {
+  verifyResendCooldown = seconds;
+  const btn = document.getElementById('verifyResendBtn');
+  btn.disabled = true;
+  if (verifyResendTimer) clearInterval(verifyResendTimer);
+  verifyResendTimer = setInterval(() => {
+    verifyResendCooldown--;
+    if (verifyResendCooldown <= 0) {
+      clearInterval(verifyResendTimer);
+      verifyResendTimer = null;
+      btn.disabled = false;
+      btn.textContent = t('verifyResend');
+    } else {
+      btn.textContent = `${t('verifyResendIn')} ${verifyResendCooldown}s`;
+    }
+  }, 1000);
+}
+
+async function verifyLogout() {
+  hideVerifyScreen();
+  if (isFirebaseReady() && firebaseAuth.currentUser) {
+    try { await firebaseAuth.signOut(); } catch(e) {}
+  }
+  currentUser = null;
+  activeProfile = null;
+  document.getElementById('loginScreen').style.display = '';
+  document.getElementById('mainApp').style.display = 'none';
 }
 
 async function checkProStatus() {
@@ -8046,11 +8450,16 @@ async function syncSessionToHealth(session) {
         currentUser = user;
         await checkProStatus();
         initRevenueCat(user.uid);
+        if (!user.emailVerified) {
+          showVerifyScreen(user.email);
+          return;
+        }
         const name = user.displayName || user.email.split('@')[0];
         const profiles = getProfiles();
         if (!profiles.includes(name)) { profiles.push(name); saveProfiles(profiles); }
         if (!activeProfile) selectProfile(name);
       } else {
+        hideVerifyScreen();
         document.getElementById('loginScreen').style.display = '';
         document.getElementById('mainApp').style.display = 'none';
       }
