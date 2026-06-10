@@ -1542,6 +1542,35 @@
   .sleep-bar-labels { display: flex; gap: 3px; }
   .sleep-bar-label { flex: 1; font-size: 8px; color: var(--text-dim); text-align: center; }
 
+  /* ===== STEPS TRACKER ===== */
+  .steps-widget { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+  .steps-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .steps-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); font-weight: 700; }
+  .steps-count { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: #4ade80; line-height: 1; }
+  .steps-count .steps-unit { font-size: 14px; color: var(--text-dim); }
+  .steps-input-row { display: flex; gap: 8px; align-items: center; }
+  .steps-input { flex: 1; background: var(--surface-2); border: 1px solid var(--border); color: var(--text); padding: 10px 12px; border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 16px; text-align: center; }
+  .steps-input:focus { outline: none; border-color: #4ade80; }
+  .steps-save-btn { background: #4ade80; color: #000; border: none; padding: 10px 16px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+  .steps-save-btn:active { transform: scale(0.95); }
+  .steps-kcal { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #4ade80; margin-top: 8px; text-align: center; }
+  .steps-bar-row { display: flex; gap: 3px; align-items: flex-end; height: 40px; margin-top: 10px; }
+  .steps-bar { flex: 1; background: var(--surface-2); border-radius: 3px 3px 0 0; transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1); min-height: 2px; }
+  .steps-bar.good { background: #4ade80; }
+  .steps-bar.today { background: #86efac; }
+  .steps-bar-labels { display: flex; gap: 3px; }
+  .steps-bar-label { flex: 1; font-size: 8px; color: var(--text-dim); text-align: center; }
+  .steps-progress { height: 4px; background: var(--surface-2); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+  .steps-progress-fill { height: 100%; background: linear-gradient(90deg, #4ade80, #86efac); border-radius: 2px; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+
+  /* ===== ACTIVITY BALANCE ===== */
+  .activity-balance { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; margin-bottom: 16px; }
+  .activity-row { display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); padding: 4px 0; }
+  .activity-divider { height: 1px; background: var(--border); margin: 6px 0; }
+  .activity-row.activity-total { color: var(--text); font-weight: 700; font-size: 13px; }
+  .activity-row.deficit { color: #4ade80; }
+  .activity-row.surplus { color: #f87171; }
+
   /* ===== OFFLINE INDICATOR ===== */
   .offline-banner { position: fixed; top: 0; left: 0; right: 0; background: #ef4444; color: #fff; text-align: center; padding: 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; z-index: 9999; transform: translateY(-100%); transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
   .offline-banner.show { transform: translateY(0); }
@@ -1866,11 +1895,11 @@
 <div class="login-screen" id="loginScreen">
   <div class="login-container">
     <div class="login-logo">GYM<span style="color:var(--accent)">TRACK</span></div>
-    <p class="login-subtitle">Dein persönliches Training</p>
+    <p class="login-subtitle" data-i18n="loginSubtitle">Your personal training</p>
 
     <div class="auth-tabs" id="authTabs">
-      <button class="auth-tab active" onclick="switchAuthTab('login')">Anmelden</button>
-      <button class="auth-tab" onclick="switchAuthTab('register')">Registrieren</button>
+      <button class="auth-tab active" onclick="switchAuthTab('login')" data-i18n="login">Login</button>
+      <button class="auth-tab" onclick="switchAuthTab('register')" data-i18n="register">Register</button>
     </div>
 
     <div class="auth-error" id="authError"></div>
@@ -1878,36 +1907,36 @@
     <!-- LOGIN FORM -->
     <form id="authLoginForm" onsubmit="event.preventDefault();doLogin()">
       <div class="auth-input-group">
-        <label for="loginEmail">E-Mail</label>
-        <input type="email" id="loginEmail" name="email" placeholder="deine@email.com" autocomplete="email" />
+        <label for="loginEmail" data-i18n="email">Email</label>
+        <input type="email" id="loginEmail" name="email" placeholder="your@email.com" autocomplete="email" />
       </div>
       <div class="auth-input-group">
-        <label for="loginPassword">Passwort</label>
-        <input type="password" id="loginPassword" name="password" placeholder="Passwort" autocomplete="current-password" />
+        <label for="loginPassword" data-i18n="password">Password</label>
+        <input type="password" id="loginPassword" name="password" data-i18n="password" placeholder="Password" autocomplete="current-password" />
       </div>
-      <button type="submit" class="auth-btn" id="loginBtn">Anmelden</button>
-      <div class="auth-forgot"><a href="#" onclick="doPasswordReset();return false;">Passwort vergessen?</a></div>
+      <button type="submit" class="auth-btn" id="loginBtn" data-i18n="login">Login</button>
+      <div class="auth-forgot"><a href="#" onclick="doPasswordReset();return false;" data-i18n="forgotPassword">Forgot password?</a></div>
     </form>
 
     <!-- REGISTER FORM -->
     <form id="authRegisterForm" style="display:none;" onsubmit="event.preventDefault();doRegister()">
       <div class="auth-input-group">
-        <label for="regUsername">Benutzername</label>
-        <input type="text" id="regUsername" name="username" placeholder="Dein Name" maxlength="20" autocomplete="username" />
+        <label for="regUsername" data-i18n="username">Username</label>
+        <input type="text" id="regUsername" name="username" data-i18n="yourName" placeholder="Your name" maxlength="20" autocomplete="username" />
       </div>
       <div class="auth-input-group">
-        <label for="regEmail">E-Mail</label>
-        <input type="email" id="regEmail" name="email" placeholder="deine@email.com" autocomplete="email" />
+        <label for="regEmail" data-i18n="email">Email</label>
+        <input type="email" id="regEmail" name="email" placeholder="your@email.com" autocomplete="email" />
       </div>
       <div class="auth-input-group">
-        <label for="regPassword">Passwort</label>
+        <label for="regPassword" data-i18n="password">Password</label>
         <input type="password" id="regPassword" name="new-password" placeholder="Min. 6 chars" autocomplete="new-password" />
       </div>
       <div class="auth-input-group">
-        <label for="regPasswordConfirm">Passwort bestätigen</label>
-        <input type="password" id="regPasswordConfirm" name="new-password-confirm" placeholder="Nochmal eingeben" autocomplete="new-password" />
+        <label for="regPasswordConfirm" data-i18n="confirmPassword">Confirm password</label>
+        <input type="password" id="regPasswordConfirm" name="new-password-confirm" data-i18n="confirmPasswordPh" placeholder="Enter again" autocomplete="new-password" />
       </div>
-      <button type="submit" class="auth-btn" id="registerBtn">Konto erstellen</button>
+      <button type="submit" class="auth-btn" id="registerBtn" data-i18n="authCreateAccount">Create account</button>
     </form>
 
     <div class="auth-info" id="authInfo"></div>
@@ -2427,7 +2456,7 @@
         <div class="nut-profile-divider"></div>
         <div class="nut-profile-stat"><span class="nut-profile-val" id="nutProfTDEE">--</span><span class="nut-profile-unit">TDEE</span></div>
         <div class="nut-profile-divider"></div>
-        <div class="nut-profile-stat"><span class="nut-profile-val" id="nutProfDeficit">--</span><span class="nut-profile-unit">Ziel</span></div>
+        <div class="nut-profile-stat"><span class="nut-profile-val" id="nutProfDeficit">--</span><span class="nut-profile-unit" data-i18n="goal">Goal</span></div>
         <div class="nut-profile-edit">✎</div>
       </div>
 
@@ -2465,6 +2494,14 @@
         </div>
       </div>
 
+      <!-- ACTIVITY BALANCE -->
+      <div class="activity-balance" id="activityBalance">
+        <div class="activity-row"><span>👟 <span data-i18n="stepsKcal">Steps</span></span><span id="actStepsKcal">0 kcal</span></div>
+        <div class="activity-row"><span>🏃 <span data-i18n="workoutBurned">Workouts</span></span><span id="actWorkoutKcal">0 kcal</span></div>
+        <div class="activity-divider"></div>
+        <div class="activity-row activity-total" id="actNetRow"><span data-i18n="netBalance">Net Balance</span><span id="actNetBalance">0 kcal</span></div>
+      </div>
+
       <div style="display:flex;gap:10px;margin-bottom:16px;">
         <button class="cardio-toggle-btn" onclick="openFoodModal()" style="flex:1;margin:0;" data-i18n="addFood">+ Essen hinzufügen</button>
         <button class="nut-goals-btn" onclick="openNutGoalsModal()">🎯 <span data-i18n="nutritionGoals">Ziele</span></button>
@@ -2486,6 +2523,22 @@
           <button class="water-btn" onclick="addWater()" style="background:var(--accent);color:#000;">+ 0.25L</button>
         </div>
         <div class="water-progress"><div class="water-progress-fill" id="waterProgressFill" style="width:0%"></div></div>
+      </div>
+
+      <!-- STEPS TRACKER -->
+      <div class="steps-widget" id="stepsWidget">
+        <div class="steps-header">
+          <div class="steps-title">👟 <span data-i18n="stepsTracker">Steps</span></div>
+          <div class="steps-count"><span id="stepsCount">0</span><span class="steps-unit"> / 10K</span></div>
+        </div>
+        <div class="steps-input-row">
+          <input type="number" class="steps-input" id="stepsInput" placeholder="8500" step="100" min="0" max="99999" inputmode="numeric" />
+          <button class="steps-save-btn" onclick="saveSteps()" data-i18n="save">Save</button>
+        </div>
+        <div class="steps-kcal" id="stepsKcalInfo"></div>
+        <div class="steps-progress"><div class="steps-progress-fill" id="stepsProgressFill" style="width:0%"></div></div>
+        <div class="steps-bar-row" id="stepsBars"></div>
+        <div class="steps-bar-labels" id="stepsBarLabels"></div>
       </div>
 
       <!-- SLEEP TRACKER -->
@@ -2789,11 +2842,11 @@
         <input type="number" class="input-field" id="cfKcal" placeholder="kcal/100g" style="margin:0;" inputmode="numeric" />
         <input type="number" class="input-field" id="cfProtein" placeholder="Protein/100g" style="margin:0;" inputmode="decimal" />
         <input type="number" class="input-field" id="cfCarbs" placeholder="Carbs/100g" style="margin:0;" inputmode="decimal" />
-        <input type="number" class="input-field" id="cfFat" placeholder="Fett/100g" style="margin:0;" inputmode="decimal" />
+        <input type="number" class="input-field" id="cfFat" placeholder="Fat/100g" style="margin:0;" inputmode="decimal" />
       </div>
-      <button class="save-btn" onclick="saveCustomFood()" style="width:100%;background:var(--accent);color:#000;border:none;padding:10px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;text-transform:uppercase;letter-spacing:1px;">Speichern</button>
+      <button class="save-btn" onclick="saveCustomFood()" style="width:100%;background:var(--accent);color:#000;border:none;padding:10px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;text-transform:uppercase;letter-spacing:1px;" data-i18n="save">Save</button>
     </div>
-    <input type="text" class="input-field" id="foodSearch" placeholder="Essen suchen..." oninput="filterFoods()" />
+    <input type="text" class="input-field" id="foodSearch" data-i18n="searchFood" placeholder="Search food..." oninput="filterFoods()" />
     <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;" id="foodCatPills"></div>
     <div class="exercise-list-modal" id="foodListModal" style="max-height:40vh;overflow-y:auto;"></div>
   </div>
@@ -2803,7 +2856,7 @@
 <div class="modal-overlay" id="foodAmountModal" style="z-index:220;" onclick="if(event.target===this) closeFoodAmountModal()">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title" id="foodAmountTitle">Menge</div>
+    <div class="modal-title" id="foodAmountTitle"></div>
     <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;" id="foodAmountInfo"></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
       <button class="cardio-type-pill" onclick="setFoodAmount(25)">25g</button>
@@ -2815,12 +2868,12 @@
       <button class="cardio-type-pill" onclick="setFoodAmount(500)">500g</button>
     </div>
     <div class="cardio-form-grid">
-      <div class="cardio-field"><label>Menge (g)</label><input type="number" inputmode="numeric" id="foodAmountInput" value="100" oninput="updateFoodPreview()" /></div>
+      <div class="cardio-field"><label data-i18n="amountG">Amount (g)</label><input type="number" inputmode="numeric" id="foodAmountInput" value="100" oninput="updateFoodPreview()" /></div>
     </div>
     <div style="background:var(--surface-2);border-radius:10px;padding:12px;margin:12px 0;" id="foodAmountPreview"></div>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeFoodAmountModal()">Abbruch</button>
-      <button class="btn-primary" onclick="confirmAddFood()">Hinzufügen</button>
+      <button class="btn-secondary" onclick="closeFoodAmountModal()" data-i18n="cancel">Cancel</button>
+      <button class="btn-primary" onclick="confirmAddFood()" data-i18n="add">Add</button>
     </div>
   </div>
 </div>
@@ -2829,16 +2882,16 @@
 <div class="modal-overlay" id="nutGoalsModal" onclick="if(event.target===this) closeNutGoalsModal()">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title" data-i18n="nutritionGoals">Ziele</div>
+    <div class="modal-title" data-i18n="nutritionGoals">Goals</div>
     <div class="cardio-form-grid">
       <div class="cardio-field"><label>kcal</label><input type="number" id="goalKcal" inputmode="numeric" /></div>
-      <div class="cardio-field"><label>Protein (g)</label><input type="number" id="goalProtein" inputmode="numeric" /></div>
-      <div class="cardio-field"><label>Carbs (g)</label><input type="number" id="goalCarbs" inputmode="numeric" /></div>
-      <div class="cardio-field"><label>Fett (g)</label><input type="number" id="goalFat" inputmode="numeric" /></div>
+      <div class="cardio-field"><label data-i18n="protein">Protein</label> (g)<input type="number" id="goalProtein" inputmode="numeric" /></div>
+      <div class="cardio-field"><label data-i18n="carbs">Carbs</label> (g)<input type="number" id="goalCarbs" inputmode="numeric" /></div>
+      <div class="cardio-field"><label data-i18n="fat">Fat</label> (g)<input type="number" id="goalFat" inputmode="numeric" /></div>
     </div>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeNutGoalsModal()">Abbruch</button>
-      <button class="btn-primary" onclick="saveNutGoals()">Speichern</button>
+      <button class="btn-secondary" onclick="closeNutGoalsModal()" data-i18n="cancel">Cancel</button>
+      <button class="btn-primary" onclick="saveNutGoals()" data-i18n="save">Save</button>
     </div>
   </div>
 </div>
@@ -2847,52 +2900,52 @@
 <div class="modal-overlay" id="nutProfileModal" onclick="if(event.target===this) closeNutProfileModal()">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">Körperprofil</div>
+    <div class="modal-title" data-i18n="bodyProfile">Body Profile</div>
     <div class="cardio-form-grid">
-      <div class="cardio-field"><label>Gewicht (kg)</label><input type="number" id="profWeight" inputmode="decimal" step="0.1" /></div>
-      <div class="cardio-field"><label>Grösse (cm)</label><input type="number" id="profHeight" inputmode="numeric" /></div>
-      <div class="cardio-field"><label>Alter</label><input type="number" id="profAge" inputmode="numeric" /></div>
+      <div class="cardio-field"><label data-i18n="weightKg">Weight (kg)</label><input type="number" id="profWeight" inputmode="decimal" step="0.1" /></div>
+      <div class="cardio-field"><label data-i18n="heightCm">Height (cm)</label><input type="number" id="profHeight" inputmode="numeric" /></div>
+      <div class="cardio-field"><label data-i18n="age">Age</label><input type="number" id="profAge" inputmode="numeric" /></div>
       <div class="cardio-field">
-        <label>Geschlecht</label>
+        <label data-i18n="gender">Gender</label>
         <select id="profGender" class="exercise-select" style="margin:0;">
-          <option value="m">Männlich</option>
-          <option value="f">Weiblich</option>
+          <option value="m" data-i18n="male">Male</option>
+          <option value="f" data-i18n="female">Female</option>
         </select>
       </div>
       <div class="cardio-field">
-        <label>Aktivität</label>
+        <label data-i18n="activityLevel">Activity</label>
         <select id="profActivity" class="exercise-select" style="margin:0;">
-          <option value="1.2">Sitzend (wenig Bewegung)</option>
-          <option value="1.375">Leicht aktiv (1-3x/Woche)</option>
-          <option value="1.55" selected>Moderat (3-5x/Woche)</option>
-          <option value="1.725">Sehr aktiv (6-7x/Woche)</option>
-          <option value="1.9">Extrem aktiv (2x täglich)</option>
+          <option value="1.2" data-i18n="sedentary">Sedentary (little movement)</option>
+          <option value="1.375" data-i18n="lightlyActive">Lightly active (1-3x/week)</option>
+          <option value="1.55" selected data-i18n="moderateActive">Moderate (3-5x/week)</option>
+          <option value="1.725" data-i18n="veryActive">Very active (6-7x/week)</option>
+          <option value="1.9" data-i18n="extremeActive">Extremely active (2x daily)</option>
         </select>
       </div>
       <div class="cardio-field">
-        <label>Ziel</label>
+        <label data-i18n="goal">Goal</label>
         <select id="profGoalType" class="exercise-select" style="margin:0;" onchange="updateProfilePreview()">
-          <option value="lose">Abnehmen</option>
-          <option value="maintain" selected>Gewicht halten</option>
-          <option value="gain">Zunehmen</option>
+          <option value="lose" data-i18n="goalLose">Lose weight</option>
+          <option value="maintain" selected data-i18n="goalMaintain">Maintain weight</option>
+          <option value="gain" data-i18n="goalGain">Gain weight</option>
         </select>
       </div>
       <div class="cardio-field" id="profWeeklyField">
-        <label>Veränderung/Woche</label>
+        <label data-i18n="weeklyChange">Change/week</label>
         <select id="profWeeklyLoss" class="exercise-select" style="margin:0;" onchange="updateProfilePreview()">
-          <option value="0.25">0.25 kg/Woche</option>
-          <option value="0.5" selected>0.5 kg/Woche</option>
-          <option value="0.75">0.75 kg/Woche</option>
-          <option value="1">1.0 kg/Woche</option>
-          <option value="1.25">1.25 kg/Woche</option>
-          <option value="1.5">1.5 kg/Woche</option>
+          <option value="0.25">0.25 kg</option>
+          <option value="0.5" selected>0.5 kg</option>
+          <option value="0.75">0.75 kg</option>
+          <option value="1">1.0 kg</option>
+          <option value="1.25">1.25 kg</option>
+          <option value="1.5">1.5 kg</option>
         </select>
       </div>
     </div>
     <div id="profCalcPreview" style="background:var(--surface-2);border-radius:10px;padding:12px;margin:12px 0;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-dim);"></div>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeNutProfileModal()">Abbruch</button>
-      <button class="btn-primary" onclick="saveNutProfile()">Berechnen & Speichern</button>
+      <button class="btn-secondary" onclick="closeNutProfileModal()" data-i18n="cancel">Cancel</button>
+      <button class="btn-primary" onclick="saveNutProfile()" data-i18n="calcAndSave">Calculate & Save</button>
     </div>
   </div>
 </div>
@@ -3093,6 +3146,44 @@ const TRANSLATIONS = {
   sleepTracker: { en:'Sleep Tracker', de:'Schlaf-Tracker', es:'Seguimiento de sueño', fr:'Suivi de sommeil', it:'Tracker sonno' },
   sleep: { en:'Sleep', de:'Schlaf', es:'Sueño', fr:'Sommeil', it:'Sonno' },
   sleepSaved: { en:'Sleep logged!', de:'Schlaf gespeichert!', es:'¡Sueño registrado!', fr:'Sommeil enregistré !', it:'Sonno registrato!' },
+  stepsTracker: { en:'Steps', de:'Schritte', es:'Pasos', fr:'Pas', it:'Passi' },
+  stepsSaved: { en:'Steps logged!', de:'Schritte gespeichert!', es:'¡Pasos registrados!', fr:'Pas enregistrés !', it:'Passi registrati!' },
+  burned: { en:'burned', de:'verbrannt', es:'quemadas', fr:'brûlées', it:'bruciate' },
+  stepsKcal: { en:'Steps', de:'Schritte', es:'Pasos', fr:'Pas', it:'Passi' },
+  workoutBurned: { en:'Workouts', de:'Workouts', es:'Entrenamientos', fr:'Entraînements', it:'Allenamenti' },
+  netBalance: { en:'Net Balance', de:'Netto-Bilanz', es:'Balance neto', fr:'Bilan net', it:'Bilancio netto' },
+  noFoodFound: { en:'No food found', de:'Kein Essen gefunden', es:'Comida no encontrada', fr:'Aucun aliment trouvé', it:'Nessun cibo trovato' },
+  bodyProfile: { en:'Body Profile', de:'Körperprofil', es:'Perfil corporal', fr:'Profil corporel', it:'Profilo corporeo' },
+  weightKg: { en:'Weight (kg)', de:'Gewicht (kg)', es:'Peso (kg)', fr:'Poids (kg)', it:'Peso (kg)' },
+  heightCm: { en:'Height (cm)', de:'Grösse (cm)', es:'Altura (cm)', fr:'Taille (cm)', it:'Altezza (cm)' },
+  age: { en:'Age', de:'Alter', es:'Edad', fr:'Âge', it:'Età' },
+  gender: { en:'Gender', de:'Geschlecht', es:'Sexo', fr:'Sexe', it:'Sesso' },
+  male: { en:'Male', de:'Männlich', es:'Masculino', fr:'Homme', it:'Maschio' },
+  female: { en:'Female', de:'Weiblich', es:'Femenino', fr:'Femme', it:'Femmina' },
+  activityLevel: { en:'Activity', de:'Aktivität', es:'Actividad', fr:'Activité', it:'Attività' },
+  sedentary: { en:'Sedentary (little movement)', de:'Sitzend (wenig Bewegung)', es:'Sedentario (poco movimiento)', fr:'Sédentaire (peu de mouvement)', it:'Sedentario (poco movimento)' },
+  lightlyActive: { en:'Lightly active (1-3x/week)', de:'Leicht aktiv (1-3x/Woche)', es:'Ligeramente activo (1-3x/semana)', fr:'Légèrement actif (1-3x/sem)', it:'Leggermente attivo (1-3x/sett)' },
+  moderateActive: { en:'Moderate (3-5x/week)', de:'Moderat (3-5x/Woche)', es:'Moderado (3-5x/semana)', fr:'Modéré (3-5x/sem)', it:'Moderato (3-5x/sett)' },
+  veryActive: { en:'Very active (6-7x/week)', de:'Sehr aktiv (6-7x/Woche)', es:'Muy activo (6-7x/semana)', fr:'Très actif (6-7x/sem)', it:'Molto attivo (6-7x/sett)' },
+  extremeActive: { en:'Extremely active (2x daily)', de:'Extrem aktiv (2x täglich)', es:'Extremadamente activo (2x/día)', fr:'Extrêmement actif (2x/jour)', it:'Estremamente attivo (2x/giorno)' },
+  goal: { en:'Goal', de:'Ziel', es:'Objetivo', fr:'Objectif', it:'Obiettivo' },
+  goalLose: { en:'Lose weight', de:'Abnehmen', es:'Perder peso', fr:'Perdre du poids', it:'Perdere peso' },
+  goalMaintain: { en:'Maintain weight', de:'Gewicht halten', es:'Mantener peso', fr:'Maintenir le poids', it:'Mantenere il peso' },
+  goalGain: { en:'Gain weight', de:'Zunehmen', es:'Ganar peso', fr:'Prendre du poids', it:'Aumentare di peso' },
+  weeklyChange: { en:'Change/week', de:'Veränderung/Woche', es:'Cambio/semana', fr:'Changement/sem', it:'Variazione/sett' },
+  calcAndSave: { en:'Calculate & Save', de:'Berechnen & Speichern', es:'Calcular y guardar', fr:'Calculer et sauver', it:'Calcola e salva' },
+  fillAllFields: { en:'Fill all fields', de:'Alle Felder ausfüllen', es:'Rellenar todos los campos', fr:'Remplir tous les champs', it:'Compilare tutti i campi' },
+  fillForCalc: { en:'Fill all fields for calculation', de:'Alle Felder ausfüllen für Berechnung', es:'Rellena todos los campos para calcular', fr:'Remplir tous les champs pour le calcul', it:'Compila tutti i campi per il calcolo' },
+  surplus: { en:'Surplus', de:'Überschuss', es:'Superávit', fr:'Surplus', it:'Surplus' },
+  deficit: { en:'Deficit', de:'Defizit', es:'Déficit', fr:'Déficit', it:'Deficit' },
+  maintain: { en:'Maintain', de:'Erhalt', es:'Mantener', fr:'Maintien', it:'Mantenimento' },
+  kcalPerDay: { en:'kcal/day', de:'kcal/Tag', es:'kcal/día', fr:'kcal/jour', it:'kcal/giorno' },
+  mode: { en:'Mode', de:'Modus', es:'Modo', fr:'Mode', it:'Modalità' },
+  targetLabel: { en:'Target', de:'Ziel', es:'Objetivo', fr:'Objectif', it:'Obiettivo' },
+  profileSaved: { en:'Profile saved — goals calculated', de:'Profil gespeichert — Ziele berechnet', es:'Perfil guardado — objetivos calculados', fr:'Profil sauvé — objectifs calculés', it:'Profilo salvato — obiettivi calcolati' },
+  goalsSaved: { en:'Goals saved', de:'Ziele gespeichert', es:'Objetivos guardados', fr:'Objectifs sauvés', it:'Obiettivi salvati' },
+  searchFood: { en:'Search food...', de:'Essen suchen...', es:'Buscar alimento...', fr:'Chercher aliment...', it:'Cerca cibo...' },
+  amountG: { en:'Amount (g)', de:'Menge (g)', es:'Cantidad (g)', fr:'Quantité (g)', it:'Quantità (g)' },
   streak: { en:'Streak', de:'Serie', es:'Racha', fr:'Série', it:'Serie' },
 
   // ── PROGRESS PHOTOS ──
@@ -3154,6 +3245,30 @@ const TRANSLATIONS = {
   // ── LEVEL PATH ──
   levelPath: { en:'Level Path', de:'Level-Pfad', es:'Ruta de nivel', fr:'Chemin de niveau', it:'Percorso livello' },
   close: { en:'Close', de:'Schliessen', es:'Cerrar', fr:'Fermer', it:'Chiudi' },
+  xpUntil: { en:'XP until', de:'XP bis', es:'XP hasta', fr:'XP jusqu\'à', it:'XP fino a' },
+  maxLevelReached: { en:'Max level reached!', de:'Maximales Level erreicht!', es:'¡Nivel máximo alcanzado!', fr:'Niveau max atteint !', it:'Livello massimo raggiunto!' },
+  levelPathYou: { en:'YOU', de:'DU', es:'TÚ', fr:'TOI', it:'TU' },
+  levelUp: { en:'LEVEL UP!', de:'LEVEL UP!', es:'¡SUBIDA DE NIVEL!', fr:'NIVEAU SUPÉRIEUR !', it:'LEVEL UP!' },
+  perkRookie: { en:'Your journey begins', de:'Deine Reise beginnt', es:'Tu viaje comienza', fr:'Ton voyage commence', it:'Il tuo viaggio inizia' },
+  perkBeginner: { en:'First steps done', de:'Erste Schritte geschafft', es:'Primeros pasos hechos', fr:'Premiers pas accomplis', it:'Primi passi fatti' },
+  perkNovice: { en:'Routine developed', de:'Routine entwickelt', es:'Rutina desarrollada', fr:'Routine développée', it:'Routine sviluppata' },
+  perkTrainee: { en:'Training plan set', de:'Trainingsplan steht', es:'Plan de entrenamiento listo', fr:'Programme en place', it:'Piano di allenamento pronto' },
+  perkRegular: { en:'Consistency shows', de:'Konsistenz zeigt sich', es:'La consistencia se nota', fr:'La constance se voit', it:'La costanza si vede' },
+  perkCommitted: { en:'No turning back', de:'Kein Weg zurück', es:'Sin vuelta atrás', fr:'Pas de retour en arrière', it:'Non si torna indietro' },
+  perkChallenger: { en:'Pushing limits', de:'Grenzen werden getestet', es:'Probando límites', fr:'Repousser les limites', it:'Testare i limiti' },
+  perkWarrior: { en:'Iron discipline', de:'Disziplin aus Stahl', es:'Disciplina de acero', fr:'Discipline d\'acier', it:'Disciplina d\'acciaio' },
+  perkGladiator: { en:'Strength shows', de:'Kraft wird sichtbar', es:'La fuerza se nota', fr:'La force se voit', it:'La forza si vede' },
+  perkAthlete: { en:'Athletic physique', de:'Athletischer Körper', es:'Físico atlético', fr:'Physique athlétique', it:'Fisico atletico' },
+  perkElite: { en:'Top 10% dedication', de:'Top 10% Dedication', es:'Top 10% dedicación', fr:'Top 10% dédication', it:'Top 10% dedizione' },
+  perkBeast: { en:'Untamed strength', de:'Ungezähmte Stärke', es:'Fuerza indomable', fr:'Force indomptée', it:'Forza indomita' },
+  perkTitan: { en:'Unshakeable', de:'Unerschütterlich', es:'Inquebrantable', fr:'Inébranlable', it:'Incrollabile' },
+  perkChampion: { en:'Master class reached', de:'Meisterklasse erreicht', es:'Clase maestra alcanzada', fr:'Classe de maître atteinte', it:'Classe master raggiunta' },
+  perkLegend: { en:'Legendary status', de:'Legendärer Status', es:'Estatus legendario', fr:'Statut légendaire', it:'Stato leggendario' },
+  perkMythic: { en:'Mythic strength', de:'Mythische Stärke', es:'Fuerza mítica', fr:'Force mythique', it:'Forza mitica' },
+  perkImmortal: { en:'Immortal legacy', de:'Unsterbliches Erbe', es:'Legado inmortal', fr:'Héritage immortel', it:'Eredità immortale' },
+  perkDemigod: { en:'Supernatural', de:'Übernatürlich', es:'Sobrenatural', fr:'Surnaturel', it:'Soprannaturale' },
+  perkOlympian: { en:'Olympic rank', de:'Olympischer Rang', es:'Rango olímpico', fr:'Rang olympique', it:'Rango olimpico' },
+  perkGoat: { en:'Greatest Of All Time', de:'Greatest Of All Time', es:'El mejor de todos los tiempos', fr:'Le plus grand de tous les temps', it:'Il più grande di tutti i tempi' },
 
   // ── THRESHOLDS ──
   medalThresholds: { en:'Medal Thresholds', de:'Medaillen-Schwellen', es:'Umbrales de medallas', fr:'Seuils de médailles', it:'Soglie medaglie' },
@@ -3270,6 +3385,10 @@ const TRANSLATIONS = {
   password: { en:'Password', de:'Passwort', es:'Contraseña', fr:'Mot de passe', it:'Password' },
   username: { en:'Username', de:'Benutzername', es:'Nombre de usuario', fr:'Nom d\'utilisateur', it:'Nome utente' },
   forgotPassword: { en:'Forgot password?', de:'Passwort vergessen?', es:'¿Olvidaste la contraseña?', fr:'Mot de passe oublié ?', it:'Password dimenticata?' },
+  loginSubtitle: { en:'Your personal training', de:'Dein persönliches Training', es:'Tu entrenamiento personal', fr:'Ton entraînement personnel', it:'Il tuo allenamento personale' },
+  confirmPassword: { en:'Confirm password', de:'Passwort bestätigen', es:'Confirmar contraseña', fr:'Confirmer mot de passe', it:'Conferma password' },
+  confirmPasswordPh: { en:'Enter again', de:'Nochmal eingeben', es:'Repetir', fr:'Répéter', it:'Ripeti' },
+  yourName: { en:'Your name', de:'Dein Name', es:'Tu nombre', fr:'Ton nom', it:'Il tuo nome' },
 
   // ── ACHIEVEMENT TITLES ──
   achFirst: { en:'First Workout', de:'Erstes Workout', es:'Primer entreno', fr:'Première séance', it:'Primo allenamento' },
@@ -4031,26 +4150,26 @@ const DEFAULT_TEMPLATES = [
 ];
 
 const LEVELS = [
-  { num: 1,  title: 'ROOKIE',      xp: 0,      icon: '🌱', perk: 'Deine Reise beginnt' },
-  { num: 2,  title: 'BEGINNER',    xp: 200,    icon: '🥾', perk: 'Erste Schritte geschafft' },
-  { num: 3,  title: 'NOVICE',      xp: 600,    icon: '🎯', perk: 'Routine entwickelt' },
-  { num: 4,  title: 'TRAINEE',     xp: 1200,   icon: '💪', perk: 'Trainingsplan steht' },
-  { num: 5,  title: 'REGULAR',     xp: 2000,   icon: '🔄', perk: 'Konsistenz zeigt sich' },
-  { num: 6,  title: 'COMMITTED',   xp: 3500,   icon: '🔥', perk: 'Kein Weg zurück' },
-  { num: 7,  title: 'CHALLENGER',  xp: 5500,   icon: '⚔️', perk: 'Grenzen werden getestet' },
-  { num: 8,  title: 'WARRIOR',     xp: 8000,   icon: '🛡️', perk: 'Disziplin aus Stahl' },
-  { num: 9,  title: 'GLADIATOR',   xp: 11000,  icon: '⚡', perk: 'Kraft wird sichtbar' },
-  { num: 10, title: 'ATHLETE',     xp: 15000,  icon: '🏅', perk: 'Athletischer Körper' },
-  { num: 11, title: 'ELITE',       xp: 20000,  icon: '💎', perk: 'Top 10% Dedication' },
-  { num: 12, title: 'BEAST',       xp: 26000,  icon: '🦁', perk: 'Ungezähmte Stärke' },
-  { num: 13, title: 'TITAN',       xp: 33000,  icon: '🗿', perk: 'Unerschütterlich' },
-  { num: 14, title: 'CHAMPION',    xp: 42000,  icon: '🏆', perk: 'Meisterklasse erreicht' },
-  { num: 15, title: 'LEGEND',      xp: 55000,  icon: '⭐', perk: 'Legendärer Status' },
-  { num: 16, title: 'MYTHIC',      xp: 70000,  icon: '🔱', perk: 'Mythische Stärke' },
-  { num: 17, title: 'IMMORTAL',    xp: 90000,  icon: '♾️', perk: 'Unsterbliches Erbe' },
-  { num: 18, title: 'DEMIGOD',     xp: 115000, icon: '👑', perk: 'Übernatürlich' },
-  { num: 19, title: 'OLYMPIAN',    xp: 145000, icon: '🏛️', perk: 'Olympischer Rang' },
-  { num: 20, title: 'GOAT',        xp: 200000, icon: '🐐', perk: 'Greatest Of All Time' },
+  { num: 1,  title: 'ROOKIE',      xp: 0,      icon: '🌱', perkKey: 'perkRookie' },
+  { num: 2,  title: 'BEGINNER',    xp: 200,    icon: '🥾', perkKey: 'perkBeginner' },
+  { num: 3,  title: 'NOVICE',      xp: 600,    icon: '🎯', perkKey: 'perkNovice' },
+  { num: 4,  title: 'TRAINEE',     xp: 1200,   icon: '💪', perkKey: 'perkTrainee' },
+  { num: 5,  title: 'REGULAR',     xp: 2000,   icon: '🔄', perkKey: 'perkRegular' },
+  { num: 6,  title: 'COMMITTED',   xp: 3500,   icon: '🔥', perkKey: 'perkCommitted' },
+  { num: 7,  title: 'CHALLENGER',  xp: 5500,   icon: '⚔️', perkKey: 'perkChallenger' },
+  { num: 8,  title: 'WARRIOR',     xp: 8000,   icon: '🛡️', perkKey: 'perkWarrior' },
+  { num: 9,  title: 'GLADIATOR',   xp: 11000,  icon: '⚡', perkKey: 'perkGladiator' },
+  { num: 10, title: 'ATHLETE',     xp: 15000,  icon: '🏅', perkKey: 'perkAthlete' },
+  { num: 11, title: 'ELITE',       xp: 20000,  icon: '💎', perkKey: 'perkElite' },
+  { num: 12, title: 'BEAST',       xp: 26000,  icon: '🦁', perkKey: 'perkBeast' },
+  { num: 13, title: 'TITAN',       xp: 33000,  icon: '🗿', perkKey: 'perkTitan' },
+  { num: 14, title: 'CHAMPION',    xp: 42000,  icon: '🏆', perkKey: 'perkChampion' },
+  { num: 15, title: 'LEGEND',      xp: 55000,  icon: '⭐', perkKey: 'perkLegend' },
+  { num: 16, title: 'MYTHIC',      xp: 70000,  icon: '🔱', perkKey: 'perkMythic' },
+  { num: 17, title: 'IMMORTAL',    xp: 90000,  icon: '♾️', perkKey: 'perkImmortal' },
+  { num: 18, title: 'DEMIGOD',     xp: 115000, icon: '👑', perkKey: 'perkDemigod' },
+  { num: 19, title: 'OLYMPIAN',    xp: 145000, icon: '🏛️', perkKey: 'perkOlympian' },
+  { num: 20, title: 'GOAT',        xp: 200000, icon: '🐐', perkKey: 'perkGoat' },
 ];
 
 const ACHIEVEMENTS = [
@@ -4425,7 +4544,7 @@ function openLevelPath() {
   const pts = state.totalPoints;
   const lvl = getLevel(pts);
   const achCount = ACHIEVEMENTS.filter(a => a.check(state)).length;
-  document.getElementById('levelPathSub').innerHTML = `${pts.toLocaleString(getLoc())} XP · Level ${lvl.num}/${LEVELS.length} · ${achCount}/${ACHIEVEMENTS.length} Achievements`;
+  document.getElementById('levelPathSub').innerHTML = `${pts.toLocaleString(getLoc())} XP · Level ${lvl.num}/${LEVELS.length} · ${achCount}/${ACHIEVEMENTS.length} ${t('achievements')}`;
   const list = document.getElementById('levelPathList');
   list.innerHTML = LEVELS.map((l, i) => {
     const reached = pts >= l.xp;
@@ -4433,6 +4552,7 @@ function openLevelPath() {
     const cls = isCurrent ? 'current' : reached ? 'reached' : 'locked';
     const nextL = LEVELS[i + 1];
     const xpLabel = nextL ? `${l.xp.toLocaleString(getLoc())} XP` : `${l.xp.toLocaleString(getLoc())} XP (MAX)`;
+    const perkText = l.perkKey ? t(l.perkKey) : '';
     let progressHtml = '';
     if (isCurrent && nextL) {
       const pct = Math.min(100, ((pts - l.xp) / (nextL.xp - l.xp)) * 100);
@@ -4444,10 +4564,10 @@ function openLevelPath() {
         <div class="level-path-dot">${reached || isCurrent ? (l.icon || l.num) : '🔒'}</div>
         <div class="level-path-info">
           <div class="level-path-title">${l.icon || ''} ${l.title}</div>
-          <div class="level-path-xp">${xpLabel}${l.perk ? ' · ' + l.perk : ''}</div>
+          <div class="level-path-xp">${xpLabel}${perkText ? ' · ' + perkText : ''}</div>
           ${progressHtml}
         </div>
-        ${isCurrent ? '<div style="color:var(--accent);font-size:11px;font-weight:700;">← DU</div>' : ''}
+        ${isCurrent ? '<div style="color:var(--accent);font-size:11px;font-weight:700;">← ' + t('levelPathYou') + '</div>' : ''}
       </div>
     `;
   }).join('');
@@ -4684,17 +4804,17 @@ function renderHome() {
   document.getElementById('levelIcon').textContent = lvl.icon || '🌱';
   document.getElementById('levelNum').textContent = 'L' + lvl.num;
   document.getElementById('levelTitle').textContent = lvl.title;
-  document.getElementById('levelPerk').textContent = lvl.perk || '';
+  document.getElementById('levelPerk').textContent = lvl.perkKey ? t(lvl.perkKey) : '';
   if (lvl.next) {
     const progress = ((state.totalPoints - lvl.xp) / (lvl.next.xp - lvl.xp)) * 100;
     const xpNeeded = lvl.next.xp - state.totalPoints;
     document.getElementById('levelProgress').style.width = Math.min(100, progress) + '%';
     document.getElementById('levelPointsText').textContent = `${state.totalPoints.toLocaleString(getLoc())} / ${lvl.next.xp.toLocaleString(getLoc())} XP`;
-    document.getElementById('levelNextInfo').textContent = `${xpNeeded.toLocaleString(getLoc())} XP bis ${lvl.next.icon} ${lvl.next.title}`;
+    document.getElementById('levelNextInfo').textContent = `${xpNeeded.toLocaleString(getLoc())} ${t('xpUntil')} ${lvl.next.icon} ${lvl.next.title}`;
   } else {
     document.getElementById('levelProgress').style.width = '100%';
     document.getElementById('levelPointsText').textContent = `${state.totalPoints.toLocaleString(getLoc())} XP (MAX)`;
-    document.getElementById('levelNextInfo').textContent = '🐐 Maximales Level erreicht!';
+    document.getElementById('levelNextInfo').textContent = '🐐 ' + t('maxLevelReached');
   }
   
   const h = new Date().getHours();
@@ -6152,8 +6272,8 @@ function finishWorkout() {
   if (newLevel.num > oldLevel.num) {
     pendingCelebrations.push({
       icon: newLevel.icon || '⭐',
-      title: 'LEVEL UP!',
-      subtitle: `Level ${newLevel.num} – ${newLevel.title}\n${newLevel.perk || ''}`,
+      title: t('levelUp'),
+      subtitle: `Level ${newLevel.num} – ${newLevel.title}\n${newLevel.perkKey ? t(newLevel.perkKey) : ''}`,
       points: ''
     });
   }
@@ -7522,7 +7642,7 @@ function closeFoodModal() { document.getElementById('foodModal').classList.remov
 function renderFoodCatPills() {
   const cats = [...new Set(getAllFoods().map(f => f.cat))];
   const container = document.getElementById('foodCatPills');
-  container.innerHTML = `<div class="food-cat-pill ${foodCatFilter==='all'?'active':''}" onclick="setFoodCat('all')">Alle</div>` +
+  container.innerHTML = `<div class="food-cat-pill ${foodCatFilter==='all'?'active':''}" onclick="setFoodCat('all')">${t('all')}</div>` +
     cats.map(c => `<div class="food-cat-pill ${foodCatFilter===c?'active':''}" onclick="setFoodCat('${escapeHtml(c)}')">${escapeHtml(c)}</div>`).join('');
 }
 function setFoodCat(cat) { foodCatFilter = cat; renderFoodCatPills(); filterFoods(); }
@@ -7542,7 +7662,7 @@ function filterFoods() {
       </div>
       <span class="muscle" style="font-size:10px;">${escapeHtml(f.cat)}</span>
     </div>
-  `).join('') || '<div class="empty-state">Kein Essen gefunden</div>';
+  `).join('') || '<div class="empty-state">' + t('noFoodFound') + '</div>';
 }
 
 function selectFood(name) {
@@ -7646,7 +7766,7 @@ function saveNutGoals() {
   saveState();
   closeNutGoalsModal();
   renderNutrition();
-  showToast('Ziele gespeichert');
+  showToast(t('goalsSaved'));
 }
 
 // =====================================================
@@ -7703,7 +7823,7 @@ function updateProfilePreview() {
   const act = document.getElementById('profActivity').value;
   const loss = document.getElementById('profWeeklyLoss').value;
   const el = document.getElementById('profCalcPreview');
-  if (!w || !h || !a) { el.textContent = 'Alle Felder ausfüllen für Berechnung'; return; }
+  if (!w || !h || !a) { el.textContent = t('fillForCalc'); return; }
   const goalType = document.getElementById('profGoalType').value;
   toggleWeeklyField();
   const p = { weight: w, height: h, age: a, gender: g, activity: act, weeklyLoss: loss, goalType: goalType };
@@ -7712,15 +7832,15 @@ function updateProfilePreview() {
   const proteinG = Math.round(w * (goalType === 'gain' ? 2.2 : 2));
   const fatG = Math.round(target * 0.25 / 9);
   const carbsG = Math.round((target - proteinG * 4 - fatG * 9) / 4);
-  const label = goalType === 'gain' ? 'Überschuss' : goalType === 'lose' ? 'Defizit' : 'Erhalt';
-  el.innerHTML = `TDEE: <b>${tdee}</b> kcal/Tag<br>Modus: <b>${label}</b><br>Ziel: <b>${target}</b> kcal/Tag<br>Protein: <b>${proteinG}g</b> • Carbs: <b>${carbsG}g</b> • Fett: <b>${fatG}g</b>`;
+  const label = goalType === 'gain' ? t('surplus') : goalType === 'lose' ? t('deficit') : t('maintain');
+  el.innerHTML = `TDEE: <b>${tdee}</b> ${t('kcalPerDay')}<br>${t('mode')}: <b>${label}</b><br>${t('targetLabel')}: <b>${target}</b> ${t('kcalPerDay')}<br>${t('protein')}: <b>${proteinG}g</b> • ${t('carbs')}: <b>${carbsG}g</b> • ${t('fat')}: <b>${fatG}g</b>`;
 }
 
 function saveNutProfile() {
   const w = parseFloat(document.getElementById('profWeight').value);
   const h = parseFloat(document.getElementById('profHeight').value);
   const a = parseInt(document.getElementById('profAge').value);
-  if (!w || !h || !a) { showToast('Alle Felder ausfüllen'); return; }
+  if (!w || !h || !a) { showToast(t('fillAllFields')); return; }
   const goalType = document.getElementById('profGoalType').value;
   const profile = {
     weight: w, height: h, age: a,
@@ -7749,7 +7869,7 @@ function saveNutProfile() {
   renderNutrition();
   renderNutProfileBar();
   renderNutWeekChart();
-  showToast('Profil gespeichert — Ziele berechnet');
+  showToast(t('profileSaved'));
 }
 
 function renderNutProfileBar() {
@@ -8038,6 +8158,98 @@ function renderSleepWidget() {
     return `<div class="sleep-bar ${cls}" style="height:${Math.max(5, pct)}%"></div>`;
   }).join('');
   labels.innerHTML = last7.map(d => `<div class="sleep-bar-label">${d.day}</div>`).join('');
+}
+
+// =============================================
+// STEPS TRACKER
+// =============================================
+function getTodaySteps() {
+  const today = getTodayKey();
+  const entry = (state.stepsLog || []).find(e => e.date === today);
+  return entry ? entry.steps : 0;
+}
+
+function saveSteps() {
+  const input = document.getElementById('stepsInput');
+  const steps = parseInt(input.value);
+  if (isNaN(steps) || steps < 0) return;
+  const today = getTodayKey();
+  if (!state.stepsLog) state.stepsLog = [];
+  const idx = state.stepsLog.findIndex(e => e.date === today);
+  if (idx >= 0) state.stepsLog[idx].steps = steps;
+  else state.stepsLog.push({ date: today, steps });
+  saveState();
+  input.value = '';
+  renderStepsWidget();
+  renderActivityBalance();
+  showToast(t('stepsSaved'));
+}
+
+function estimateStepKcal(steps) {
+  const weight = state.bodyWeight || 70;
+  return Math.round(steps * weight * 0.0004);
+}
+
+function renderStepsWidget() {
+  const steps = getTodaySteps();
+  const goal = state.stepsGoal || 10000;
+  document.getElementById('stepsCount').textContent = steps.toLocaleString(getLoc());
+  document.getElementById('stepsProgressFill').style.width = Math.min(100, (steps / goal) * 100) + '%';
+
+  const kcal = estimateStepKcal(steps);
+  document.getElementById('stepsKcalInfo').textContent = kcal > 0 ? `≈ ${kcal} kcal ${t('burned')}` : '';
+
+  if (steps > 0) {
+    document.getElementById('stepsInput').placeholder = steps.toString();
+  }
+
+  const dayNames = (TRANSLATIONS.days && TRANSLATIONS.days[currentLang]) || ['Mo','Tu','We','Th','Fr','Sa','Su'];
+  const last7 = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const key = d.toISOString().split('T')[0];
+    const entry = (state.stepsLog || []).find(e => e.date === key);
+    last7.push({ day: dayNames[d.getDay() === 0 ? 6 : d.getDay() - 1], steps: entry ? entry.steps : 0, isToday: i === 0 });
+  }
+  const maxS = Math.max(goal, ...last7.map(d => d.steps));
+  const bars = document.getElementById('stepsBars');
+  const labels = document.getElementById('stepsBarLabels');
+  bars.innerHTML = last7.map(d => {
+    const pct = (d.steps / maxS) * 100;
+    const cls = d.isToday ? 'today' : (d.steps >= goal ? 'good' : '');
+    return `<div class="steps-bar ${cls}" style="height:${Math.max(5, pct)}%"></div>`;
+  }).join('');
+  labels.innerHTML = last7.map(d => `<div class="steps-bar-label">${d.day}</div>`).join('');
+}
+
+function renderActivityBalance() {
+  const key = getNutDateKey(nutSelectedDate);
+  const steps = (() => {
+    const entry = (state.stepsLog || []).find(e => e.date === key);
+    return entry ? entry.steps : 0;
+  })();
+  const stepsKcal = estimateStepKcal(steps);
+
+  const cardioSessions = (state.cardioHistory || []).filter(c => {
+    const d = new Date(c.date);
+    return getNutDateKey(d) === key;
+  });
+  const workoutKcal = cardioSessions.reduce((s, c) => s + (c.kcal || 0), 0);
+
+  const log = (state.nutritionLog || []).filter(e => e.date === key);
+  const intake = log.reduce((s, e) => s + e.kcal, 0);
+
+  const totalBurned = stepsKcal + workoutKcal;
+  const net = Math.round(intake - totalBurned);
+
+  document.getElementById('actStepsKcal').textContent = `−${stepsKcal} kcal`;
+  document.getElementById('actWorkoutKcal').textContent = `−${workoutKcal} kcal`;
+  document.getElementById('actNetBalance').textContent = `${net >= 0 ? '+' : ''}${net} kcal`;
+
+  const row = document.getElementById('actNetRow');
+  row.classList.remove('deficit', 'surplus');
+  if (net < 0) row.classList.add('deficit');
+  else if (net > 0 && intake > 0) row.classList.add('surplus');
 }
 
 // =============================================
@@ -8446,7 +8658,9 @@ const _originalRenderNutrition = renderNutrition;
 renderNutrition = function() {
   _originalRenderNutrition();
   renderWaterWidget();
+  renderStepsWidget();
   renderSleepWidget();
+  renderActivityBalance();
 };
 
 // PWA Service Worker — auto-reload on update
