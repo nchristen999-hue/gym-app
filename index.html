@@ -3013,6 +3013,9 @@
           <input type="number" class="steps-input" id="stepsInput" placeholder="8500" step="100" min="0" max="99999" inputmode="numeric" />
           <button class="steps-save-btn" onclick="saveSteps()" data-i18n="save">Save</button>
         </div>
+        <button class="steps-save-btn" id="stepsHealthBtn" onclick="syncStepsFromHealth()" style="display:none;width:100%;margin-top:8px;background:transparent;color:#4ade80;border:1px solid #4ade80;">
+          🍎 Aus Health holen
+        </button>
         <div class="steps-kcal" id="stepsKcalInfo"></div>
         <div class="steps-progress"><div class="steps-progress-fill" id="stepsProgressFill" style="width:0%"></div></div>
         <div class="steps-bar-row" id="stepsBars"></div>
@@ -3029,6 +3032,9 @@
           <input type="number" class="sleep-input" id="sleepHoursInput" placeholder="7.5" step="0.5" min="0" max="24" />
           <button class="sleep-save-btn" onclick="saveSleep()" data-i18n="save">Save</button>
         </div>
+        <button class="sleep-save-btn" id="sleepHealthBtn" onclick="syncSleepFromHealth()" style="display:none;width:100%;margin-top:8px;background:transparent;color:#7c83fd;border:1px solid #7c83fd;">
+          🍎 Aus Health holen
+        </button>
         <div class="sleep-bar-row" id="sleepBars"></div>
         <div class="sleep-bar-labels" id="sleepBarLabels"></div>
       </div>
@@ -5071,6 +5077,53 @@ function selectProfile(name) {
   loadState();
   renderHome();
   renderSettingsProfile();
+  try { resumeRestTimerFromState(); } catch(e) {}
+  try { updateHealthButtonsVisibility(); } catch(e) {}
+}
+
+function updateHealthButtonsVisibility() {
+  const isNative = !!(window.Native && window.Native.isNative);
+  const stepsBtn = document.getElementById('stepsHealthBtn');
+  const sleepBtn = document.getElementById('sleepHealthBtn');
+  if (stepsBtn) stepsBtn.style.display = isNative ? '' : 'none';
+  if (sleepBtn) sleepBtn.style.display = isNative ? '' : 'none';
+}
+
+async function syncStepsFromHealth() {
+  const btn = document.getElementById('stepsHealthBtn');
+  if (!btn) return;
+  if (!window.Native || !window.Native.isNative) { showToast('Health nur in der iPhone-App verfügbar'); return; }
+  btn.disabled = true; const orig = btn.textContent; btn.textContent = '⏳ ...';
+  try {
+    await window.Native.ensureHealthPermissions();
+    const steps = await window.Native.stepsToday();
+    if (steps == null) { showToast('Health-Zugriff abgelehnt'); }
+    else {
+      document.getElementById('stepsInput').value = steps;
+      saveSteps();
+      showToast('🍎 ' + steps + ' Schritte aus Health');
+    }
+  } catch(e) { showToast('Health Fehler: ' + (e.message || e)); }
+  btn.disabled = false; btn.textContent = orig;
+}
+
+async function syncSleepFromHealth() {
+  const btn = document.getElementById('sleepHealthBtn');
+  if (!btn) return;
+  if (!window.Native || !window.Native.isNative) { showToast('Health nur in der iPhone-App verfügbar'); return; }
+  btn.disabled = true; const orig = btn.textContent; btn.textContent = '⏳ ...';
+  try {
+    await window.Native.ensureHealthPermissions();
+    const minutes = await window.Native.sleepLastNight();
+    if (minutes == null) { showToast('Health-Zugriff abgelehnt'); }
+    else {
+      const hours = +(minutes / 60).toFixed(1);
+      document.getElementById('sleepHoursInput').value = hours;
+      saveSleep();
+      showToast('🍎 ' + hours + ' h Schlaf aus Health');
+    }
+  } catch(e) { showToast('Health Fehler: ' + (e.message || e)); }
+  btn.disabled = false; btn.textContent = orig;
 }
 
 function migrateOldData() {
@@ -5182,6 +5235,8 @@ function saveState() {
     progressPhotos: state.progressPhotos,
     currentWorkout: state.currentWorkout,
     workoutStartTime: state.workoutStartTime,
+    restTimerEndAt: state.restTimerEndAt,
+    restTimerTotal: state.restTimerTotal,
   }));
 }
 
@@ -7229,16 +7284,24 @@ function showTimerNotification() {
   }
 }
 
-function startRestTimer(duration) {
+function startRestTimer(duration, resumeFromEndAt) {
   const dur = duration || state.restTimeDuration || 90;
   restTimerTotal = dur;
-  restTimerRemaining = dur;
-  restTimerEndAt = Date.now() + dur * 1000;
+  if (resumeFromEndAt) {
+    restTimerEndAt = resumeFromEndAt;
+    restTimerRemaining = Math.max(0, Math.round((restTimerEndAt - Date.now()) / 1000));
+  } else {
+    restTimerEndAt = Date.now() + dur * 1000;
+    restTimerRemaining = dur;
+  }
+  state.restTimerEndAt = restTimerEndAt;
+  state.restTimerTotal = restTimerTotal;
+  saveState();
 
   if (restTimerInterval) clearInterval(restTimerInterval);
   requestNotificationPermission();
 
-  if (window.Native && window.Native.isNative) {
+  if (window.Native && window.Native.isNative && !resumeFromEndAt) {
     window.Native.scheduleRestNotif(dur);
   }
 
@@ -7329,11 +7392,26 @@ function skipRestTimer() {
   restTimerInterval = null;
   restTimerRemaining = 0;
   restTimerEndAt = 0;
+  state.restTimerEndAt = 0;
+  state.restTimerTotal = 0;
+  saveState();
   document.getElementById('restTimerFloat').classList.remove('active');
   const inlineRest = document.getElementById('workoutRestTimer');
   if (inlineRest) inlineRest.style.display = 'none';
   if (window.Native && window.Native.isNative) {
     window.Native.cancelRestNotif();
+  }
+}
+
+function resumeRestTimerFromState() {
+  if (!state.restTimerEndAt) return;
+  const remaining = (state.restTimerEndAt - Date.now()) / 1000;
+  if (remaining > 0.5) {
+    startRestTimer(state.restTimerTotal || state.restTimeDuration || 90, state.restTimerEndAt);
+  } else {
+    state.restTimerEndAt = 0;
+    state.restTimerTotal = 0;
+    saveState();
   }
 }
 
@@ -7638,8 +7716,9 @@ function renderBodyWeightChart() {
 // =====================================================
 function exportData() {
   const data = {
-    version: 'gymtrack_v2',
+    version: 'gymtrack_v3',
     exportDate: new Date().toISOString(),
+    profile: activeProfile,
     workouts: state.workouts,
     prs: state.prs,
     myTemplates: state.myTemplates,
@@ -7648,6 +7727,18 @@ function exportData() {
     customExercises: state.customExercises,
     bodyWeights: state.bodyWeights,
     restTimeDuration: state.restTimeDuration,
+    cardioSessions: state.cardioSessions,
+    cardioTemplates: state.cardioTemplates,
+    nutritionLog: state.nutritionLog,
+    customFoods: state.customFoods,
+    nutritionGoals: state.nutritionGoals,
+    nutProfile: state.nutProfile,
+    weightLog: state.weightLog,
+    waterLog: state.waterLog,
+    sleepLog: state.sleepLog,
+    progressPhotos: state.progressPhotos,
+    currentWorkout: state.currentWorkout,
+    workoutStartTime: state.workoutStartTime,
   };
 
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -7685,6 +7776,18 @@ function importData(event) {
       state.customExercises = data.customExercises || [];
       state.bodyWeights = data.bodyWeights || [];
       state.restTimeDuration = data.restTimeDuration || 90;
+      state.cardioSessions = data.cardioSessions || [];
+      state.cardioTemplates = data.cardioTemplates || [];
+      state.nutritionLog = data.nutritionLog || {};
+      state.customFoods = data.customFoods || [];
+      state.nutritionGoals = data.nutritionGoals || state.nutritionGoals;
+      state.nutProfile = data.nutProfile || state.nutProfile;
+      state.weightLog = data.weightLog || [];
+      state.waterLog = data.waterLog || {};
+      state.sleepLog = data.sleepLog || {};
+      state.progressPhotos = data.progressPhotos || [];
+      if (data.currentWorkout) state.currentWorkout = data.currentWorkout;
+      if (data.workoutStartTime) state.workoutStartTime = data.workoutStartTime;
 
       saveState();
       renderHome();
