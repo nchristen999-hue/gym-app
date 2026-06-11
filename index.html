@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -4301,8 +4301,21 @@ async function doGoogleSignIn() {
   const btn = document.getElementById('googleSignInBtn');
   btn.disabled = true;
   try {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    const cred = await firebaseAuth.signInWithPopup(provider);
+    let cred;
+    if (window.Native && window.Native.isNative) {
+      // Native iOS – System-OAuth-Sheet (Google blockt OAuth in eingebetteten WebViews)
+      const gUser = await window.Native.signInGoogle();
+      if (!gUser || !gUser.authentication) throw new Error('Google sign-in cancelled');
+      const credential = firebase.auth.GoogleAuthProvider.credential(
+        gUser.authentication.idToken,
+        gUser.authentication.accessToken
+      );
+      cred = await firebaseAuth.signInWithCredential(credential);
+    } else {
+      // Browser – Firebase Popup
+      const provider = new firebase.auth.GoogleAuthProvider();
+      cred = await firebaseAuth.signInWithPopup(provider);
+    }
     currentUser = cred.user;
     await checkProStatus();
     const name = cred.user.displayName || cred.user.email.split('@')[0];
@@ -5167,8 +5180,16 @@ function saveState() {
     waterLog: state.waterLog,
     sleepLog: state.sleepLog,
     progressPhotos: state.progressPhotos,
+    currentWorkout: state.currentWorkout,
+    workoutStartTime: state.workoutStartTime,
   }));
 }
+
+window.addEventListener('pagehide', () => { try { saveState(); } catch(e) {} });
+window.addEventListener('beforeunload', () => { try { saveState(); } catch(e) {} });
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') { try { saveState(); } catch(e) {} }
+});
 
 function getAllExercises() {
   return [...EXERCISES, ...state.customExercises];
@@ -7217,6 +7238,10 @@ function startRestTimer(duration) {
   if (restTimerInterval) clearInterval(restTimerInterval);
   requestNotificationPermission();
 
+  if (window.Native && window.Native.isNative) {
+    window.Native.scheduleRestNotif(dur);
+  }
+
   const float = document.getElementById('restTimerFloat');
   const ring = document.getElementById('restTimerRing');
   const countdown = document.getElementById('restTimerCountdown');
@@ -7307,6 +7332,9 @@ function skipRestTimer() {
   document.getElementById('restTimerFloat').classList.remove('active');
   const inlineRest = document.getElementById('workoutRestTimer');
   if (inlineRest) inlineRest.style.display = 'none';
+  if (window.Native && window.Native.isNative) {
+    window.Native.cancelRestNotif();
+  }
 }
 
 // =====================================================
@@ -9387,6 +9415,156 @@ try {
   const link = document.getElementById('appleTouchIcon');
   if (link) link.href = c.toDataURL('image/png');
 } catch(e) {}
+</script>
+
+<!-- =====================================================
+     NATIVE BRIDGE (Capacitor) – funktioniert im Browser nicht,
+     aber wird auf dem iPhone in der nativen App benutzt.
+     ===================================================== -->
+<script>
+(function(){
+  const C = window.Capacitor;
+  const isNative = !!(C && C.isNativePlatform && C.isNativePlatform());
+  const P = (name) => isNative ? (C.Plugins[name] || null) : null;
+
+  window.Native = {
+    isNative,
+
+    // ---------- HealthKit ----------
+    async ensureHealthPermissions() {
+      const Health = P('Health');
+      if (!Health) return false;
+      try {
+        await Health.requestAuthorization({ read: ['steps', 'sleep'], write: [] });
+        return true;
+      } catch(e) { console.warn('Health perm denied', e); return false; }
+    },
+    async stepsToday() {
+      const Health = P('Health');
+      if (!Health) return null;
+      try {
+        const start = new Date(); start.setHours(0,0,0,0);
+        const res = await Health.queryAggregated({
+          dataType: 'steps',
+          startDate: start.toISOString(),
+          endDate: new Date().toISOString(),
+          bucket: 'day'
+        });
+        return res?.aggregatedData?.[0]?.value ?? 0;
+      } catch(e) { return null; }
+    },
+    async sleepLastNight() {
+      const Health = P('Health');
+      if (!Health) return null;
+      try {
+        const end = new Date();
+        const start = new Date(end.getTime() - 24*60*60*1000);
+        const res = await Health.queryAggregated({
+          dataType: 'sleep',
+          startDate: start.toISOString(),
+          endDate: end.toISOString(),
+          bucket: 'day'
+        });
+        const minutes = res?.aggregatedData?.[0]?.value ?? 0;
+        return Math.round(minutes);
+      } catch(e) { return null; }
+    },
+
+    // ---------- Local Notifications (Satz-Timer) ----------
+    async ensureNotifPermissions() {
+      const LN = P('LocalNotifications');
+      if (!LN) return false;
+      try {
+        const perm = await LN.requestPermissions();
+        return perm.display === 'granted';
+      } catch(e) { return false; }
+    },
+    async scheduleRestNotif(seconds) {
+      const LN = P('LocalNotifications');
+      if (!LN) return;
+      try {
+        await LN.cancel({ notifications: [{ id: 1001 }] });
+        await LN.schedule({ notifications: [{
+          id: 1001,
+          title: 'Pause vorbei 💪',
+          body: 'Nächster Satz!',
+          schedule: { at: new Date(Date.now() + seconds * 1000) },
+          smallIcon: 'ic_stat_icon',
+          sound: 'beep.wav'
+        }]});
+      } catch(e) { console.warn('Notif schedule fail', e); }
+    },
+    async cancelRestNotif() {
+      const LN = P('LocalNotifications');
+      if (!LN) return;
+      try { await LN.cancel({ notifications: [{ id: 1001 }] }); } catch(e) {}
+    },
+
+    // ---------- Google Sign-In ----------
+    async signInGoogle() {
+      const G = P('GoogleAuth');
+      if (!G) return null;
+      try {
+        const user = await G.signIn();
+        return user;
+      } catch(e) { console.warn('Google SignIn fail', e); return null; }
+    },
+
+    // ---------- Abo / In-App-Purchase via RevenueCat ----------
+    async rcConfigure(apiKey, appUserId) {
+      const Purchases = P('Purchases');
+      if (!Purchases) return false;
+      try { await Purchases.configure({ apiKey, appUserID: appUserId }); return true; }
+      catch(e) { return false; }
+    },
+    async rcOfferings() {
+      const Purchases = P('Purchases');
+      if (!Purchases) return null;
+      try { return await Purchases.getOfferings(); } catch(e) { return null; }
+    },
+    async rcPurchase(packageObj) {
+      const Purchases = P('Purchases');
+      if (!Purchases) return null;
+      try { return await Purchases.purchasePackage({ aPackage: packageObj }); } catch(e) { return null; }
+    },
+    async rcCustomerInfo() {
+      const Purchases = P('Purchases');
+      if (!Purchases) return null;
+      try { return await Purchases.getCustomerInfo(); } catch(e) { return null; }
+    },
+
+    // ---------- Status Bar Stil ----------
+    async setupStatusBar() {
+      const SB = P('StatusBar');
+      if (!SB) return;
+      try {
+        await SB.setStyle({ style: 'DARK' });
+        await SB.setBackgroundColor({ color: '#0a0a0a' });
+      } catch(e) {}
+    },
+
+    // ---------- App-Lifecycle: Workout beim Hintergrund speichern ----------
+    setupLifecycle() {
+      const App = P('App');
+      if (!App) return;
+      try {
+        App.addListener('appStateChange', (s) => {
+          if (!s.isActive && typeof saveState === 'function') {
+            try { saveState(); } catch(e) {}
+          }
+        });
+      } catch(e) {}
+    },
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (isNative) {
+      window.Native.setupStatusBar();
+      window.Native.setupLifecycle();
+      window.Native.ensureNotifPermissions();
+    }
+  });
+})();
 </script>
 </body>
 </html>

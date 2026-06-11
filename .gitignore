@@ -1,0 +1,20 @@
+# Capacitor / Node
+node_modules/
+.DS_Store
+npm-debug.log
+yarn-error.log
+
+# iOS Build-Outputs (das ios/ FOLDER selbst wird committet, nur die Build-Reste nicht)
+ios/App/build/
+ios/App/Pods/
+ios/App/Podfile.lock
+ios/DerivedData/
+ios/.xcode.env.local
+ios/App/App.xcworkspace/xcuserdata/
+ios/App/App.xcodeproj/xcuserdata/
+ios/App/App.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Sensible Dateien
+.env
+.env.local
+GoogleService-Info.plist
