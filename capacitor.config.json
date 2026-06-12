@@ -3,7 +3,7 @@
   "appName": "GYMTRACK",
   "webDir": ".",
   "ios": {
-    "contentInset": "always",
+    "contentInset": "automatic",
     "limitsNavigationsToAppBoundDomains": false,
     "scheme": "GYMTRACK",
     "backgroundColor": "#0a0a0a"
