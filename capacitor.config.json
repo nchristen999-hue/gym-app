@@ -6,7 +6,6 @@
     "contentInset": "always",
     "limitsNavigationsToAppBoundDomains": false,
     "scheme": "GYMTRACK",
-    "scrollEnabled": false,
     "backgroundColor": "#0a0a0a"
   },
   "plugins": {
