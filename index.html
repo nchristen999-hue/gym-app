@@ -41,7 +41,10 @@
   html {
     background: var(--bg);
     width: 100%;
-    overflow-x: hidden;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    height: auto !important;
+    -webkit-overflow-scrolling: touch;
   }
   body {
     background: var(--bg);
@@ -52,8 +55,9 @@
     overscroll-behavior: none;
     -webkit-font-smoothing: antialiased;
     -webkit-overflow-scrolling: touch;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    height: auto !important;
     width: 100%;
     position: relative;
   }
@@ -3054,7 +3058,7 @@
         <span data-i18n="progressPhotos">Progress Photos</span>
         <span class="card-title-action" onclick="triggerPhotoUpload()">+ <span data-i18n="addPhoto">Add Photo</span></span>
       </div>
-      <input type="file" accept="image/*" capture="environment" id="photoFileInput" style="display:none;" onchange="handlePhotoUpload(event)" />
+      <input type="file" accept="image/*" id="photoFileInput" style="display:none;" onchange="handlePhotoUpload(event)" />
       <div id="photoCompareSection" style="display:none;">
         <div class="card-title" style="margin-bottom:8px;"><span data-i18n="compare">Compare</span></div>
         <div class="photo-compare" id="photoCompare">
@@ -9203,37 +9207,53 @@ window.addEventListener('offline', updateOfflineStatus);
 // =============================================
 // PROGRESS PHOTOS
 // =============================================
-function triggerPhotoUpload() {
-  document.getElementById('photoFileInput').click();
+async function triggerPhotoUpload() {
+  if (window.Native && window.Native.isNative) {
+    // Native Capacitor Camera – kein Crash, sauberer System-Dialog
+    try {
+      const dataUrl = await window.Native.takePhoto();
+      if (!dataUrl) return;
+      await savePhotoDataUrl(dataUrl);
+    } catch(e) {
+      showToast('Foto-Fehler: ' + (e.message || e));
+    }
+  } else {
+    // Browser-Fallback: file input
+    document.getElementById('photoFileInput').click();
+  }
+}
+
+async function savePhotoDataUrl(dataUrl) {
+  // Optional nochmal komprimieren falls grösser
+  const img = new Image();
+  await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = dataUrl; });
+  const canvas = document.createElement('canvas');
+  const maxW = 800;
+  const scale = Math.min(1, maxW / img.width);
+  canvas.width = img.width * scale;
+  canvas.height = img.height * scale;
+  canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+  const compressed = canvas.toDataURL('image/jpeg', 0.75);
+  if (!state.progressPhotos) state.progressPhotos = [];
+  state.progressPhotos.push({
+    id: Date.now(),
+    date: getTodayKey(),
+    timestamp: Date.now(),
+    dataUrl: compressed,
+    note: ''
+  });
+  saveState();
+  renderPhotos();
+  showToast(t('photoSaved'));
 }
 
 function handlePhotoUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = function(e) {
-    const img = new Image();
-    img.onload = function() {
-      const canvas = document.createElement('canvas');
-      const maxW = 600;
-      const scale = Math.min(1, maxW / img.width);
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
-      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-      if (!state.progressPhotos) state.progressPhotos = [];
-      state.progressPhotos.push({
-        id: Date.now(),
-        date: getTodayKey(),
-        timestamp: Date.now(),
-        dataUrl: dataUrl,
-        note: ''
-      });
-      saveState();
-      renderPhotos();
-      showToast(t('photoSaved'));
-    };
-    img.src = e.target.result;
+  reader.onload = async function(e) {
+    try { await savePhotoDataUrl(e.target.result); }
+    catch(err) { showToast('Foto-Fehler'); }
   };
   reader.readAsDataURL(file);
   event.target.value = '';
@@ -9815,6 +9835,27 @@ try {
           }
         });
       } catch(e) {}
+    },
+
+    // ---------- Kamera / Foto-Bibliothek ----------
+    async takePhoto() {
+      const Cam = P('Camera');
+      if (!Cam) return null;
+      try {
+        const photo = await Cam.getPhoto({
+          quality: 70,
+          allowEditing: false,
+          resultType: 'dataUrl',
+          source: 'prompt', // User wählt: Kamera oder Album
+          saveToGallery: false,
+          width: 800,
+        });
+        return photo?.dataUrl || null;
+      } catch(e) {
+        if (e && (e.message || '').toLowerCase().includes('cancel')) return null;
+        console.warn('takePhoto fail', e);
+        return null;
+      }
     },
 
     // ---------- Background Geolocation für Cardio ----------
