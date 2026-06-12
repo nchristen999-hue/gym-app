@@ -38,7 +38,12 @@
     --platinum: #b9f2ff;
   }
   
-  html, body {
+  html {
+    background: var(--bg);
+    width: 100%;
+    overflow-x: hidden;
+  }
+  body {
     background: var(--bg);
     color: var(--text);
     font-family: 'Inter', sans-serif;
@@ -46,11 +51,12 @@
     min-height: 100dvh;
     overscroll-behavior: none;
     -webkit-font-smoothing: antialiased;
+    -webkit-overflow-scrolling: touch;
     overflow-x: hidden;
+    overflow-y: auto;
     width: 100%;
     position: relative;
   }
-  body { -webkit-overflow-scrolling: touch; }
 
   body {
     background-image:
