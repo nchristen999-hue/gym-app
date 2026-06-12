@@ -45,11 +45,13 @@
     min-height: 100vh;
     min-height: 100dvh;
     overscroll-behavior: none;
+    overscroll-behavior-y: none;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
     width: 100%;
     position: relative;
   }
+  html { -webkit-overflow-scrolling: auto; }
 
   body {
     background-image:
@@ -915,7 +917,7 @@
   
   .toast {
     position: fixed;
-    top: 20px;
+    top: calc(20px + env(safe-area-inset-top));
     left: 50%;
     transform: translateX(-50%) translateY(-100px);
     background: var(--accent);
@@ -929,6 +931,7 @@
     font-size: 14px;
     max-width: 90%;
     text-align: center;
+    word-wrap: break-word;
   }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   
@@ -3009,13 +3012,13 @@
           <div class="steps-title">👟 <span data-i18n="stepsTracker">Steps</span></div>
           <div class="steps-count"><span id="stepsCount">0</span><span class="steps-unit"> / 10K</span></div>
         </div>
-        <div class="steps-input-row">
+        <div class="steps-input-row" id="stepsInputRow">
           <input type="number" class="steps-input" id="stepsInput" placeholder="8500" step="100" min="0" max="99999" inputmode="numeric" />
           <button class="steps-save-btn" onclick="saveSteps()" data-i18n="save">Save</button>
         </div>
-        <button class="steps-save-btn" id="stepsHealthBtn" onclick="syncStepsFromHealth()" style="display:none;width:100%;margin-top:8px;background:transparent;color:#4ade80;border:1px solid #4ade80;">
-          🍎 Aus Health holen
-        </button>
+        <div class="steps-kcal" id="stepsHealthInfo" style="display:none;color:#4ade80;font-weight:700;">
+          🍎 Schritte werden automatisch aus Apple Health geholt
+        </div>
         <div class="steps-kcal" id="stepsKcalInfo"></div>
         <div class="steps-progress"><div class="steps-progress-fill" id="stepsProgressFill" style="width:0%"></div></div>
         <div class="steps-bar-row" id="stepsBars"></div>
@@ -5079,50 +5082,68 @@ function selectProfile(name) {
   renderSettingsProfile();
   try { resumeRestTimerFromState(); } catch(e) {}
   try { updateHealthButtonsVisibility(); } catch(e) {}
+  // Cardio-GPS-Session wiederaufnehmen (falls App während Cardio geschlossen wurde)
+  setTimeout(() => { try { resumeGpsSession(); } catch(e) {} }, 800);
 }
 
 function updateHealthButtonsVisibility() {
   const isNative = !!(window.Native && window.Native.isNative);
-  const stepsBtn = document.getElementById('stepsHealthBtn');
+  const stepsRow = document.getElementById('stepsInputRow');
+  const stepsInfo = document.getElementById('stepsHealthInfo');
   const sleepBtn = document.getElementById('sleepHealthBtn');
-  if (stepsBtn) stepsBtn.style.display = isNative ? '' : 'none';
+  if (stepsRow) stepsRow.style.display = isNative ? 'none' : 'flex';
+  if (stepsInfo) stepsInfo.style.display = isNative ? 'block' : 'none';
   if (sleepBtn) sleepBtn.style.display = isNative ? '' : 'none';
 }
 
-async function syncStepsFromHealth() {
-  const btn = document.getElementById('stepsHealthBtn');
-  if (!btn) return;
-  if (!window.Native || !window.Native.isNative) { showToast('Health nur in der iPhone-App verfügbar'); return; }
-  btn.disabled = true; const orig = btn.textContent; btn.textContent = '⏳ ...';
+// Schritte ohne Toast/Buttons aus Health holen (silent auto-sync)
+let _lastAutoStepsSync = 0;
+async function autoSyncStepsOnFocus() {
+  if (!window.Native || !window.Native.isNative) return;
+  if (!activeProfile) return;
+  // Throttle: max alle 60 Sekunden
+  if (Date.now() - _lastAutoStepsSync < 60000) return;
+  _lastAutoStepsSync = Date.now();
   try {
-    await window.Native.ensureHealthPermissions();
+    const ok = await window.Native.ensureHealthPermissions();
+    if (!ok) return;
     const steps = await window.Native.stepsToday();
-    if (steps == null) { showToast('Health-Zugriff abgelehnt'); }
-    else {
-      document.getElementById('stepsInput').value = steps;
-      saveSteps();
-      showToast('🍎 ' + steps + ' Schritte aus Health');
-    }
-  } catch(e) { showToast('Health Fehler: ' + (e.message || e)); }
-  btn.disabled = false; btn.textContent = orig;
+    if (steps == null) return;
+    const input = document.getElementById('stepsInput');
+    if (input) input.value = steps;
+    if (typeof saveSteps === 'function') saveSteps(true); // silent flag
+  } catch(e) { console.warn('auto steps sync fail', e); }
+}
+
+async function syncStepsFromHealth() {
+  // Manueller Aufruf – mit Toast Feedback
+  if (!window.Native || !window.Native.isNative) { showToast('Health nur in der iPhone-App'); return; }
+  try {
+    const ok = await window.Native.ensureHealthPermissions();
+    if (!ok) { showToast('Bitte Health-Zugriff in iOS-Einstellungen erlauben'); return; }
+    const steps = await window.Native.stepsToday();
+    if (steps == null) { showToast('Keine Schritte gefunden'); return; }
+    document.getElementById('stepsInput').value = steps;
+    saveSteps();
+    showToast('🍎 ' + steps + ' Schritte');
+  } catch(e) { showToast('Health Fehler'); }
 }
 
 async function syncSleepFromHealth() {
   const btn = document.getElementById('sleepHealthBtn');
   if (!btn) return;
-  if (!window.Native || !window.Native.isNative) { showToast('Health nur in der iPhone-App verfügbar'); return; }
+  if (!window.Native || !window.Native.isNative) { showToast('Health nur in der iPhone-App'); return; }
   btn.disabled = true; const orig = btn.textContent; btn.textContent = '⏳ ...';
   try {
-    await window.Native.ensureHealthPermissions();
+    const ok = await window.Native.ensureHealthPermissions();
+    if (!ok) { showToast('Bitte Health-Zugriff in iOS-Einstellungen erlauben'); btn.disabled = false; btn.textContent = orig; return; }
     const minutes = await window.Native.sleepLastNight();
-    if (minutes == null) { showToast('Health-Zugriff abgelehnt'); }
-    else {
-      const hours = +(minutes / 60).toFixed(1);
-      document.getElementById('sleepHoursInput').value = hours;
-      saveSleep();
-      showToast('🍎 ' + hours + ' h Schlaf aus Health');
-    }
-  } catch(e) { showToast('Health Fehler: ' + (e.message || e)); }
+    if (minutes == null || minutes === 0) { showToast('Keine Schlaf-Daten gefunden'); btn.disabled = false; btn.textContent = orig; return; }
+    const hours = +(minutes / 60).toFixed(1);
+    document.getElementById('sleepHoursInput').value = hours;
+    saveSleep();
+    showToast('🍎 ' + hours + ' h Schlaf');
+  } catch(e) { showToast('Health Fehler'); }
   btn.disabled = false; btn.textContent = orig;
 }
 
@@ -6042,13 +6063,15 @@ function initGpsMap() {
   gpsPolyline = L.polyline([], { color: '#d4ff3a', weight: 3 }).addTo(gpsLiveMap);
 }
 
-function gpsStart() {
-  if (!navigator.geolocation) { alert(t('gpsNotAvailable')); return; }
+async function gpsStart() {
+  const isNative = !!(window.Native && window.Native.isNative);
+  if (!isNative && !navigator.geolocation) { alert(t('gpsNotAvailable')); return; }
   gpsTrackpoints = [];
   gpsStartTime = Date.now();
   gpsPausedTime = 0;
   gpsPauseStart = null;
   gpsState = 'tracking';
+  persistGpsState();
   initGpsMap();
   if (gpsPolyline) gpsPolyline.setLatLngs([]);
   if (gpsMarker) { gpsLiveMap.removeLayer(gpsMarker); gpsMarker = null; }
@@ -6056,59 +6079,154 @@ function gpsStart() {
   document.getElementById('gpsStatus').innerHTML = '<span class="pulse green"></span> Aufzeichnung läuft...';
   updateGpsControls();
 
-  gpsWatchId = navigator.geolocation.watchPosition(
-    pos => {
-      if (gpsState !== 'tracking') return;
-      const pt = { lat: pos.coords.latitude, lon: pos.coords.longitude, alt: pos.coords.altitude || 0, time: Date.now() };
-      gpsTrackpoints.push(pt);
-      const ll = [pt.lat, pt.lon];
-      gpsPolyline.addLatLng(ll);
+  const onPoint = (pt) => {
+    if (gpsState !== 'tracking') return;
+    gpsTrackpoints.push(pt);
+    persistGpsState();
+    const ll = [pt.lat, pt.lon];
+    if (gpsPolyline) gpsPolyline.addLatLng(ll);
+    if (gpsLiveMap) {
       if (!gpsMarker) {
         gpsMarker = L.circleMarker(ll, { radius: 6, color: '#d4ff3a', fillColor: '#d4ff3a', fillOpacity: 1 }).addTo(gpsLiveMap);
       } else {
         gpsMarker.setLatLng(ll);
       }
       gpsLiveMap.panTo(ll);
-      updateGpsLiveStats();
-    },
-    err => {
-      document.getElementById('gpsStatus').innerHTML = '<span class="pulse red"></span> GPS Fehler: ' + err.message;
-    },
-    { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
-  );
+    }
+    updateGpsLiveStats();
+  };
+
+  if (isNative) {
+    // Background-Geolocation: läuft auch wenn die App geschlossen ist
+    const started = await window.Native.startBackgroundGps(onPoint);
+    if (!started) {
+      document.getElementById('gpsStatus').innerHTML = '<span class="pulse red"></span> Background-GPS abgelehnt – wechsle zu Vordergrund-Modus';
+      // Fallback zu navigator.geolocation
+      gpsWatchId = navigator.geolocation.watchPosition(
+        pos => onPoint({ lat: pos.coords.latitude, lon: pos.coords.longitude, alt: pos.coords.altitude || 0, time: Date.now() }),
+        err => { console.warn('GPS err', err); },
+        { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+      );
+    }
+  } else {
+    gpsWatchId = navigator.geolocation.watchPosition(
+      pos => onPoint({ lat: pos.coords.latitude, lon: pos.coords.longitude, alt: pos.coords.altitude || 0, time: Date.now() }),
+      err => {
+        document.getElementById('gpsStatus').innerHTML = '<span class="pulse red"></span> GPS Fehler: ' + err.message;
+      },
+      { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+    );
+  }
 
   gpsTimerInterval = setInterval(updateGpsTimer, 1000);
+}
+
+function persistGpsState() {
+  try {
+    if (!activeProfile) return;
+    const data = { state: gpsState, startTime: gpsStartTime, pausedTime: gpsPausedTime, trackpoints: gpsTrackpoints, type: selectedCardioType };
+    localStorage.setItem('gymtrack_gps_' + activeProfile, JSON.stringify(data));
+  } catch(e) {}
+}
+
+function clearPersistedGpsState() {
+  try { if (activeProfile) localStorage.removeItem('gymtrack_gps_' + activeProfile); } catch(e) {}
+}
+
+function resumeGpsSession() {
+  try {
+    if (!activeProfile) return;
+    const raw = localStorage.getItem('gymtrack_gps_' + activeProfile);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    if (!data || !data.startTime) return;
+    if (data.state !== 'tracking' && data.state !== 'paused') return;
+    gpsTrackpoints = data.trackpoints || [];
+    gpsStartTime = data.startTime;
+    gpsPausedTime = data.pausedTime || 0;
+    gpsState = data.state;
+    if (data.type) selectedCardioType = data.type;
+    setCardioMode('gps');
+    initGpsMap();
+    if (gpsPolyline && gpsTrackpoints.length) {
+      gpsPolyline.setLatLngs(gpsTrackpoints.map(p => [p.lat, p.lon]));
+      const last = gpsTrackpoints[gpsTrackpoints.length - 1];
+      if (last && gpsLiveMap) gpsLiveMap.panTo([last.lat, last.lon]);
+    }
+    updateGpsControls();
+    updateGpsLiveStats();
+    if (data.state === 'tracking') {
+      // Tracking wieder aufnehmen (Bridge holt Points die im Background eingingen)
+      if (window.Native && window.Native.isNative) {
+        window.Native.startBackgroundGps((pt) => {
+          if (gpsState !== 'tracking') return;
+          gpsTrackpoints.push(pt);
+          persistGpsState();
+          const ll = [pt.lat, pt.lon];
+          if (gpsPolyline) gpsPolyline.addLatLng(ll);
+          if (gpsMarker) gpsMarker.setLatLng(ll);
+          if (gpsLiveMap) gpsLiveMap.panTo(ll);
+          updateGpsLiveStats();
+        });
+      } else {
+        gpsWatchId = navigator.geolocation.watchPosition(
+          pos => {
+            const pt = { lat: pos.coords.latitude, lon: pos.coords.longitude, alt: pos.coords.altitude || 0, time: Date.now() };
+            gpsTrackpoints.push(pt);
+            persistGpsState();
+            updateGpsLiveStats();
+          }, () => {}, { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+        );
+      }
+      gpsTimerInterval = setInterval(updateGpsTimer, 1000);
+      showToast('▶️ Cardio-Session wieder aufgenommen');
+    }
+  } catch(e) { console.warn('resume gps fail', e); }
 }
 
 function gpsPause() {
   gpsState = 'paused';
   gpsPauseStart = Date.now();
   if (gpsWatchId !== null) { navigator.geolocation.clearWatch(gpsWatchId); gpsWatchId = null; }
+  if (window.Native && window.Native.isNative) { window.Native.stopBackgroundGps(); }
+  persistGpsState();
   document.getElementById('gpsStatus').innerHTML = '<span class="pulse orange"></span> Pausiert';
   updateGpsControls();
 }
 
-function gpsResume() {
+async function gpsResume() {
   if (gpsPauseStart) gpsPausedTime += Date.now() - gpsPauseStart;
   gpsPauseStart = null;
   gpsState = 'tracking';
+  persistGpsState();
   document.getElementById('gpsStatus').innerHTML = '<span class="pulse green"></span> Aufzeichnung läuft...';
   updateGpsControls();
 
-  gpsWatchId = navigator.geolocation.watchPosition(
-    pos => {
-      if (gpsState !== 'tracking') return;
-      const pt = { lat: pos.coords.latitude, lon: pos.coords.longitude, alt: pos.coords.altitude || 0, time: Date.now() };
-      gpsTrackpoints.push(pt);
-      const ll = [pt.lat, pt.lon];
-      gpsPolyline.addLatLng(ll);
-      gpsMarker.setLatLng(ll);
-      gpsLiveMap.panTo(ll);
-      updateGpsLiveStats();
-    },
-    () => {},
-    { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
-  );
+  const onPoint = (pt) => {
+    if (gpsState !== 'tracking') return;
+    gpsTrackpoints.push(pt);
+    persistGpsState();
+    const ll = [pt.lat, pt.lon];
+    if (gpsPolyline) gpsPolyline.addLatLng(ll);
+    if (gpsMarker) gpsMarker.setLatLng(ll);
+    if (gpsLiveMap) gpsLiveMap.panTo(ll);
+    updateGpsLiveStats();
+  };
+
+  if (window.Native && window.Native.isNative) {
+    const ok = await window.Native.startBackgroundGps(onPoint);
+    if (!ok) {
+      gpsWatchId = navigator.geolocation.watchPosition(
+        pos => onPoint({ lat: pos.coords.latitude, lon: pos.coords.longitude, alt: pos.coords.altitude || 0, time: Date.now() }),
+        () => {}, { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+      );
+    }
+  } else {
+    gpsWatchId = navigator.geolocation.watchPosition(
+      pos => onPoint({ lat: pos.coords.latitude, lon: pos.coords.longitude, alt: pos.coords.altitude || 0, time: Date.now() }),
+      () => {}, { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
+    );
+  }
 }
 
 function gpsStop() {
@@ -6116,7 +6234,9 @@ function gpsStop() {
   gpsPauseStart = null;
   gpsState = 'stopped';
   if (gpsWatchId !== null) { navigator.geolocation.clearWatch(gpsWatchId); gpsWatchId = null; }
+  if (window.Native && window.Native.isNative) { window.Native.stopBackgroundGps(); }
   if (gpsTimerInterval) { clearInterval(gpsTimerInterval); gpsTimerInterval = null; }
+  persistGpsState();
   document.getElementById('gpsStatus').innerHTML = `<span class="pulse red"></span> ${t('gpsStopped')}`;
   updateGpsControls();
   updateGpsLiveStats();
@@ -6125,11 +6245,13 @@ function gpsStop() {
 function gpsReset() {
   gpsState = 'idle';
   if (gpsWatchId !== null) { navigator.geolocation.clearWatch(gpsWatchId); gpsWatchId = null; }
+  if (window.Native && window.Native.isNative) { window.Native.stopBackgroundGps(); }
   if (gpsTimerInterval) { clearInterval(gpsTimerInterval); gpsTimerInterval = null; }
   gpsTrackpoints = [];
   gpsStartTime = null;
   gpsPausedTime = 0;
   gpsPauseStart = null;
+  clearPersistedGpsState();
   if (gpsPolyline) gpsPolyline.setLatLngs([]);
   if (gpsMarker && gpsLiveMap) { gpsLiveMap.removeLayer(gpsMarker); gpsMarker = null; }
   document.getElementById('gpsStatus').innerHTML = `<span class="pulse red"></span> ${t('gpsReady')}`;
@@ -8979,7 +9101,7 @@ function getTodaySteps() {
   return entry ? entry.steps : 0;
 }
 
-function saveSteps() {
+function saveSteps(silent) {
   const input = document.getElementById('stepsInput');
   const steps = parseInt(input.value);
   if (isNaN(steps) || steps < 0) return;
@@ -8992,7 +9114,7 @@ function saveSteps() {
   input.value = '';
   renderStepsWidget();
   renderActivityBalance();
-  showToast(t('stepsSaved'));
+  if (!silent) showToast(t('stepsSaved'));
 }
 
 function estimateStepKcal(steps) {
@@ -9533,44 +9655,72 @@ try {
   window.Native = {
     isNative,
 
-    // ---------- HealthKit ----------
+    // ---------- HealthKit (Perfood Plugin) ----------
+    _healthAuthDone: false,
     async ensureHealthPermissions() {
-      const Health = P('Health');
-      if (!Health) return false;
+      const HK = P('CapacitorHealthkit');
+      if (!HK) return false;
+      if (this._healthAuthDone) return true;
       try {
-        await Health.requestAuthorization({ read: ['steps', 'sleep'], write: [] });
+        await HK.requestAuthorization({
+          all: [],
+          read: ['steps', 'distance', 'calories', 'sleep', 'activity'],
+          write: ['steps', 'distance', 'calories', 'sleep', 'activity']
+        });
+        this._healthAuthDone = true;
         return true;
       } catch(e) { console.warn('Health perm denied', e); return false; }
     },
     async stepsToday() {
-      const Health = P('Health');
-      if (!Health) return null;
+      const HK = P('CapacitorHealthkit');
+      if (!HK) return null;
       try {
         const start = new Date(); start.setHours(0,0,0,0);
-        const res = await Health.queryAggregated({
-          dataType: 'steps',
+        const res = await HK.queryHKitSampleType({
+          sampleName: 'stepCount',
           startDate: start.toISOString(),
           endDate: new Date().toISOString(),
-          bucket: 'day'
+          limit: 0
         });
-        return res?.aggregatedData?.[0]?.value ?? 0;
-      } catch(e) { return null; }
+        const samples = res?.resultData || [];
+        const total = samples.reduce((sum, s) => sum + (s.value || 0), 0);
+        return Math.round(total);
+      } catch(e) { console.warn('stepsToday fail', e); return null; }
     },
     async sleepLastNight() {
-      const Health = P('Health');
-      if (!Health) return null;
+      const HK = P('CapacitorHealthkit');
+      if (!HK) return null;
       try {
         const end = new Date();
         const start = new Date(end.getTime() - 24*60*60*1000);
-        const res = await Health.queryAggregated({
-          dataType: 'sleep',
+        const res = await HK.queryHKitSampleType({
+          sampleName: 'sleepAnalysis',
           startDate: start.toISOString(),
           endDate: end.toISOString(),
-          bucket: 'day'
+          limit: 0
         });
-        const minutes = res?.aggregatedData?.[0]?.value ?? 0;
-        return Math.round(minutes);
-      } catch(e) { return null; }
+        const samples = res?.resultData || [];
+        const asleep = samples.filter(s => s.sleepState === 'asleep' || s.sleepState === 'asleepCore' || s.sleepState === 'asleepDeep' || s.sleepState === 'asleepREM' || s.value === 1);
+        let totalMs = 0;
+        asleep.forEach(s => { totalMs += (new Date(s.endDate) - new Date(s.startDate)); });
+        return Math.round(totalMs / 60000);
+      } catch(e) { console.warn('sleep fail', e); return null; }
+    },
+    async saveWorkoutToHealth(type, durationMinutes, kcal, distanceKm) {
+      const HK = P('CapacitorHealthkit');
+      if (!HK) return false;
+      try {
+        const end = new Date();
+        const start = new Date(end.getTime() - durationMinutes * 60000);
+        await HK.storeWorkout({
+          startTime: start.toISOString(),
+          endTime: end.toISOString(),
+          activityType: type || 'other',
+          totalEnergyBurned: kcal || 0,
+          totalDistance: (distanceKm || 0) * 1000,
+        });
+        return true;
+      } catch(e) { console.warn('storeWorkout fail', e); return false; }
     },
 
     // ---------- Local Notifications (Satz-Timer) ----------
@@ -9655,8 +9805,44 @@ try {
           if (!s.isActive && typeof saveState === 'function') {
             try { saveState(); } catch(e) {}
           }
+          if (s.isActive && typeof autoSyncStepsOnFocus === 'function') {
+            try { autoSyncStepsOnFocus(); } catch(e) {}
+          }
         });
       } catch(e) {}
+    },
+
+    // ---------- Background Geolocation für Cardio ----------
+    _bgWatcherId: null,
+    async startBackgroundGps(onPoint) {
+      const BG = P('BackgroundGeolocation');
+      if (!BG) return false;
+      try {
+        this._bgWatcherId = await BG.addWatcher({
+          backgroundMessage: 'GYMTRACK zeichnet deine Cardio-Session auf',
+          backgroundTitle: 'Cardio läuft',
+          requestPermissions: true,
+          stale: false,
+          distanceFilter: 5,
+        }, (location, error) => {
+          if (error) { console.warn('bgGeo err', error); return; }
+          if (location && onPoint) onPoint({
+            lat: location.latitude,
+            lon: location.longitude,
+            alt: location.altitude || 0,
+            time: location.time || Date.now(),
+            speed: location.speed || 0,
+            accuracy: location.accuracy || 0,
+          });
+        });
+        return true;
+      } catch(e) { console.warn('bgGeo start fail', e); return false; }
+    },
+    async stopBackgroundGps() {
+      const BG = P('BackgroundGeolocation');
+      if (!BG || !this._bgWatcherId) return;
+      try { await BG.removeWatcher({ id: this._bgWatcherId }); } catch(e) {}
+      this._bgWatcherId = null;
     },
   };
 
@@ -9665,6 +9851,13 @@ try {
       window.Native.setupStatusBar();
       window.Native.setupLifecycle();
       window.Native.ensureNotifPermissions();
+      // Health-Permission früh anfragen + Schritte automatisch syncen
+      setTimeout(async () => {
+        try {
+          const ok = await window.Native.ensureHealthPermissions();
+          if (ok && typeof autoSyncStepsOnFocus === 'function') autoSyncStepsOnFocus();
+        } catch(e) {}
+      }, 1500);
     }
   });
 })();
