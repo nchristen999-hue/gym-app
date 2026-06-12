@@ -3510,7 +3510,8 @@ const ADMIN_EMAILS = [
 // 4. Offering: "default" → monthly + annual packages
 // 5. API Keys → copy Web key below
 // =============================================
-const RC_WEB_API_KEY = ''; // Paste your RevenueCat Web API key here
+const RC_WEB_API_KEY = ''; // RevenueCat Web (Browser) – nur nötig wenn die App auch im Browser läuft
+const RC_IOS_API_KEY = ''; // RevenueCat iOS API Key – muss eingetragen werden für In-App-Purchase
 const RC_ENTITLEMENT = 'pro';
 let rcInstance = null;
 let rcOfferings = null;
@@ -4524,7 +4525,35 @@ const PAYWALL_PRICES = {
 };
 
 async function initRevenueCat(userId) {
-  if (!RC_WEB_API_KEY || !userId) return;
+  if (!userId) return;
+
+  // Native iOS: Capacitor Plugin verwenden
+  if (window.Native && window.Native.isNative) {
+    if (!RC_IOS_API_KEY) {
+      console.warn('RC_IOS_API_KEY ist leer – Abo nicht möglich. Trage iOS API Key ein.');
+      return;
+    }
+    try {
+      const Purchases = window.Capacitor.Plugins.Purchases;
+      await Purchases.configure({ apiKey: RC_IOS_API_KEY, appUserID: userId });
+      const off = await Purchases.getOfferings();
+      // Mapping auf das gleiche Format wie Web-SDK damit der Rest des Codes funktioniert
+      rcOfferings = { current: off.current };
+      rcInstance = {
+        getCustomerInfo: () => Purchases.getCustomerInfo(),
+        purchase: ({ rcPackage }) => Purchases.purchasePackage({ aPackage: rcPackage }),
+        restorePurchases: () => Purchases.restorePurchases(),
+      };
+      await syncRCEntitlements();
+      updatePaywallPricesFromRC();
+    } catch(e) {
+      console.warn('RevenueCat native init failed:', e.message || e);
+    }
+    return;
+  }
+
+  // Browser (PWA): Web-SDK
+  if (!RC_WEB_API_KEY) return;
   try {
     const mod = await import('https://esm.sh/@revenuecat/purchases-js@6');
     const Purchases = mod.Purchases || mod.default;
@@ -4604,8 +4633,12 @@ function closePaywall() {
 }
 
 async function handlePurchase() {
+  if (window.Native && window.Native.isNative && !RC_IOS_API_KEY) {
+    showToast('Abo nicht konfiguriert. RC_IOS_API_KEY fehlt in der index.html');
+    return;
+  }
   if (!rcInstance || !rcOfferings || !rcOfferings.current) {
-    showToast(t('purchaseNotReady'));
+    showToast(t('purchaseNotReady') + ' – pruefe RevenueCat Setup');
     return;
   }
   const pkg = paywallBilling === 'yearly'
@@ -6109,8 +6142,13 @@ async function gpsStart() {
     // Background-Geolocation: läuft auch wenn die App geschlossen ist
     const started = await window.Native.startBackgroundGps(onPoint);
     if (!started) {
-      document.getElementById('gpsStatus').innerHTML = '<span class="pulse red"></span> Background-GPS abgelehnt – wechsle zu Vordergrund-Modus';
-      // Fallback zu navigator.geolocation
+      const err = window.Native._lastBgError;
+      let msg = 'Background-GPS nicht verfügbar';
+      if (err === 'PLUGIN_MISSING') msg = 'GPS-Plugin nicht installiert. Mac: npm install + npx cap sync ios';
+      else if (err === 'PERMISSION_DENIED') msg = 'Standort-Erlaubnis fehlt. iOS-Einstellungen > GYMTRACK > Standort > Immer';
+      document.getElementById('gpsStatus').innerHTML = '<span class="pulse red"></span> ' + msg;
+      showToast(msg);
+      // Fallback zu navigator.geolocation (nur Vordergrund)
       gpsWatchId = navigator.geolocation.watchPosition(
         pos => onPoint({ lat: pos.coords.latitude, lon: pos.coords.longitude, alt: pos.coords.altitude || 0, time: Date.now() }),
         err => { console.warn('GPS err', err); },
@@ -9210,12 +9248,22 @@ window.addEventListener('offline', updateOfflineStatus);
 async function triggerPhotoUpload() {
   if (window.Native && window.Native.isNative) {
     // Native Capacitor Camera – kein Crash, sauberer System-Dialog
+    const Cam = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Camera;
+    if (!Cam) {
+      showToast('Camera-Plugin nicht installiert. Mac: npm install + npx cap sync ios');
+      return;
+    }
     try {
       const dataUrl = await window.Native.takePhoto();
-      if (!dataUrl) return;
+      if (!dataUrl) return; // user abgebrochen
       await savePhotoDataUrl(dataUrl);
     } catch(e) {
-      showToast('Foto-Fehler: ' + (e.message || e));
+      const msg = (e && e.message) ? e.message : String(e);
+      if (msg.toLowerCase().includes('denied') || msg.toLowerCase().includes('permission')) {
+        showToast('Kamera-Erlaubnis fehlt. iOS-Einstellungen > GYMTRACK > Kamera + Fotos');
+      } else {
+        showToast('Foto-Fehler: ' + msg);
+      }
     }
   } else {
     // Browser-Fallback: file input
@@ -9860,9 +9908,13 @@ try {
 
     // ---------- Background Geolocation für Cardio ----------
     _bgWatcherId: null,
+    _lastBgError: null,
     async startBackgroundGps(onPoint) {
       const BG = P('BackgroundGeolocation');
-      if (!BG) return false;
+      if (!BG) {
+        this._lastBgError = 'PLUGIN_MISSING';
+        return false;
+      }
       try {
         this._bgWatcherId = await BG.addWatcher({
           backgroundMessage: 'GYMTRACK zeichnet deine Cardio-Session auf',
@@ -9871,7 +9923,13 @@ try {
           stale: false,
           distanceFilter: 5,
         }, (location, error) => {
-          if (error) { console.warn('bgGeo err', error); return; }
+          if (error) {
+            console.warn('bgGeo err', error);
+            if (error.code === 'NOT_AUTHORIZED' || error.code === 'PERMISSION_DENIED') {
+              this._lastBgError = 'PERMISSION_DENIED';
+            }
+            return;
+          }
           if (location && onPoint) onPoint({
             lat: location.latitude,
             lon: location.longitude,
@@ -9882,7 +9940,11 @@ try {
           });
         });
         return true;
-      } catch(e) { console.warn('bgGeo start fail', e); return false; }
+      } catch(e) {
+        this._lastBgError = (e && e.message) ? e.message : 'UNKNOWN';
+        console.warn('bgGeo start fail', e);
+        return false;
+      }
     },
     async stopBackgroundGps() {
       const BG = P('BackgroundGeolocation');
