@@ -38,6 +38,52 @@ iOS-Einstellungen → GYMTRACK → Kamera / Fotos wieder erlauben.
 
 ---
 
+## 6. 💳 Abo / In-App-Kauf (RevenueCat + App Store Connect)
+
+Aktuell kann man das PRO-Abo **nicht kaufen**, weil `RC_IOS_API_KEY` in `index.html`
+leer ist UND die Produkte noch nicht in App Store Connect + RevenueCat existieren.
+Das ist externe Einrichtung – sie braucht deine Apple- und RevenueCat-Konten.
+
+Der Code erwartet **exakt** diese Bezeichner:
+- Produkt-IDs: `gymtrack_pro_monthly` und `gymtrack_pro_yearly`
+- Entitlement: `pro`
+- Offering: `default` mit den Paketen **monthly** + **annual**
+
+### a) Apple Developer Program
+Du brauchst eine zahlende Mitgliedschaft (99 $/Jahr), sonst sind keine In-App-Käufe möglich.
+
+### b) App Store Connect
+1. [appstoreconnect.apple.com](https://appstoreconnect.apple.com) → App anlegen (Bundle-ID `com.nchristen.gymtrack`).
+2. **Vereinbarungen → „Paid Apps"-Vertrag** akzeptieren + **Bank-/Steuerdaten** ausfüllen (sonst keine Käufe!).
+3. **Abonnements (Auto-Renewable Subscriptions)** → Gruppe anlegen, dann zwei Produkte:
+   - `gymtrack_pro_monthly` (monatlich, Preis z. B. CHF 2.30)
+   - `gymtrack_pro_yearly` (jährlich, Preis z. B. CHF 17)
+   - Jeweils Lokalisierung (Name/Beschreibung) + Review-Screenshot ausfüllen.
+4. **App-Information → App-spezifisches geteiltes Geheimnis** generieren & notieren.
+
+### c) RevenueCat ([app.revenuecat.com](https://app.revenuecat.com))
+1. Projekt anlegen → **App Store**-App hinzufügen (Bundle-ID + das geteilte Geheimnis aus b4).
+2. **Products** → beide Produkt-IDs aus b3 hinzufügen.
+3. **Entitlements** → `pro` anlegen → beide Produkte anhängen.
+4. **Offerings** → Offering `default` → Pakete: **Monthly** = `gymtrack_pro_monthly`, **Annual** = `gymtrack_pro_yearly`.
+5. **API Keys** → den **Apple/iOS Public Key** (beginnt mit `appl_…`) kopieren.
+
+### d) Key eintragen
+In `index.html` (Zeile ~3542):
+```js
+const RC_IOS_API_KEY = 'appl_DEIN_KEY_HIER';
+```
+→ committen, auf dem Mac `git pull` + `npx cap sync ios` + neu bauen.
+
+### e) Testen
+In-App-Käufe testen nur über **Sandbox** (App Store Connect → Benutzer → Sandbox-Tester
+anlegen) oder über **TestFlight** – nicht im normalen Simulator. Erst wenn Apple die
+Abos geprüft/freigegeben hat, sind sie live kaufbar.
+
+> Schick mir einfach den `appl_…`-Key, sobald du ihn hast – dann trage ich ihn ein und pushe.
+
+---
+
 ## 1. ✅ Export / Download (bereits im Code gefixt)
 
 Im WKWebView funktioniert der `<a download>`-Trick **nicht** – darum wird jetzt der
