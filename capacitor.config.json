@@ -19,7 +19,8 @@
     },
     "GoogleAuth": {
       "scopes": ["profile", "email"],
-      "serverClientId": "REPLACE_WITH_YOUR_GOOGLE_WEB_CLIENT_ID.apps.googleusercontent.com",
+      "serverClientId": "31698189822-8305210pa4lq2gseqiakvs1i040civj3.apps.googleusercontent.com",
+      "iosClientId": "31698189822-rjkk3lu3eub60okh78c7eup0atacoecp.apps.googleusercontent.com",
       "forceCodeForRefreshToken": true
     }
   }

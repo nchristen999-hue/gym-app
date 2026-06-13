@@ -1943,6 +1943,12 @@
   .sleep-bar.today { background: #c4b5fd; }
   .sleep-bar-labels { display: flex; gap: 3px; }
   .sleep-bar-label { flex: 1; font-size: 8px; color: var(--text-dim); text-align: center; }
+  .home-health-summary { display: flex; gap: 10px; margin-bottom: 14px; }
+  .home-health-item { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+  .home-health-label { font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
+  .home-health-value { font-size: 22px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+  .home-health-chart-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; margin: 8px 0 4px; }
+  #homeStepsChart, #homeSleepChart { width: 100%; display: block; }
 
   /* ===== STEPS TRACKER ===== */
   .steps-widget { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
@@ -2652,6 +2658,28 @@
           </div>
         </div>
         <div class="muscle-map-legend" id="muscleMapLegend"></div>
+      </div>
+
+      <!-- AKTIVITÄT & SCHLAF (7-Tage-Diagramm, nutzt stepsLog/sleepLog) -->
+      <div class="muscle-map-card" id="homeHealthCard">
+        <div class="muscle-map-header">
+          <div class="card-title" style="margin:0;">Aktivität &amp; Schlaf</div>
+          <span class="card-title-action" onclick="showView('nutrition')">Details →</span>
+        </div>
+        <div class="home-health-summary">
+          <div class="home-health-item">
+            <div class="home-health-label">👟 Schritte heute</div>
+            <div class="home-health-value" id="homeStepsVal">0</div>
+          </div>
+          <div class="home-health-item">
+            <div class="home-health-label">😴 Schlaf (Ø 7T)</div>
+            <div class="home-health-value" id="homeSleepVal">– h</div>
+          </div>
+        </div>
+        <div class="home-health-chart-label">Schritte · 7 Tage</div>
+        <canvas id="homeStepsChart" height="130"></canvas>
+        <div class="home-health-chart-label">Schlaf · 7 Tage (Std)</div>
+        <canvas id="homeSleepChart" height="130"></canvas>
       </div>
 
       <div class="section-tabs">
@@ -5637,7 +5665,111 @@ function renderHome() {
   renderTemplates();
   if (typeof renderMuscleWeekWidget === 'function') renderMuscleWeekWidget();
   if (typeof renderMuscleMap === 'function') renderMuscleMap();
+  if (typeof renderHomeHealthCard === 'function') renderHomeHealthCard();
   updateProUI();
+
+  // Kennzahlen für das Home-Screen-Widget in die App Group schreiben.
+  if (window.Native && window.Native.isNative && window.Native.publishWidgetData) {
+    window.Native.publishWidgetData({
+      streak: stats.streak,
+      level: lvl.num,
+      points: state.totalPoints,
+      weekWorkouts: stats.weekWorkouts,
+      steps: (typeof getTodaySteps === 'function') ? getTodaySteps() : null,
+      updated: Date.now(),
+    });
+  }
+}
+
+// =============================================
+// HOME: Aktivität & Schlaf – 7-Tage-Diagramm
+// =============================================
+function last7Days(log, valueKey) {
+  const out = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const key = d.toISOString().split('T')[0];
+    const entry = (log || []).find(e => e.date === key);
+    out.push({ date: key, day: d.getDay(), value: entry ? (entry[valueKey] || 0) : 0 });
+  }
+  return out;
+}
+
+function renderHomeHealthCard() {
+  const stepsData = last7Days(state.stepsLog, 'steps');
+  const sleepData = last7Days(state.sleepLog, 'hours');
+
+  const todaySteps = (typeof getTodaySteps === 'function') ? getTodaySteps() : 0;
+  const sleepVals = sleepData.filter(d => d.value > 0).map(d => d.value);
+  const sleepAvg = sleepVals.length ? (sleepVals.reduce((a, b) => a + b, 0) / sleepVals.length) : 0;
+
+  const sEl = document.getElementById('homeStepsVal');
+  const slEl = document.getElementById('homeSleepVal');
+  if (sEl) sEl.textContent = (todaySteps || 0).toLocaleString(getLoc());
+  if (slEl) slEl.textContent = sleepAvg ? sleepAvg.toFixed(1) + ' h' : '– h';
+
+  drawHomeBars('homeStepsChart', stepsData, '#d4ff3a', v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : String(Math.round(v)));
+  drawHomeBars('homeSleepChart', sleepData, '#a78bfa', v => v.toFixed(1));
+}
+
+function drawHomeBars(canvasId, data, color, fmt) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const cw = canvas.clientWidth || canvas.parentElement.clientWidth || 320;
+  const ch = 130;
+  canvas.style.height = ch + 'px';
+  canvas.width = cw * dpr; canvas.height = ch * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, cw, ch);
+
+  const dayNames = (TRANSLATIONS.days && TRANSLATIONS.days[currentLang]) || ['Mo','Tu','We','Th','Fr','Sa','Su'];
+
+  if (!data || data.length === 0 || data.every(d => !d.value)) {
+    ctx.fillStyle = '#888';
+    ctx.font = '13px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Noch keine Daten', cw / 2, ch / 2);
+    return;
+  }
+
+  const padding = { top: 20, right: 6, bottom: 20, left: 6 };
+  const W = cw - padding.left - padding.right;
+  const H = ch - padding.top - padding.bottom;
+  const maxV = Math.max(...data.map(d => d.value), 1);
+  const n = data.length;
+  const gap = 8;
+  const barW = (W - gap * (n - 1)) / n;
+
+  data.forEach((d, i) => {
+    const x = padding.left + i * (barW + gap);
+    const isToday = i === n - 1;
+    const barH = d.value ? Math.max(3, (d.value / maxV) * H) : 2;
+    const y = padding.top + H - barH;
+    const r = Math.min(5, barW / 2);
+    ctx.fillStyle = d.value ? (isToday ? '#fff' : color) : '#2a2a2a';
+    ctx.beginPath();
+    ctx.moveTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.arcTo(x + barW, y, x + barW, y + r, r);
+    ctx.lineTo(x + barW, padding.top + H);
+    ctx.lineTo(x, padding.top + H);
+    ctx.closePath();
+    ctx.fill();
+
+    if (d.value) {
+      ctx.fillStyle = '#aaa';
+      ctx.font = '9px JetBrains Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(fmt(d.value), x + barW / 2, y - 5);
+    }
+    ctx.fillStyle = '#666';
+    ctx.font = '9px JetBrains Mono, monospace';
+    ctx.textAlign = 'center';
+    const idx = d.day === 0 ? 6 : d.day - 1;
+    ctx.fillText(dayNames[idx] || '', x + barW / 2, padding.top + H + 14);
+  });
 }
 
 function renderTemplates() {
@@ -7883,7 +8015,7 @@ function renderBodyWeightChart() {
 // =====================================================
 // FEATURE 5: DATA EXPORT / IMPORT
 // =====================================================
-function exportData() {
+async function exportData() {
   const data = {
     version: 'gymtrack_v3',
     exportDate: new Date().toISOString(),
@@ -7910,11 +8042,30 @@ function exportData() {
     workoutStartTime: state.workoutStartTime,
   };
 
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const json = JSON.stringify(data, null, 2);
+  const filename = `gymtrack_${activeProfile}_${new Date().toISOString().slice(0, 10)}.json`;
+
+  // iOS WKWebView ignoriert <a download> – darum nativen Share-Sheet benutzen.
+  try {
+    if (window.Native && window.Native.isNative && navigator.canShare) {
+      const file = new File([json], filename, { type: 'application/json' });
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: filename });
+        showToast(t('backupDownloaded'));
+        return;
+      }
+    }
+  } catch (e) {
+    if (e && e.name === 'AbortError') return; // User hat abgebrochen
+    console.warn('Share export fail, fallback to download', e);
+  }
+
+  // Fallback (Web / ältere iOS): klassischer Download.
+  const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `gymtrack_${activeProfile}_${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -9829,11 +9980,9 @@ try {
     // ---------- Google Sign-In ----------
     async signInGoogle() {
       const G = P('GoogleAuth');
-      if (!G) return null;
-      try {
-        const user = await G.signIn();
-        return user;
-      } catch(e) { console.warn('Google SignIn fail', e); return null; }
+      if (!G) throw new Error('Google-Login ist in dieser App nicht konfiguriert.');
+      const user = await G.signIn();
+      return user;
     },
 
     // ---------- Abo / In-App-Purchase via RevenueCat ----------
@@ -9857,6 +10006,20 @@ try {
       const Purchases = P('Purchases');
       if (!Purchases) return null;
       try { return await Purchases.getCustomerInfo(); } catch(e) { return null; }
+    },
+
+    // ---------- Widget-Daten (Home Screen) via App Group ----------
+    // Schreibt Kennzahlen in die geteilte UserDefaults-Suite (App Group),
+    // damit die WidgetKit-Extension sie lesen kann. Siehe NATIVE_SETUP.md.
+    async publishWidgetData(obj) {
+      const Pref = P('Preferences');
+      if (!Pref) return;
+      try {
+        if (Pref.configure) {
+          try { await Pref.configure({ group: 'group.com.nchristen.gymtrack' }); } catch(e) {}
+        }
+        await Pref.set({ key: 'widget_data', value: JSON.stringify(obj) });
+      } catch(e) { console.warn('publishWidgetData fail', e); }
     },
 
     // ---------- Status Bar Stil ----------
