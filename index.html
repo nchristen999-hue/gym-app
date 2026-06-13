@@ -9996,6 +9996,9 @@ try {
     async signInGoogle() {
       const G = P('GoogleAuth');
       if (!G) throw new Error('Google-Login ist in dieser App nicht konfiguriert.');
+      // Zuvor gewähltes Konto vergessen, damit IMMER die Kontoauswahl erscheint
+      // (sonst landet man stillschweigend wieder im zuletzt benutzten Account).
+      try { await G.signOut(); } catch(e) {}
       const user = await G.signIn();
       return user;
     },
