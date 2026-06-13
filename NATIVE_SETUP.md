@@ -17,6 +17,27 @@ npx cap open ios     # öffnet Xcode
 
 ---
 
+## 5. 📷 Fotos hinzufügen (Kamera/Fotos – Info.plist-Texte zwingend!)
+
+Die App nutzt `@capacitor/camera`. iOS **crasht** sofort, wenn beim Zugriff auf Kamera
+oder Fotomediathek die passenden Nutzungstexte in der Info.plist fehlen. Darum diese
+drei Schlüssel in `ios/App/App/Info.plist` ergänzen (nach dem ersten `<dict>`):
+
+```xml
+<key>NSCameraUsageDescription</key>
+<string>GYMTRACK braucht die Kamera, um Fortschritts-Fotos aufzunehmen.</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>GYMTRACK braucht Zugriff auf deine Fotos, um Fortschritts-Bilder auszuwählen.</string>
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>GYMTRACK kann Fortschritts-Fotos in deiner Mediathek speichern.</string>
+```
+
+Danach `npx cap sync ios` (falls nötig) und neu bauen. Auf dem iPhone beim ersten
+Foto-Antippen die Erlaubnis bestätigen. Wurde sie versehentlich abgelehnt:
+iOS-Einstellungen → GYMTRACK → Kamera / Fotos wieder erlauben.
+
+---
+
 ## 1. ✅ Export / Download (bereits im Code gefixt)
 
 Im WKWebView funktioniert der `<a download>`-Trick **nicht** – darum wird jetzt der
