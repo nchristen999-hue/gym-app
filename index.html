@@ -5323,6 +5323,8 @@ function saveState() {
     weightLog: state.weightLog,
     waterLog: state.waterLog,
     sleepLog: state.sleepLog,
+    stepsLog: state.stepsLog,
+    stepsGoal: state.stepsGoal,
     progressPhotos: state.progressPhotos,
     currentWorkout: state.currentWorkout,
     workoutStartTime: state.workoutStartTime,
@@ -8037,6 +8039,8 @@ async function exportData() {
     weightLog: state.weightLog,
     waterLog: state.waterLog,
     sleepLog: state.sleepLog,
+    stepsLog: state.stepsLog,
+    stepsGoal: state.stepsGoal,
     progressPhotos: state.progressPhotos,
     currentWorkout: state.currentWorkout,
     workoutStartTime: state.workoutStartTime,
@@ -8079,43 +8083,51 @@ function importData(event) {
 
   const reader = new FileReader();
   reader.onload = function(e) {
+    // 1) Datei lesen/parsen – nur HIER zählt ein "Lesefehler".
+    let data;
     try {
-      const data = JSON.parse(e.target.result);
-      if (!data.workouts || !Array.isArray(data.workouts)) {
-        showToast(t('invalidFile'));
-        return;
-      }
-
-      if (!confirm(t('confirmLoadBackup'))) return;
-
-      state.workouts = data.workouts || [];
-      state.prs = data.prs || {};
-      state.myTemplates = data.myTemplates || [];
-      state.customThresholds = data.customThresholds || {};
-      state.totalPoints = data.totalPoints || 0;
-      state.customExercises = data.customExercises || [];
-      state.bodyWeights = data.bodyWeights || [];
-      state.restTimeDuration = data.restTimeDuration || 90;
-      state.cardioSessions = data.cardioSessions || [];
-      state.cardioTemplates = data.cardioTemplates || [];
-      state.nutritionLog = data.nutritionLog || {};
-      state.customFoods = data.customFoods || [];
-      state.nutritionGoals = data.nutritionGoals || state.nutritionGoals;
-      state.nutProfile = data.nutProfile || state.nutProfile;
-      state.weightLog = data.weightLog || [];
-      state.waterLog = data.waterLog || {};
-      state.sleepLog = data.sleepLog || {};
-      state.progressPhotos = data.progressPhotos || [];
-      if (data.currentWorkout) state.currentWorkout = data.currentWorkout;
-      if (data.workoutStartTime) state.workoutStartTime = data.workoutStartTime;
-
-      saveState();
-      renderHome();
-      showToast(t('dataRestored'));
-      closeSettings();
+      data = JSON.parse(e.target.result);
     } catch (err) {
       showToast(t('fileReadError'));
+      return;
     }
+    if (!data || !Array.isArray(data.workouts)) {
+      showToast(t('invalidFile'));
+      return;
+    }
+
+    if (!confirm(t('confirmLoadBackup'))) return;
+
+    // 2) Daten übernehmen. Wichtig: nutritionLog/waterLog/sleepLog sind ARRAYS
+    //    (Default []), nicht {} – sonst crashen spätere .find/.filter-Aufrufe.
+    state.workouts = data.workouts || [];
+    state.prs = data.prs || {};
+    state.myTemplates = data.myTemplates || [];
+    state.customThresholds = data.customThresholds || {};
+    state.totalPoints = data.totalPoints || 0;
+    state.customExercises = data.customExercises || [];
+    state.bodyWeights = data.bodyWeights || [];
+    state.restTimeDuration = data.restTimeDuration || 90;
+    state.cardioSessions = data.cardioSessions || [];
+    state.cardioTemplates = data.cardioTemplates || [];
+    state.nutritionLog = Array.isArray(data.nutritionLog) ? data.nutritionLog : [];
+    state.customFoods = data.customFoods || [];
+    state.nutritionGoals = data.nutritionGoals || state.nutritionGoals;
+    state.nutProfile = data.nutProfile || state.nutProfile;
+    state.weightLog = data.weightLog || [];
+    state.waterLog = Array.isArray(data.waterLog) ? data.waterLog : [];
+    state.sleepLog = Array.isArray(data.sleepLog) ? data.sleepLog : [];
+    state.stepsLog = Array.isArray(data.stepsLog) ? data.stepsLog : (state.stepsLog || []);
+    state.progressPhotos = data.progressPhotos || [];
+    if (data.currentWorkout) state.currentWorkout = data.currentWorkout;
+    if (data.workoutStartTime) state.workoutStartTime = data.workoutStartTime;
+
+    saveState();
+
+    // 3) Erfolg melden. Render-Fehler dürfen das NICHT überschreiben.
+    showToast(t('dataRestored'));
+    closeSettings();
+    try { renderHome(); } catch (e2) { console.warn('post-import render failed', e2); }
   };
   reader.readAsText(file);
   event.target.value = '';
@@ -8188,6 +8200,8 @@ function renderMuscleWeekWidget() {
   allEx.forEach(e => { muscleMap[e.name] = e.muscle; });
 
   const muscles = ['Brust', 'Rücken', 'Beine', 'Schultern', 'Arme', 'Core'];
+  // Unter-Muskeln auf die 6 Gruppen abbilden (Bizeps/Trizeps/Unterarm -> Arme)
+  const groupMap = { Bizeps: 'Arme', Trizeps: 'Arme', Unterarm: 'Arme' };
   const data = {};
   muscles.forEach(m => { data[m] = { vol: 0, sets: 0 }; });
 
@@ -8196,7 +8210,8 @@ function renderMuscleWeekWidget() {
     if (w.timestamp < weekAgo) return;
     weekWorkoutCount++;
     w.exercises.forEach(ex => {
-      const muscle = muscleMap[ex.name];
+      const raw = muscleMap[ex.name];
+      const muscle = groupMap[raw] || raw;
       if (!muscle || !data[muscle]) return;
       ex.sets.forEach(s => {
         if (s.done) {
