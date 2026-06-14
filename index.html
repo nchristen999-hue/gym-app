@@ -3522,12 +3522,9 @@ const FIREBASE_CONFIG = {
   appId: "1:31698189822:web:1ff326ff336bab2f4fd4af"
 };
 
-const ADMIN_EMAILS = [
-  'nchristen656@gmail.com',
-  'nevio.christen@gmx.ch',
-  'testuserlager384@gmail.com',
-  'getMoreInformation@gmx.ch'
-];
+// Pro-Zugang wird AUSSCHLIESSLICH über Firebase gesteuert (users/<uid>.plan === 'pro').
+// Liste leer lassen = keine automatischen Admin-Pro-Konten mehr.
+const ADMIN_EMAILS = [];
 
 // =============================================
 // REVENUECAT CONFIG
