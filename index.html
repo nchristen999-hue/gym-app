@@ -8141,12 +8141,19 @@ function clearAllData() {
 // =====================================================
 // SETTINGS
 // =====================================================
-function openSettings() {
+async function openSettings() {
   document.getElementById('settingsOverlay').classList.add('active');
   renderRestTimeOptions();
+  renderSettingsProfile();   // Profil (E-Mail, PRO/FREE-Badge, Upgrade-Button) füllen
   requestAnimationFrame(() => {
     renderBodyWeight();
   });
+  // Pro-Status frisch aus Firebase nachladen, dann Profil + Schlösser aktualisieren.
+  try {
+    await checkProStatus();
+    renderSettingsProfile();
+    if (typeof updateProUI === 'function') updateProUI();
+  } catch(e) { console.warn('openSettings pro refresh fail', e); }
 }
 
 function closeSettings() {
