@@ -3497,11 +3497,11 @@
     </div>
     <div class="paywall-price">
       <div class="paywall-price-row">
-        <div class="paywall-price-original" id="paywallPriceOriginal">CHF 34</div>
-        <div class="paywall-price-amount" id="paywallPriceAmount">CHF 17</div>
+        <div class="paywall-price-original" id="paywallPriceOriginal">CHF 24</div>
+        <div class="paywall-price-amount" id="paywallPriceAmount">CHF 15</div>
       </div>
       <div class="paywall-price-period" id="paywallPricePeriod">pro Jahr</div>
-      <div class="paywall-discount-badge" id="paywallDiscountBadge">SPARE CHF 17 / Jahr</div>
+      <div class="paywall-discount-badge" id="paywallDiscountBadge">SPARE CHF 9 / Jahr</div>
     </div>
     <button class="paywall-buy-btn" onclick="handlePurchase()" data-i18n="upgradeNow">Upgrade now</button>
     <button class="paywall-close" onclick="closePaywall()" data-i18n="later">Later</button>
@@ -4550,8 +4550,8 @@ function isPro() { return userIsPro; }
 let paywallBilling = 'yearly';
 
 const PAYWALL_PRICES = {
-  yearly:  { original: 'CHF 34',   amount: 'CHF 17',    period: 'perYear',  save: 'CHF 17' },
-  monthly: { original: 'CHF 4.60', amount: 'CHF 2.30',  period: 'perMonth', save: 'CHF 2.30' }
+  yearly:  { original: 'CHF 24',   amount: 'CHF 15',    period: 'perYear',  save: 'CHF 9' },
+  monthly: { original: 'CHF 4',    amount: 'CHF 2',     period: 'perMonth', save: 'CHF 2' }
 };
 
 async function initRevenueCat(userId) {
