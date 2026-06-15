@@ -2292,7 +2292,7 @@
   .heatmap-grid { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 12px); gap: 3px; width: max-content; }
   .heatmap-cell {
     width: 12px; height: 12px; border-radius: 3px;
-    background: rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.12);
   }
   .heatmap-cell.l1 { background: rgba(212,255,58,0.25); }
   .heatmap-cell.l2 { background: rgba(212,255,58,0.5); }
@@ -3524,7 +3524,7 @@ const FIREBASE_CONFIG = {
 
 // Pro-Zugang wird AUSSCHLIESSLICH über Firebase gesteuert (users/<uid>.plan === 'pro').
 // Liste leer lassen = keine automatischen Admin-Pro-Konten mehr.
-const ADMIN_EMAILS = [];
+const ADMIN_EMAILS = ['nevio.christen@gmx.ch'];
 
 // =============================================
 // REVENUECAT CONFIG
@@ -3880,6 +3880,7 @@ const TRANSLATIONS = {
   noOfferingsAvailable: { en:'No subscription plans available.', de:'Keine Abo-Pläne verfügbar.', es:'No hay planes disponibles.', fr:'Aucun plan disponible.', it:'Nessun piano disponibile.' },
   purchasePending: { en:'Processing purchase...', de:'Kauf wird verarbeitet...', es:'Procesando compra...', fr:'Traitement de l\'achat...', it:'Elaborazione acquisto...' },
   manageSubscription: { en:'Manage Subscription', de:'Abo verwalten', es:'Gestionar suscripción', fr:'Gérer l\'abonnement', it:'Gestisci abbonamento' },
+  manageSubHint: { en:'Manage your subscription in the App Store app under Settings → Subscriptions', de:'Verwalte dein Abo in der App Store App unter Einstellungen → Abonnements', es:'Gestiona tu suscripción en la app App Store en Ajustes → Suscripciones', fr:'Gérez votre abonnement dans l\'app App Store sous Réglages → Abonnements', it:'Gestisci il tuo abbonamento nell\'app App Store in Impostazioni → Abbonamenti' },
   cancelSubscription: { en:'Cancel Subscription', de:'Abo kündigen', es:'Cancelar suscripción', fr:'Annuler l\'abonnement', it:'Annulla abbonamento' },
   subActiveUntil: { en:'Active until', de:'Aktiv bis', es:'Activo hasta', fr:'Actif jusqu\'au', it:'Attivo fino al' },
   upgradeForCHF: { en:'Upgrade for', de:'Upgrade für', es:'Mejora por', fr:'Passez pour', it:'Aggiorna per' },
@@ -4740,7 +4741,11 @@ async function openManageSubscription() {
       }
     } catch(e) { /* fall through */ }
   }
-  window.open('https://billing.stripe.com/p/login/test', '_blank');
+  if (window.Native && window.Native.isNative) {
+    window.open('https://apps.apple.com/account/subscriptions', '_blank');
+  } else {
+    showToast(t('manageSubHint'));
+  }
 }
 
 function updateProUI() {
@@ -9799,7 +9804,7 @@ function renderTrainingHeatmap() {
     const n = counts[k] || 0;
     const future = cur > today;
     if (!future) total += n;
-    const lvl = n >= 3 ? 'l4' : n === 2 ? 'l3' : n === 1 ? 'l2' : '';
+    const lvl = n >= 4 ? 'l4' : n === 3 ? 'l3' : n === 2 ? 'l2' : n === 1 ? 'l1' : '';
     const cls = ['heatmap-cell', lvl, k === todayKey ? 'today' : ''].filter(Boolean).join(' ');
     const style = future ? ' style="opacity:0.18;"' : '';
     const label = cur.toLocaleDateString(getLoc(), { day: 'numeric', month: 'short' }) + (n ? ` · ${n} Session${n > 1 ? 's' : ''}` : '');
@@ -9826,7 +9831,7 @@ const _originalRenderHome = renderHome;
 renderHome = function() {
   _originalRenderHome();
   updateOfflineStatus();
-  try { renderTrainingHeatmap(); } catch (e) {}
+  try { renderTrainingHeatmap(); } catch (e) { console.warn('heatmap render error:', e); }
 };
 
 const _originalRenderNutrition = renderNutrition;
