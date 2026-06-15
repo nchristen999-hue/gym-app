@@ -4528,14 +4528,18 @@ async function verifyLogout() {
 
 async function checkProStatus() {
   if (!currentUser) { userIsPro = false; return; }
-  if (ADMIN_EMAILS.includes(currentUser.email.toLowerCase())) { userIsPro = true; return; }
-  if (!isFirebaseReady()) { userIsPro = false; return; }
+  if (ADMIN_EMAILS.includes(currentUser.email.toLowerCase())) { userIsPro = true; localStorage.setItem('gymtrack_pro_cache', 'pro'); return; }
+  const cached = localStorage.getItem('gymtrack_pro_cache');
+  if (cached === 'pro') userIsPro = true;
+  if (!isFirebaseReady()) { return; }
   try {
     const doc = await firebaseDb.collection('users').doc(currentUser.uid).get();
     if (doc.exists) {
-      userIsPro = doc.data().plan === 'pro';
+      const plan = doc.data().plan;
+      userIsPro = plan === 'pro';
+      localStorage.setItem('gymtrack_pro_cache', plan || 'free');
     }
-  } catch(e) { userIsPro = false; }
+  } catch(e) { console.warn('checkProStatus error (keeping cached status):', e); }
 }
 
 function isPro() { return userIsPro; }
@@ -4627,6 +4631,7 @@ async function syncRCEntitlements() {
     const hasEnt = info.entitlements.active[RC_ENTITLEMENT] !== undefined;
     if (hasEnt) {
       userIsPro = true;
+      localStorage.setItem('gymtrack_pro_cache', 'pro');
       if (isFirebaseReady() && currentUser) {
         firebaseDb.collection('users').doc(currentUser.uid).set({ plan: 'pro' }, { merge: true }).catch(() => {});
       }
@@ -4681,6 +4686,7 @@ async function handlePurchase() {
     const { customerInfo } = await rcInstance.purchase({ rcPackage: pkg });
     if (customerInfo.entitlements.active[RC_ENTITLEMENT]) {
       userIsPro = true;
+      localStorage.setItem('gymtrack_pro_cache', 'pro');
       closePaywall();
       updateProUI();
       showToast(t('purchaseSuccess'));
@@ -4704,6 +4710,7 @@ async function restorePurchase() {
       const info = await rcInstance.restorePurchases();
       if (info.entitlements.active[RC_ENTITLEMENT]) {
         userIsPro = true;
+        localStorage.setItem('gymtrack_pro_cache', 'pro');
         closePaywall();
         updateProUI();
         showToast(t('proRestored'));
@@ -5237,6 +5244,7 @@ function logoutProfile() {
   rcInstance = null;
   rcOfferings = null;
   localStorage.removeItem('gymtrack_active');
+  localStorage.removeItem('gymtrack_pro_cache');
   state = {
     workouts: [], prs: {}, myTemplates: [], customThresholds: {},
     totalPoints: 0, currentWorkout: null, workoutStartTime: null,
