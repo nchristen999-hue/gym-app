@@ -2833,7 +2833,7 @@
               <div class="gps-stat-val" id="gpsLivePace">--:--<span style="font-size:11px;color:var(--text-dim);"> /km</span></div>
             </div>
           </div>
-          <div class="gps-live-stats" style="grid-template-columns:1fr 1fr;">
+          <div class="gps-live-stats" style="grid-template-columns:1fr 1fr 1fr;">
             <div class="gps-stat">
               <div class="gps-stat-label" data-i18n="elevation">Elevation</div>
               <div class="gps-stat-val" id="gpsLiveElevation">0<span style="font-size:11px;color:var(--text-dim);"> m</span></div>
@@ -2841,6 +2841,10 @@
             <div class="gps-stat">
               <div class="gps-stat-label" data-i18n="speed">Speed</div>
               <div class="gps-stat-val" id="gpsLiveSpeed">0.0<span style="font-size:11px;color:var(--text-dim);"> km/h</span></div>
+            </div>
+            <div class="gps-stat" id="gpsHeartRateStat" style="display:none;">
+              <div class="gps-stat-label">❤️ HR</div>
+              <div class="gps-stat-val" id="gpsLiveHR" style="color:#ff4d6a;">--<span style="font-size:11px;color:var(--text-dim);"> bpm</span></div>
             </div>
           </div>
           <div class="gps-controls" id="gpsControls">
@@ -6133,6 +6137,8 @@ let cardioMode = 'gps';
 let gpsState = 'idle'; // idle | tracking | paused | stopped
 let gpsWatchId = null;
 let gpsTrackpoints = [];
+let hrPollInterval = null;
+let hrSamples = [];
 let gpsStartTime = null;
 let gpsPausedTime = 0;
 let gpsPauseStart = null;
@@ -6310,6 +6316,7 @@ async function gpsStart() {
   }
 
   gpsTimerInterval = setInterval(updateGpsTimer, 1000);
+  startHeartRatePolling();
 }
 
 function persistGpsState() {
@@ -6380,6 +6387,7 @@ function gpsPause() {
   gpsPauseStart = Date.now();
   if (gpsWatchId !== null) { navigator.geolocation.clearWatch(gpsWatchId); gpsWatchId = null; }
   if (window.Native && window.Native.isNative) { window.Native.stopBackgroundGps(); }
+  if (hrPollInterval) { clearInterval(hrPollInterval); hrPollInterval = null; }
   persistGpsState();
   document.getElementById('gpsStatus').innerHTML = '<span class="pulse orange"></span> Pausiert';
   updateGpsControls();
@@ -6418,6 +6426,7 @@ async function gpsResume() {
       () => {}, { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
     );
   }
+  startHeartRatePolling();
 }
 
 function gpsStop() {
@@ -6427,6 +6436,7 @@ function gpsStop() {
   if (gpsWatchId !== null) { navigator.geolocation.clearWatch(gpsWatchId); gpsWatchId = null; }
   if (window.Native && window.Native.isNative) { window.Native.stopBackgroundGps(); }
   if (gpsTimerInterval) { clearInterval(gpsTimerInterval); gpsTimerInterval = null; }
+  stopHeartRatePolling();
   persistGpsState();
   document.getElementById('gpsStatus').innerHTML = `<span class="pulse red"></span> ${t('gpsStopped')}`;
   updateGpsControls();
@@ -6438,6 +6448,7 @@ function gpsReset() {
   if (gpsWatchId !== null) { navigator.geolocation.clearWatch(gpsWatchId); gpsWatchId = null; }
   if (window.Native && window.Native.isNative) { window.Native.stopBackgroundGps(); }
   if (gpsTimerInterval) { clearInterval(gpsTimerInterval); gpsTimerInterval = null; }
+  stopHeartRatePolling();
   gpsTrackpoints = [];
   gpsStartTime = null;
   gpsPausedTime = 0;
@@ -6451,6 +6462,10 @@ function gpsReset() {
   document.getElementById('gpsLivePace').innerHTML = '--:--<span style="font-size:11px;color:var(--text-dim);"> /km</span>';
   document.getElementById('gpsLiveElevation').innerHTML = '0<span style="font-size:11px;color:var(--text-dim);"> m</span>';
   document.getElementById('gpsLiveSpeed').innerHTML = '0.0<span style="font-size:11px;color:var(--text-dim);"> km/h</span>';
+  document.getElementById('gpsLiveHR').innerHTML = '--<span style="font-size:11px;color:var(--text-dim);"> bpm</span>';
+  const hrStat = document.getElementById('gpsHeartRateStat');
+  if (hrStat) hrStat.style.display = 'none';
+  hrSamples = [];
   updateGpsControls();
 }
 
@@ -9176,6 +9191,43 @@ const HealthKit = {
     }
   },
 };
+
+async function startHeartRatePolling() {
+  if (!await HealthKit.isAvailable()) return;
+  const authed = await HealthKit.requestAuthorization();
+  if (!authed) return;
+  const hrStat = document.getElementById('gpsHeartRateStat');
+  if (hrStat) hrStat.style.display = '';
+  hrSamples = [];
+  hrPollInterval = setInterval(async () => {
+    if (gpsState !== 'tracking') return;
+    try {
+      const now = new Date();
+      const tenSecsAgo = new Date(now.getTime() - 10000);
+      const result = await window.Capacitor.Plugins.HealthKit.queryHKitSampleType({
+        sampleName: 'HKQuantityTypeIdentifierHeartRate',
+        startDate: tenSecsAgo.toISOString(),
+        endDate: now.toISOString(),
+        limit: 1,
+      });
+      if (result && result.resultData && result.resultData.length > 0) {
+        const bpm = Math.round(result.resultData[result.resultData.length - 1].value);
+        hrSamples.push(bpm);
+        const hrEl = document.getElementById('gpsLiveHR');
+        if (hrEl) hrEl.innerHTML = bpm + '<span style="font-size:11px;color:var(--text-dim);"> bpm</span>';
+      }
+    } catch(e) { console.warn('HR poll error:', e); }
+  }, 5000);
+}
+
+function stopHeartRatePolling() {
+  if (hrPollInterval) { clearInterval(hrPollInterval); hrPollInterval = null; }
+  if (hrSamples.length > 0) {
+    const avg = Math.round(hrSamples.reduce((a, b) => a + b, 0) / hrSamples.length);
+    const hrInput = document.getElementById('gpsHR');
+    if (hrInput && !hrInput.value) hrInput.value = avg;
+  }
+}
 
 async function syncSessionToHealth(session) {
   try {
