@@ -3478,6 +3478,17 @@
   </div>
 </div>
 
+<!-- CONFIRM DIALOG (iOS-safe, replaces native confirm()) -->
+<div class="modal-overlay" id="appConfirmModal" style="z-index:999;" onclick="resolveAppConfirm(false)">
+  <div class="modal" style="max-width:320px;" onclick="event.stopPropagation()">
+    <div class="modal-title" id="appConfirmTitle"></div>
+    <div style="font-size:13px;color:var(--text-dim);margin-bottom:16px;line-height:1.5;" id="appConfirmMsg"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="resolveAppConfirm(false)" data-i18n="cancel">Abbrechen</button>
+      <button class="btn-primary" style="background:#f44;border-color:#f44;" onclick="resolveAppConfirm(true)" id="appConfirmOk">OK</button>
+    </div>
+  </div>
+</div>
 
 <!-- PAYWALL MODAL -->
 <div class="paywall-overlay" id="paywallOverlay" onclick="if(event.target===this) closePaywall()">
@@ -3528,7 +3539,7 @@ const FIREBASE_CONFIG = {
 
 // Pro-Zugang wird AUSSCHLIESSLICH über Firebase gesteuert (users/<uid>.plan === 'pro').
 // Liste leer lassen = keine automatischen Admin-Pro-Konten mehr.
-const ADMIN_EMAILS = ['nevio.christen@gmx.ch'];
+const ADMIN_EMAILS = ['nevio.christen@gmx.ch', 'nchristen656@gmail.com'];
 
 // =============================================
 // REVENUECAT CONFIG
@@ -4742,6 +4753,10 @@ async function restorePurchase() {
 }
 
 async function openManageSubscription() {
+  if (window.Native && window.Native.isNative) {
+    window.open('https://apps.apple.com/account/subscriptions', '_blank');
+    return;
+  }
   if (rcInstance) {
     try {
       const info = await rcInstance.getCustomerInfo();
@@ -4752,11 +4767,7 @@ async function openManageSubscription() {
       }
     } catch(e) { /* fall through */ }
   }
-  if (window.Native && window.Native.isNative) {
-    window.open('https://apps.apple.com/account/subscriptions', '_blank');
-  } else {
-    showToast(t('manageSubHint'));
-  }
+  showToast(t('manageSubHint'));
 }
 
 function updateProUI() {
@@ -5262,9 +5273,9 @@ function logoutProfile() {
   closeSettings();
 }
 
-function deleteProfile() {
+async function deleteProfile() {
   if (!activeProfile) return;
-  if (!confirm(t('confirmDeleteProfile'))) return;
+  if (!await appConfirm('🗑', t('confirmDeleteProfile'))) return;
   const profiles = getProfiles().filter(p => p !== activeProfile);
   saveProfiles(profiles);
   localStorage.removeItem(storageKey());
@@ -6169,7 +6180,7 @@ function setCardioMode(mode) {
   if (mode === 'gps') initGpsMap();
 }
 
-function toggleCardioForm() {
+async function toggleCardioForm() {
   const form = document.getElementById('cardioForm');
   const btn = document.getElementById('cardioToggleBtn');
   if (form.style.display === 'none') {
@@ -6183,7 +6194,8 @@ function toggleCardioForm() {
     if (cardioMode === 'gps') setTimeout(initGpsMap, 100);
   } else {
     if (gpsState === 'tracking' || gpsState === 'paused') {
-      if (!confirm(t('confirmGpsCancel'))) return;
+      const ok = await appConfirm('⚠️', t('confirmGpsCancel'));
+      if (!ok) return;
       gpsReset();
     }
     form.style.display = 'none';
@@ -6663,8 +6675,8 @@ function autoFillKcal(prefix) {
   document.getElementById(prefix + 'Kcal').value = kcal > 0 ? kcal : '';
 }
 
-function deleteCardioSession(id) {
-  if (!confirm(t('confirmDeleteCardio'))) return;
+async function deleteCardioSession(id) {
+  if (!await appConfirm('🗑', t('confirmDeleteCardio'))) return;
   const idx = state.cardioSessions.findIndex(s => s.id === id);
   if (idx === -1) return;
   const s = state.cardioSessions[idx];
@@ -6807,8 +6819,8 @@ function startCardioTemplate(id) {
   showToast(t('templateLoaded'));
 }
 
-function deleteCardioTemplate(id) {
-  if (!confirm(t('confirmDeleteCardioTpl'))) return;
+async function deleteCardioTemplate(id) {
+  if (!await appConfirm('🗑', t('confirmDeleteCardioTpl'))) return;
   state.cardioTemplates = (state.cardioTemplates || []).filter(ct => ct.id !== id);
   saveState();
   renderCardioTemplates();
@@ -7080,9 +7092,9 @@ function closeMoreMenu() {
   document.getElementById('moreMenuBackdrop').classList.remove('show');
 }
 
-function startEmptyWorkout() {
+async function startEmptyWorkout() {
   if (state.currentWorkout) {
-    if (!confirm(t('confirmActiveWorkout'))) return;
+    if (!await appConfirm('⚠️', t('confirmActiveWorkout'))) return;
   }
   state.currentWorkout = { name: '', exercises: [] };
   state.workoutStartTime = Date.now();
@@ -7103,9 +7115,9 @@ function startMyTemplate(id) {
   startFromTemplate(tpl.name, tpl.exercises);
 }
 
-function startFromTemplate(name, exercises) {
+async function startFromTemplate(name, exercises) {
   if (state.currentWorkout) {
-    if (!confirm(t('confirmActiveWorkout'))) return;
+    if (!await appConfirm('⚠️', t('confirmActiveWorkout'))) return;
   }
   state.currentWorkout = {
     name: name,
@@ -7200,8 +7212,8 @@ function pickExercise(name) {
     renderTemplateBuilder();
   }
 }
-function removeExercise(idx) {
-  if (!confirm(t('confirmRemoveEx'))) return;
+async function removeExercise(idx) {
+  if (!await appConfirm('⚠️', t('confirmRemoveEx'))) return;
   state.currentWorkout.exercises.splice(idx, 1);
   renderWorkout();
 }
@@ -7261,7 +7273,7 @@ function startTimer() {
   timerInterval = setInterval(update, 1000);
 }
 
-function finishWorkout() {
+async function finishWorkout() {
   if (!state.currentWorkout) return;
   const w = state.currentWorkout;
   w.name = document.getElementById('workoutName').value || 'Workout';
@@ -7272,7 +7284,7 @@ function finishWorkout() {
     return ex.sets.some(s => s.done);
   });
   if (w.exercises.length === 0) {
-    if (!confirm(t('confirmNoSets'))) return;
+    if (!await appConfirm('⚠️', t('confirmNoSets'))) return;
   }
   w.exercises.forEach(ex => {
     if (!ex.isCardio) ex.sets = ex.sets.filter(s => s.done);
@@ -7378,8 +7390,8 @@ function closeCelebration() {
   }, 300);
 }
 
-function cancelWorkout() {
-  if (!confirm(t('confirmDiscardWorkout'))) return;
+async function cancelWorkout() {
+  if (!await appConfirm('⚠️', t('confirmDiscardWorkout'))) return;
   state.currentWorkout = null;
   state.workoutStartTime = null;
   if (timerInterval) clearInterval(timerInterval);
@@ -7465,9 +7477,9 @@ function saveTemplate() {
   renderHome();
   showToast(t('templateSaved'));
 }
-function deleteTemplate() {
+async function deleteTemplate() {
   if (!templateBuilder.editingId) return;
-  if (!confirm(t('confirmDeleteTemplate'))) return;
+  if (!await appConfirm('🗑', t('confirmDeleteTemplate'))) return;
   state.myTemplates = state.myTemplates.filter(mt => mt.id !== templateBuilder.editingId);
   saveState();
   closeTemplateModal();
@@ -7524,8 +7536,8 @@ function updateThreshold(exerciseName, idx, value) {
   state.customThresholds[exerciseName][idx] = val;
   // No re-render needed - inputs hold their own state, save happens on close
 }
-function resetThresholds() {
-  if (!confirm(t('confirmResetThresholds'))) return;
+async function resetThresholds() {
+  if (!await appConfirm('⚠️', t('confirmResetThresholds'))) return;
   state.customThresholds = {};
   renderThresholdsList();
   showToast(t('thresholdsReset'));
@@ -7536,6 +7548,20 @@ function showToast(msg) {
   el.textContent = msg;
   el.className = 'toast show';
   setTimeout(() => el.className = 'toast', 2500);
+}
+
+let _appConfirmResolve = null;
+function appConfirm(title, msg) {
+  return new Promise(resolve => {
+    _appConfirmResolve = resolve;
+    document.getElementById('appConfirmTitle').textContent = title || '';
+    document.getElementById('appConfirmMsg').textContent = msg || '';
+    document.getElementById('appConfirmModal').classList.add('active');
+  });
+}
+function resolveAppConfirm(val) {
+  document.getElementById('appConfirmModal').classList.remove('active');
+  if (_appConfirmResolve) { _appConfirmResolve(val); _appConfirmResolve = null; }
 }
 
 function escapeHtml(s) {
@@ -8107,7 +8133,7 @@ function importData(event) {
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = async function(e) {
     // 1) Datei lesen/parsen – nur HIER zählt ein "Lesefehler".
     let data;
     try {
@@ -8121,7 +8147,8 @@ function importData(event) {
       return;
     }
 
-    if (!confirm(t('confirmLoadBackup'))) return;
+    const ok = await appConfirm('📤 Import', t('confirmLoadBackup'));
+    if (!ok) return;
 
     // 2) Daten übernehmen. Wichtig: nutritionLog/waterLog/sleepLog sind ARRAYS
     //    (Default []), nicht {} – sonst crashen spätere .find/.filter-Aufrufe.
@@ -8153,15 +8180,15 @@ function importData(event) {
     showToast(t('dataRestored'));
     closeSettings();
     try { renderHome(); } catch (e2) { console.warn('post-import render failed', e2); }
+    updateProUI();
   };
   reader.readAsText(file);
   event.target.value = '';
 }
 
-function clearAllData() {
-  if (!confirm(t('confirmDeleteAll'))) return;
-  if (!confirm(t('confirmDeleteAll2'))) return;
-
+async function clearAllData() {
+  if (!await appConfirm('⚠️', t('confirmDeleteAll'))) return;
+  if (!await appConfirm('⚠️', t('confirmDeleteAll2'))) return;
   localStorage.removeItem(storageKey());
   location.reload();
 }
@@ -9586,8 +9613,8 @@ function renderPhotos() {
   }).join('');
 }
 
-function deletePhoto(timestamp) {
-  if (!confirm(t('confirmDelete') || 'Delete this photo?')) return;
+async function deletePhoto(timestamp) {
+  if (!await appConfirm('🗑', t('confirmDelete') || 'Delete this photo?')) return;
   state.progressPhotos = (state.progressPhotos || []).filter(p => p.timestamp !== timestamp);
   saveState();
   renderPhotos();
