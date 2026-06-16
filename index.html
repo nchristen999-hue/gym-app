@@ -9202,6 +9202,7 @@ async function syncSessionToHealth(session) {
       if (user) {
         currentUser = user;
         await checkProStatus();
+        updateProUI();
         initRevenueCat(user.uid);
         if (!user.emailVerified) {
           showVerifyScreen(user.email);
