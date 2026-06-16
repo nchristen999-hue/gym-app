@@ -5651,48 +5651,50 @@ function calculateStreak() {
 }
 
 function renderHome() {
-  const stats = calculateStats();
-  document.getElementById('totalWorkouts').textContent = stats.totalWorkouts;
-  document.getElementById('weekWorkouts').textContent = stats.weekWorkouts;
-  document.getElementById('totalVolume').innerHTML = stats.totalVolume.toLocaleString(getLoc()) + '<span class="unit">kg</span>';
-  document.getElementById('totalMedals').textContent = stats.totalMedals;
-  document.getElementById('totalPoints').textContent = state.totalPoints.toLocaleString(getLoc());
+  try {
+    const stats = calculateStats();
+    document.getElementById('totalWorkouts').textContent = stats.totalWorkouts;
+    document.getElementById('weekWorkouts').textContent = stats.weekWorkouts;
+    document.getElementById('totalVolume').innerHTML = stats.totalVolume.toLocaleString(getLoc()) + '<span class="unit">kg</span>';
+    document.getElementById('totalMedals').textContent = stats.totalMedals;
+    document.getElementById('totalPoints').textContent = state.totalPoints.toLocaleString(getLoc());
 
-  const cardioSessions = state.cardioSessions || [];
-  const cardioKcal = cardioSessions.reduce((s, c) => s + (c.kcal || 0), 0);
-  document.getElementById('homeCardioKcal').innerHTML = cardioKcal.toLocaleString(getLoc()) + '<span class="unit">kcal</span>';
-  document.getElementById('homeCardioCount').textContent = cardioSessions.length;
-  
-  document.getElementById('streakCount').textContent = stats.streak;
-  const badge = document.getElementById('streakBadge');
-  if (stats.streak > 0) badge.classList.add('active');
-  else badge.classList.remove('active');
-  
-  const lvl = getLevel(state.totalPoints);
-  document.getElementById('levelIcon').textContent = lvl.icon || '🌱';
-  document.getElementById('levelNum').textContent = 'L' + lvl.num;
-  document.getElementById('levelTitle').textContent = lvl.title;
-  document.getElementById('levelPerk').textContent = lvl.perkKey ? t(lvl.perkKey) : '';
-  if (lvl.next) {
-    const progress = ((state.totalPoints - lvl.xp) / (lvl.next.xp - lvl.xp)) * 100;
-    const xpNeeded = lvl.next.xp - state.totalPoints;
-    document.getElementById('levelProgress').style.width = Math.min(100, progress) + '%';
-    document.getElementById('levelPointsText').textContent = `${state.totalPoints.toLocaleString(getLoc())} / ${lvl.next.xp.toLocaleString(getLoc())} XP`;
-    document.getElementById('levelNextInfo').textContent = `${xpNeeded.toLocaleString(getLoc())} ${t('xpUntil')} ${lvl.next.icon} ${lvl.next.title}`;
-  } else {
-    document.getElementById('levelProgress').style.width = '100%';
-    document.getElementById('levelPointsText').textContent = `${state.totalPoints.toLocaleString(getLoc())} XP (MAX)`;
-    document.getElementById('levelNextInfo').textContent = '🐐 ' + t('maxLevelReached');
-  }
-  
-  const h = new Date().getHours();
-  const greeting = h < 12 ? t('greetMorning') : h < 18 ? t('greetAfternoon') : t('greetEvening');
-  document.getElementById('heroTitle').textContent = greeting;
-  
-  renderTemplates();
-  if (typeof renderMuscleWeekWidget === 'function') renderMuscleWeekWidget();
-  if (typeof renderMuscleMap === 'function') renderMuscleMap();
-  if (typeof renderHomeHealthCard === 'function') renderHomeHealthCard();
+    const cardioSessions = state.cardioSessions || [];
+    const cardioKcal = cardioSessions.reduce((s, c) => s + (c.kcal || 0), 0);
+    document.getElementById('homeCardioKcal').innerHTML = cardioKcal.toLocaleString(getLoc()) + '<span class="unit">kcal</span>';
+    document.getElementById('homeCardioCount').textContent = cardioSessions.length;
+
+    document.getElementById('streakCount').textContent = stats.streak;
+    const badge = document.getElementById('streakBadge');
+    if (stats.streak > 0) badge.classList.add('active');
+    else badge.classList.remove('active');
+
+    const lvl = getLevel(state.totalPoints);
+    document.getElementById('levelIcon').textContent = lvl.icon || '🌱';
+    document.getElementById('levelNum').textContent = 'L' + lvl.num;
+    document.getElementById('levelTitle').textContent = lvl.title;
+    document.getElementById('levelPerk').textContent = lvl.perkKey ? t(lvl.perkKey) : '';
+    if (lvl.next) {
+      const progress = ((state.totalPoints - lvl.xp) / (lvl.next.xp - lvl.xp)) * 100;
+      const xpNeeded = lvl.next.xp - state.totalPoints;
+      document.getElementById('levelProgress').style.width = Math.min(100, progress) + '%';
+      document.getElementById('levelPointsText').textContent = `${state.totalPoints.toLocaleString(getLoc())} / ${lvl.next.xp.toLocaleString(getLoc())} XP`;
+      document.getElementById('levelNextInfo').textContent = `${xpNeeded.toLocaleString(getLoc())} ${t('xpUntil')} ${lvl.next.icon} ${lvl.next.title}`;
+    } else {
+      document.getElementById('levelProgress').style.width = '100%';
+      document.getElementById('levelPointsText').textContent = `${state.totalPoints.toLocaleString(getLoc())} XP (MAX)`;
+      document.getElementById('levelNextInfo').textContent = '🐐 ' + t('maxLevelReached');
+    }
+
+    const h = new Date().getHours();
+    const greeting = h < 12 ? t('greetMorning') : h < 18 ? t('greetAfternoon') : t('greetEvening');
+    document.getElementById('heroTitle').textContent = greeting;
+  } catch(e) { console.warn('renderHome stats error:', e); }
+
+  try { renderTemplates(); } catch(e) { console.warn('renderTemplates error:', e); }
+  try { if (typeof renderMuscleWeekWidget === 'function') renderMuscleWeekWidget(); } catch(e) { console.warn('renderMuscleWeekWidget error:', e); }
+  try { if (typeof renderMuscleMap === 'function') renderMuscleMap(); } catch(e) { console.warn('renderMuscleMap error:', e); }
+  try { if (typeof renderHomeHealthCard === 'function') renderHomeHealthCard(); } catch(e) { console.warn('renderHomeHealthCard error:', e); }
   updateProUI();
 
   // Kennzahlen für das Home-Screen-Widget in die App Group schreiben.
