@@ -2116,6 +2116,84 @@
   body.theme-retro .theme-option { border: 3px solid var(--text); border-radius: 8px; box-shadow: 3px 3px 0 var(--text); }
   body.theme-retro .theme-option.active { border-color: var(--accent); box-shadow: 3px 3px 0 var(--accent); }
 
+  /* ── Retro: Heatmap (fix white-on-white) ── */
+  body.theme-retro .heatmap-card { background: var(--surface); border: 3px solid var(--text); border-radius: 8px; box-shadow: 4px 4px 0 var(--text); }
+  body.theme-retro .heatmap-cell { background: rgba(15,24,64,0.08); }
+  body.theme-retro .heatmap-cell.l1 { background: rgba(214,40,40,0.2); }
+  body.theme-retro .heatmap-cell.l2 { background: rgba(214,40,40,0.45); }
+  body.theme-retro .heatmap-cell.l3 { background: rgba(214,40,40,0.7); }
+  body.theme-retro .heatmap-cell.l4 { background: var(--accent); box-shadow: 0 0 4px rgba(214,40,40,0.5); }
+  body.theme-retro .heatmap-cell.today { outline-color: var(--text); }
+
+  /* ── Retro: Nutrition, Water, Sleep, Steps widgets ── */
+  body.theme-retro .nut-macro-card,
+  body.theme-retro .nut-log-item,
+  body.theme-retro .nut-chart-card,
+  body.theme-retro .nut-profile-bar,
+  body.theme-retro .water-widget,
+  body.theme-retro .sleep-widget,
+  body.theme-retro .steps-widget,
+  body.theme-retro .activity-balance { background: var(--surface); border: 3px solid var(--text); border-radius: 8px; box-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .nut-macro-val { color: var(--text); }
+  body.theme-retro .nut-macro-card.nut-kcal .nut-macro-val { color: var(--accent); }
+  body.theme-retro .nut-log-name { color: var(--text); }
+  body.theme-retro .nut-log-kcal { color: var(--accent); }
+  body.theme-retro .progress-bar { background: var(--surface-2); }
+  body.theme-retro .food-cat-pill { background: var(--surface); border: 2px solid var(--text); color: var(--text); }
+  body.theme-retro .food-cat-pill.active { background: var(--accent); color: #fff; border-color: var(--text); }
+  body.theme-retro .nut-goals-btn { border: 2px solid var(--text); color: var(--text); font-family: 'Saira Condensed', sans-serif; font-weight: 800; }
+  body.theme-retro .cardio-toggle-btn { color: var(--text); }
+  body.theme-retro .water-btn { background: var(--surface-2); border: 2px solid var(--text); color: var(--text); border-radius: 6px; font-weight: 800; }
+  body.theme-retro .water-btn:last-child { background: var(--accent); color: #fff; }
+  body.theme-retro .water-progress { background: var(--surface-2); border: 2px solid var(--text); }
+  body.theme-retro .water-progress-fill { background: #3b82f6; }
+  body.theme-retro .steps-input { background: var(--surface-2); border: 2px solid var(--text); color: var(--text); font-family: 'Space Mono', monospace; border-radius: 4px; }
+  body.theme-retro .steps-save-btn,
+  body.theme-retro .sleep-save-btn { background: var(--accent); color: #fff; border: 2px solid var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 800; }
+  body.theme-retro .sleep-input { background: var(--surface-2); border: 2px solid var(--text); color: var(--text); font-family: 'Space Mono', monospace; border-radius: 4px; }
+  body.theme-retro .steps-bar { background: rgba(15,24,64,0.12); }
+  body.theme-retro .steps-bar.today { background: var(--accent); }
+  body.theme-retro .steps-bar.good { background: var(--royal); }
+  body.theme-retro .sleep-bar { background: rgba(15,24,64,0.12); }
+
+  /* ── Retro: Buttons & misc ── */
+  body.theme-retro .btn-secondary { background: var(--surface); border: 2px solid var(--text); color: var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 800; }
+  body.theme-retro .cardio-delete { background: var(--surface-2); border: 2px solid var(--text); color: var(--accent); }
+  body.theme-retro .more-menu { background: var(--surface); border: 3px solid var(--text); box-shadow: 4px 4px 0 var(--text); }
+  body.theme-retro .more-menu-item { color: var(--text); font-family: 'Saira Condensed', sans-serif; font-weight: 800; }
+  body.theme-retro .mm-lock { color: var(--accent); }
+  body.theme-retro .tab-lock { color: var(--accent); }
+  body.theme-retro .empty-state { color: var(--text-dim); }
+  body.theme-retro .paywall-card { background: var(--surface); border: 3px solid var(--text); box-shadow: 6px 6px 0 var(--text); color: var(--text); }
+  body.theme-retro .paywall-title { color: var(--text); }
+  body.theme-retro .paywall-title .accent { color: var(--accent); }
+  body.theme-retro .paywall-subtitle { color: var(--text-dim); }
+  body.theme-retro .paywall-feature { color: var(--text); }
+  body.theme-retro .paywall-buy-btn { background: var(--accent); color: #fff; border: 3px solid var(--text); box-shadow: 3px 3px 0 var(--text); font-family: 'Saira Condensed', sans-serif; font-weight: 900; }
+  body.theme-retro .paywall-billing-tab { color: var(--text-dim); background: var(--surface-2); }
+  body.theme-retro .paywall-billing-tab.active { background: var(--accent); color: #fff; }
+  body.theme-retro .paywall-price { color: var(--text); }
+  body.theme-retro .paywall-original-price { color: var(--text-dim); }
+  body.theme-retro .muscle-week-widget { border: 3px solid var(--text); box-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .settings-section-title { color: var(--text); font-family: 'Saira Condensed', sans-serif; font-weight: 800; }
+  body.theme-retro .bw-chart-container { background: var(--surface); border: 3px solid var(--text); border-radius: 8px; box-shadow: 3px 3px 0 var(--text); }
+  body.theme-retro .bw-entry-row input { background: var(--surface-2); border: 2px solid var(--text); color: var(--text); font-family: 'Space Mono', monospace; border-radius: 4px; }
+  body.theme-retro .bw-entry-row button { background: var(--accent); color: #fff; border: 2px solid var(--text); border-radius: 4px; font-family: 'Saira Condensed', sans-serif; font-weight: 800; }
+  body.theme-retro .bw-item { background: var(--surface); border: 2px solid var(--text); border-radius: 6px; }
+  body.theme-retro .bw-item-weight { color: var(--text); }
+  body.theme-retro .bw-item-diff.down { color: var(--accent); }
+  body.theme-retro .bw-item-diff.up { color: var(--yellow); }
+  body.theme-retro .rest-timer-float { background: var(--surface); border: 3px solid var(--text); box-shadow: 4px 4px 0 var(--text); }
+  body.theme-retro .rest-timer-countdown { color: var(--text); }
+  body.theme-retro .rest-timer-btn { border-color: var(--text); color: var(--text); }
+  body.theme-retro .rest-timer-btn:active, body.theme-retro .rest-timer-btn.active { border-color: var(--accent); color: var(--accent); }
+  body.theme-retro .chart-container, body.theme-retro .bw-chart-container { background: var(--surface); }
+  body.theme-retro .nut-add-btn { background: var(--accent); color: #fff; border: 2px solid var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; font-weight: 800; }
+  body.theme-retro .exercise-search-input, body.theme-retro .nut-search-input { background: var(--surface-2); border: 2px solid var(--text); color: var(--text); border-radius: 4px; }
+  body.theme-retro .exercise-list-item { background: var(--surface); border: 2px solid var(--text); color: var(--text); border-radius: 6px; }
+  body.theme-retro .exercise-list-item:active { background: var(--surface-2); }
+  body.theme-retro .toast { background: var(--text); color: var(--bg); border: 2px solid var(--yellow); font-family: 'Saira Condensed', sans-serif; font-weight: 800; }
+
 /* ════════════════════════════════════════════════════════
    FOUNDRY v2 — Design System Overhaul
    Industrial athletic. Condensed display type, grain, signal-lime.
@@ -2515,7 +2593,7 @@
       </div>
 
       <!-- TRAINING HEATMAP -->
-      <div class="heatmap-card">
+      <div class="heatmap-card" style="margin-top:8px;">
         <div class="card-title" style="margin-bottom:12px;">
           <span data-i18n="activity16w">Aktivität · 16 Wochen</span>
           <span id="heatmapTotal" style="color:var(--accent);"></span>
@@ -5754,9 +5832,12 @@ function renderHomeHealthCard() {
   if (sEl) sEl.textContent = (todaySteps || 0).toLocaleString(getLoc());
   if (slEl) slEl.textContent = sleepAvg ? sleepAvg.toFixed(1) + ' h' : '– h';
 
-  drawHomeBars('homeStepsChart', stepsData, '#d4ff3a', v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : String(Math.round(v)));
-  drawHomeBars('homeSleepChart', sleepData, '#a78bfa', v => v.toFixed(1));
+  const retro = isRetro();
+  drawHomeBars('homeStepsChart', stepsData, retro ? '#D62828' : '#d4ff3a', v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : String(Math.round(v)));
+  drawHomeBars('homeSleepChart', sleepData, retro ? '#1E3A8A' : '#a78bfa', v => v.toFixed(1));
 }
+
+function isRetro() { return document.body.classList.contains('theme-retro'); }
 
 function drawHomeBars(canvasId, data, color, fmt) {
   const canvas = document.getElementById(canvasId);
@@ -5773,7 +5854,7 @@ function drawHomeBars(canvasId, data, color, fmt) {
   const dayNames = (TRANSLATIONS.days && TRANSLATIONS.days[currentLang]) || ['Mo','Tu','We','Th','Fr','Sa','Su'];
 
   if (!data || data.length === 0 || data.every(d => !d.value)) {
-    ctx.fillStyle = '#888';
+    ctx.fillStyle = isRetro() ? '#4A5780' : '#888';
     ctx.font = '13px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('Noch keine Daten', cw / 2, ch / 2);
@@ -5794,7 +5875,8 @@ function drawHomeBars(canvasId, data, color, fmt) {
     const barH = d.value ? Math.max(3, (d.value / maxV) * H) : 2;
     const y = padding.top + H - barH;
     const r = Math.min(5, barW / 2);
-    ctx.fillStyle = d.value ? (isToday ? '#fff' : color) : '#2a2a2a';
+    const retro = isRetro();
+    ctx.fillStyle = d.value ? (isToday ? (retro ? '#0F1840' : '#fff') : color) : (retro ? '#E0D8C0' : '#2a2a2a');
     ctx.beginPath();
     ctx.moveTo(x, y + r);
     ctx.arcTo(x, y, x + r, y, r);
@@ -5805,12 +5887,12 @@ function drawHomeBars(canvasId, data, color, fmt) {
     ctx.fill();
 
     if (d.value) {
-      ctx.fillStyle = '#aaa';
+      ctx.fillStyle = retro ? '#4A5780' : '#aaa';
       ctx.font = '9px JetBrains Mono, monospace';
       ctx.textAlign = 'center';
       ctx.fillText(fmt(d.value), x + barW / 2, y - 5);
     }
-    ctx.fillStyle = '#666';
+    ctx.fillStyle = retro ? '#4A5780' : '#666';
     ctx.font = '9px JetBrains Mono, monospace';
     ctx.textAlign = 'center';
     const idx = d.day === 0 ? 6 : d.day - 1;
@@ -6990,24 +7072,25 @@ function drawChart(canvas, data) {
   ctx.scale(dpr, dpr);
   ctx.clearRect(0, 0, rect.width, rect.height);
   
+  const retro = isRetro();
   if (data.length === 0) {
-    ctx.fillStyle = '#888';
+    ctx.fillStyle = retro ? '#4A5780' : '#888';
     ctx.font = '14px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(t('noDataYet'), rect.width/2, rect.height/2);
     return;
   }
-  
+
   const padding = { top: 20, right: 20, bottom: 30, left: 40 };
   const W = rect.width - padding.left - padding.right;
   const H = rect.height - padding.top - padding.bottom;
-  
+
   const weights = data.map(d => d.weight);
   const minW = Math.min(...weights, 0);
   const maxW = Math.max(...weights, 1);
   const range = maxW - minW || 1;
-  
-  ctx.strokeStyle = '#2a2a2a';
+
+  ctx.strokeStyle = retro ? 'rgba(15,24,64,0.1)' : '#2a2a2a';
   ctx.lineWidth = 1;
   for (let i = 0; i <= 4; i++) {
     const y = padding.top + (H * i / 4);
@@ -7015,15 +7098,15 @@ function drawChart(canvas, data) {
     ctx.moveTo(padding.left, y);
     ctx.lineTo(padding.left + W, y);
     ctx.stroke();
-    ctx.fillStyle = '#666';
+    ctx.fillStyle = retro ? '#4A5780' : '#666';
     ctx.font = '10px JetBrains Mono, monospace';
     ctx.textAlign = 'right';
     const val = maxW - (range * i / 4);
     ctx.fillText(val.toFixed(0) + 'kg', padding.left - 6, y + 3);
   }
-  
+
   if (data.length > 1) {
-    ctx.strokeStyle = '#d4ff3a';
+    ctx.strokeStyle = retro ? '#0F1840' : '#d4ff3a';
     ctx.lineWidth = 2.5;
     ctx.beginPath();
     data.forEach((d, i) => {
@@ -7033,31 +7116,31 @@ function drawChart(canvas, data) {
       else ctx.lineTo(x, y);
     });
     ctx.stroke();
-    
+
     const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + H);
-    gradient.addColorStop(0, 'rgba(212, 255, 58, 0.3)');
-    gradient.addColorStop(1, 'rgba(212, 255, 58, 0)');
+    gradient.addColorStop(0, retro ? 'rgba(15, 24, 64, 0.2)' : 'rgba(212, 255, 58, 0.3)');
+    gradient.addColorStop(1, retro ? 'rgba(15, 24, 64, 0)' : 'rgba(212, 255, 58, 0)');
     ctx.fillStyle = gradient;
     ctx.lineTo(padding.left + W, padding.top + H);
     ctx.lineTo(padding.left, padding.top + H);
     ctx.closePath();
     ctx.fill();
   }
-  
+
   data.forEach((d, i) => {
     const x = padding.left + (W * (data.length === 1 ? 0.5 : i / (data.length - 1)));
     const y = padding.top + H - ((d.weight - minW) / range) * H;
-    ctx.fillStyle = '#d4ff3a';
+    ctx.fillStyle = retro ? '#D62828' : '#d4ff3a';
     ctx.beginPath();
     ctx.arc(x, y, 4, 0, Math.PI*2);
     ctx.fill();
-    ctx.fillStyle = '#0a0a0a';
+    ctx.fillStyle = retro ? '#FAF3E0' : '#0a0a0a';
     ctx.beginPath();
     ctx.arc(x, y, 2, 0, Math.PI*2);
     ctx.fill();
   });
-  
-  ctx.fillStyle = '#666';
+
+  ctx.fillStyle = retro ? '#4A5780' : '#666';
   ctx.font = '10px JetBrains Mono, monospace';
   ctx.textAlign = 'center';
   if (data.length > 0) {
@@ -8015,8 +8098,9 @@ function renderBodyWeightChart() {
 
   const data = [...state.bodyWeights].reverse();
 
+  const retro = isRetro();
   if (data.length < 2) {
-    ctx.fillStyle = '#888';
+    ctx.fillStyle = retro ? '#4A5780' : '#888';
     ctx.font = '13px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(data.length === 0 ? t('noDataYet') : t('minEntriesChart'), rect.width / 2, rect.height / 2);
@@ -8032,7 +8116,7 @@ function renderBodyWeightChart() {
   const maxW = Math.max(...weights) + 1;
   const range = maxW - minW || 1;
 
-  ctx.strokeStyle = '#2a2a2a';
+  ctx.strokeStyle = retro ? 'rgba(15,24,64,0.1)' : '#2a2a2a';
   ctx.lineWidth = 1;
   for (let i = 0; i <= 3; i++) {
     const y = padding.top + (H * i / 3);
@@ -8040,13 +8124,13 @@ function renderBodyWeightChart() {
     ctx.moveTo(padding.left, y);
     ctx.lineTo(padding.left + W, y);
     ctx.stroke();
-    ctx.fillStyle = '#666';
+    ctx.fillStyle = retro ? '#4A5780' : '#666';
     ctx.font = '10px JetBrains Mono, monospace';
     ctx.textAlign = 'right';
     ctx.fillText((maxW - (range * i / 3)).toFixed(1), padding.left - 6, y + 3);
   }
 
-  ctx.strokeStyle = '#00bfff';
+  ctx.strokeStyle = retro ? '#0F1840' : '#00bfff';
   ctx.lineWidth = 2.5;
   ctx.beginPath();
   data.forEach((d, i) => {
@@ -8058,8 +8142,8 @@ function renderBodyWeightChart() {
   ctx.stroke();
 
   const gradient = ctx.createLinearGradient(0, padding.top, 0, padding.top + H);
-  gradient.addColorStop(0, 'rgba(0, 191, 255, 0.25)');
-  gradient.addColorStop(1, 'rgba(0, 191, 255, 0)');
+  gradient.addColorStop(0, retro ? 'rgba(15, 24, 64, 0.2)' : 'rgba(0, 191, 255, 0.25)');
+  gradient.addColorStop(1, retro ? 'rgba(15, 24, 64, 0)' : 'rgba(0, 191, 255, 0)');
   ctx.fillStyle = gradient;
   ctx.lineTo(padding.left + W, padding.top + H);
   ctx.lineTo(padding.left, padding.top + H);
@@ -8069,13 +8153,13 @@ function renderBodyWeightChart() {
   data.forEach((d, i) => {
     const x = padding.left + (W * i / (data.length - 1));
     const y = padding.top + H - ((d.weight - minW) / range) * H;
-    ctx.fillStyle = '#00bfff';
+    ctx.fillStyle = retro ? '#0F1840' : '#00bfff';
     ctx.beginPath();
     ctx.arc(x, y, 3.5, 0, Math.PI * 2);
     ctx.fill();
   });
 
-  ctx.fillStyle = '#666';
+  ctx.fillStyle = retro ? '#4A5780' : '#666';
   ctx.font = '10px JetBrains Mono, monospace';
   ctx.textAlign = 'center';
   const first = new Date(data[0].timestamp);
@@ -9144,25 +9228,26 @@ function renderNutWeekChart() {
     const barH = Math.max(2, (d.kcal / maxVal) * barMaxH);
     const y = barMaxH - barH;
 
+    const retro = isRetro();
     if (d.kcal > goal) {
       ctx.fillStyle = 'rgba(248,113,113,0.7)';
     } else if (d.isToday) {
-      ctx.fillStyle = 'rgba(212,255,58,0.8)';
+      ctx.fillStyle = retro ? 'rgba(214,40,40,0.85)' : 'rgba(212,255,58,0.8)';
     } else {
-      ctx.fillStyle = 'rgba(212,255,58,0.35)';
+      ctx.fillStyle = retro ? 'rgba(214,40,40,0.3)' : 'rgba(212,255,58,0.35)';
     }
     ctx.beginPath();
     ctx.roundRect(x, y, barW, barH, 3);
     ctx.fill();
 
-    ctx.fillStyle = d.isToday ? '#f5f5f5' : '#888';
+    ctx.fillStyle = d.isToday ? (retro ? '#0F1840' : '#f5f5f5') : (retro ? '#4A5780' : '#888');
     ctx.font = '500 10px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(d.label, x + barW / 2, h - 2);
   });
 
   const goalY = barMaxH - (goal / maxVal) * barMaxH;
-  ctx.strokeStyle = 'rgba(212,255,58,0.4)';
+  ctx.strokeStyle = isRetro() ? 'rgba(214,40,40,0.5)' : 'rgba(212,255,58,0.4)';
   ctx.setLineDash([4, 3]);
   ctx.lineWidth = 1;
   ctx.beginPath();
