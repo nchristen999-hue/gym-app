@@ -5190,36 +5190,53 @@ function updateHealthButtonsVisibility() {
   if (sleepBtn) sleepBtn.style.display = isNative ? '' : 'none';
 }
 
-// Schritte ohne Toast/Buttons aus Health holen (silent auto-sync)
+// Schritte ohne Toast/Buttons aus Health holen (silent auto-sync, letzte 7 Tage)
 let _lastAutoStepsSync = 0;
 async function autoSyncStepsOnFocus() {
   if (!window.Native || !window.Native.isNative) return;
   if (!activeProfile) return;
-  // Throttle: max alle 60 Sekunden
   if (Date.now() - _lastAutoStepsSync < 60000) return;
   _lastAutoStepsSync = Date.now();
   try {
     const ok = await window.Native.ensureHealthPermissions();
     if (!ok) return;
-    const steps = await window.Native.stepsToday();
-    if (steps == null) return;
-    const input = document.getElementById('stepsInput');
-    if (input) input.value = steps;
-    if (typeof saveSteps === 'function') saveSteps(true); // silent flag
+    if (!state.stepsLog) state.stepsLog = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const key = d.toISOString().split('T')[0];
+      const steps = await window.Native.stepsForDate(d);
+      if (steps == null) continue;
+      const idx = state.stepsLog.findIndex(e => e.date === key);
+      if (idx >= 0) state.stepsLog[idx].steps = steps;
+      else state.stepsLog.push({ date: key, steps });
+    }
+    saveState();
+    if (typeof renderStepsWidget === 'function') renderStepsWidget();
+    if (typeof renderActivityBalance === 'function') renderActivityBalance();
   } catch(e) { console.warn('auto steps sync fail', e); }
 }
 
 async function syncStepsFromHealth() {
-  // Manueller Aufruf – mit Toast Feedback
   if (!window.Native || !window.Native.isNative) { showToast('Health nur in der iPhone-App'); return; }
   try {
     const ok = await window.Native.ensureHealthPermissions();
     if (!ok) { showToast('Bitte Health-Zugriff in iOS-Einstellungen erlauben'); return; }
-    const steps = await window.Native.stepsToday();
-    if (steps == null) { showToast('Keine Schritte gefunden'); return; }
-    document.getElementById('stepsInput').value = steps;
-    saveSteps();
-    showToast('🍎 ' + steps + ' Schritte');
+    if (!state.stepsLog) state.stepsLog = [];
+    let todaySteps = 0;
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const key = d.toISOString().split('T')[0];
+      const steps = await window.Native.stepsForDate(d);
+      if (steps == null) continue;
+      if (i === 0) todaySteps = steps;
+      const idx = state.stepsLog.findIndex(e => e.date === key);
+      if (idx >= 0) state.stepsLog[idx].steps = steps;
+      else state.stepsLog.push({ date: key, steps });
+    }
+    saveState();
+    renderStepsWidget();
+    renderActivityBalance();
+    showToast('🍎 ' + todaySteps + ' Schritte heute');
   } catch(e) { showToast('Health Fehler'); }
 }
 
@@ -10010,20 +10027,26 @@ try {
       } catch(e) { console.warn('Health perm denied', e); return false; }
     },
     async stepsToday() {
+      return this.stepsForDate(new Date());
+    },
+    async stepsForDate(date) {
       const HK = P('CapacitorHealthkit');
       if (!HK) return null;
       try {
-        const start = new Date(); start.setHours(0,0,0,0);
+        const start = new Date(date); start.setHours(0,0,0,0);
+        const end = new Date(date); end.setHours(23,59,59,999);
+        const now = new Date();
+        if (end > now) end.setTime(now.getTime());
         const res = await HK.queryHKitSampleType({
           sampleName: 'stepCount',
           startDate: start.toISOString(),
-          endDate: new Date().toISOString(),
+          endDate: end.toISOString(),
           limit: 0
         });
         const samples = res?.resultData || [];
         const total = samples.reduce((sum, s) => sum + (s.value || 0), 0);
         return Math.round(total);
-      } catch(e) { console.warn('stepsToday fail', e); return null; }
+      } catch(e) { console.warn('stepsForDate fail', e); return null; }
     },
     async sleepLastNight() {
       const HK = P('CapacitorHealthkit');
