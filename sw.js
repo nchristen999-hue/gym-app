@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gymtrack-v12';
+const CACHE_NAME = 'gymtrack-v13';
 const ASSETS = [
   './',
   './index.html',
@@ -24,7 +24,7 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    fetch(e.request)
+    fetch(e.request, { cache: 'no-store' })
       .then(res => {
         const clone = res.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
