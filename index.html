@@ -2387,10 +2387,10 @@
   .heatmap-legend { display: flex; align-items: center; gap: 3px; }
   .heatmap-legend .heatmap-cell { width: 9px; height: 9px; }
   .heatmap-year-grid {
-    display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 1fr);
-    gap: 1.5px; width: 100%; height: 84px;
+    display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, minmax(0, 1fr));
+    gap: 1.5px; width: 100%; height: 84px; overflow: hidden;
   }
-  .heatmap-year-grid .heatmap-cell { width: 100%; height: 100%; border-radius: 1px; }
+  .heatmap-year-grid .heatmap-cell { width: 100%; height: 100%; min-width: 0; min-height: 0; border-radius: 1px; }
   .heatmap-expand-btn {
     display: block; width: 100%; margin-top: 12px; padding: 10px;
     background: transparent; border: 1px solid var(--border); border-radius: 10px;
@@ -10058,7 +10058,7 @@ function openYearlyHeatmap() {
           <span>${year}</span>
           <span style="color:var(--accent);">${total} Sessions</span>
         </div>
-        <div class="heatmap-year-grid" style="grid-template-columns:repeat(${cols},1fr);">${cellsHtml}</div>
+        <div class="heatmap-year-grid" style="grid-template-columns:repeat(${cols},minmax(0,1fr));">${cellsHtml}</div>
       </div>`;
   }
   body.innerHTML = html;
