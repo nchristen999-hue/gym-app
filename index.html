@@ -1948,7 +1948,7 @@
   .home-health-label { font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
   .home-health-value { font-size: 22px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
   .home-health-chart-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; margin: 8px 0 4px; }
-  #homeStepsChart, #homeSleepChart { width: 100%; display: block; }
+  #homeStepsChart { width: 100%; display: block; }
 
   /* ===== STEPS TRACKER ===== */
   .steps-widget { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
@@ -2124,6 +2124,8 @@
   body.theme-retro .heatmap-cell.l3 { background: rgba(214,40,40,0.7); }
   body.theme-retro .heatmap-cell.l4 { background: var(--accent); box-shadow: 0 0 4px rgba(214,40,40,0.5); }
   body.theme-retro .heatmap-cell.today { outline-color: var(--text); }
+  body.theme-retro .heatmap-expand-btn { border: 2px solid var(--text); color: var(--text); border-radius: 6px; font-family: 'Saira Condensed', sans-serif; }
+  body.theme-retro .heatmap-expand-btn:active { color: var(--accent); border-color: var(--accent); }
 
   /* ── Retro: Nutrition, Water, Sleep, Steps widgets ── */
   body.theme-retro .nut-macro-card,
@@ -2384,6 +2386,13 @@
   }
   .heatmap-legend { display: flex; align-items: center; gap: 3px; }
   .heatmap-legend .heatmap-cell { width: 9px; height: 9px; }
+  .heatmap-expand-btn {
+    display: block; width: 100%; margin-top: 12px; padding: 10px;
+    background: transparent; border: 1px solid var(--border); border-radius: 10px;
+    color: var(--text-dim); font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px; cursor: pointer;
+  }
+  .heatmap-expand-btn:active { border-color: var(--accent); color: var(--accent); }
 
 </style>
 </head>
@@ -2595,7 +2604,7 @@
       <!-- TRAINING HEATMAP -->
       <div class="heatmap-card" style="margin-top:8px;">
         <div class="card-title" style="margin-bottom:12px;">
-          <span data-i18n="activity16w">Aktivität · 16 Wochen</span>
+          <span data-i18n="activityYear">Aktivität · Jahr</span>
           <span id="heatmapTotal" style="color:var(--accent);"></span>
         </div>
         <div class="heatmap-scroll">
@@ -2613,6 +2622,7 @@
             <span style="margin-left:4px;">Mehr</span>
           </div>
         </div>
+        <button class="heatmap-expand-btn" onclick="openYearlyHeatmap()" data-i18n="viewAllYears">Erweitert · Alle Jahre ▸</button>
       </div>
 
       <!-- MUSCLE MAP WIDGET -->
@@ -2738,10 +2748,10 @@
         <div class="muscle-map-legend" id="muscleMapLegend"></div>
       </div>
 
-      <!-- AKTIVITÄT & SCHLAF (7-Tage-Diagramm, nutzt stepsLog/sleepLog) -->
+      <!-- AKTIVITÄT (7-Tage-Diagramm, nutzt stepsLog) -->
       <div class="muscle-map-card" id="homeHealthCard">
         <div class="muscle-map-header">
-          <div class="card-title" style="margin:0;">Aktivität &amp; Schlaf</div>
+          <div class="card-title" style="margin:0;">Aktivität</div>
           <span class="card-title-action" onclick="showView('nutrition')">Details →</span>
         </div>
         <div class="home-health-summary">
@@ -2749,15 +2759,9 @@
             <div class="home-health-label">👟 Schritte heute</div>
             <div class="home-health-value" id="homeStepsVal">0</div>
           </div>
-          <div class="home-health-item">
-            <div class="home-health-label">😴 Schlaf (Ø 7T)</div>
-            <div class="home-health-value" id="homeSleepVal">– h</div>
-          </div>
         </div>
         <div class="home-health-chart-label">Schritte · 7 Tage</div>
         <canvas id="homeStepsChart" height="130"></canvas>
-        <div class="home-health-chart-label">Schlaf · 7 Tage (Std)</div>
-        <canvas id="homeSleepChart" height="130"></canvas>
       </div>
 
       <div class="section-tabs">
@@ -3422,6 +3426,15 @@
   </div>
 </div>
 
+<!-- YEARLY HEATMAP OVERVIEW (only reachable via the heatmap "expand" button) -->
+<div class="settings-overlay" id="yearlyHeatmapOverlay">
+  <div class="settings-header">
+    <div class="settings-header-title" data-i18n="yearlyOverview">Yearly Overview</div>
+    <button class="settings-close" onclick="closeYearlyHeatmap()">✕</button>
+  </div>
+  <div class="settings-content" id="yearlyHeatmapBody"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <div class="celebration-overlay" id="celebration">
@@ -3675,7 +3688,9 @@ const TRANSLATIONS = {
 
   // ── MUSCLE MAP ──
   muscleMap: { en:'Muscle Map', de:'Muskel-Map', es:'Mapa muscular', fr:'Carte musculaire', it:'Mappa muscolare' },
-  activity16w: { en:'Activity · 16 Weeks', de:'Aktivität · 16 Wochen', es:'Actividad · 16 semanas', fr:'Activité · 16 semaines', it:'Attività · 16 settimane' },
+  activityYear: { en:'Activity · Year', de:'Aktivität · Jahr', es:'Actividad · Año', fr:'Activité · Année', it:'Attività · Anno' },
+  viewAllYears: { en:'Expand · All Years ▸', de:'Erweitert · Alle Jahre ▸', es:'Ampliar · Todos los años ▸', fr:'Étendre · Toutes les années ▸', it:'Espandi · Tutti gli anni ▸' },
+  yearlyOverview: { en:'Yearly Overview', de:'Jahresübersicht', es:'Resumen anual', fr:'Aperçu annuel', it:'Panoramica annuale' },
   week: { en:'Week', de:'Woche', es:'Semana', fr:'Semaine', it:'Settimana' },
   month: { en:'Month', de:'Monat', es:'Mes', fr:'Mois', it:'Mese' },
   total: { en:'Total', de:'Gesamt', es:'Total', fr:'Total', it:'Totale' },
@@ -5746,8 +5761,9 @@ function calculateStreak() {
 }
 
 function renderHome() {
+  let stats, lvl;
   try {
-    const stats = calculateStats();
+    stats = calculateStats();
     document.getElementById('totalWorkouts').textContent = stats.totalWorkouts;
     document.getElementById('weekWorkouts').textContent = stats.weekWorkouts;
     document.getElementById('totalVolume').innerHTML = stats.totalVolume.toLocaleString(getLoc()) + '<span class="unit">kg</span>';
@@ -5764,7 +5780,7 @@ function renderHome() {
     if (stats.streak > 0) badge.classList.add('active');
     else badge.classList.remove('active');
 
-    const lvl = getLevel(state.totalPoints);
+    lvl = getLevel(state.totalPoints);
     document.getElementById('levelIcon').textContent = lvl.icon || '🌱';
     document.getElementById('levelNum').textContent = 'L' + lvl.num;
     document.getElementById('levelTitle').textContent = lvl.title;
@@ -5793,7 +5809,7 @@ function renderHome() {
   updateProUI();
 
   // Kennzahlen für das Home-Screen-Widget in die App Group schreiben.
-  if (window.Native && window.Native.isNative && window.Native.publishWidgetData) {
+  if (stats && lvl && window.Native && window.Native.isNative && window.Native.publishWidgetData) {
     window.Native.publishWidgetData({
       streak: stats.streak,
       level: lvl.num,
@@ -5806,7 +5822,7 @@ function renderHome() {
 }
 
 // =============================================
-// HOME: Aktivität & Schlaf – 7-Tage-Diagramm
+// HOME: Aktivität – 7-Tage-Diagramm
 // =============================================
 function last7Days(log, valueKey) {
   const out = [];
@@ -5821,20 +5837,13 @@ function last7Days(log, valueKey) {
 
 function renderHomeHealthCard() {
   const stepsData = last7Days(state.stepsLog, 'steps');
-  const sleepData = last7Days(state.sleepLog, 'hours');
-
   const todaySteps = (typeof getTodaySteps === 'function') ? getTodaySteps() : 0;
-  const sleepVals = sleepData.filter(d => d.value > 0).map(d => d.value);
-  const sleepAvg = sleepVals.length ? (sleepVals.reduce((a, b) => a + b, 0) / sleepVals.length) : 0;
 
   const sEl = document.getElementById('homeStepsVal');
-  const slEl = document.getElementById('homeSleepVal');
   if (sEl) sEl.textContent = (todaySteps || 0).toLocaleString(getLoc());
-  if (slEl) slEl.textContent = sleepAvg ? sleepAvg.toFixed(1) + ' h' : '– h';
 
   const retro = isRetro();
   drawHomeBars('homeStepsChart', stepsData, retro ? '#D62828' : '#d4ff3a', v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : String(Math.round(v)));
-  drawHomeBars('homeSleepChart', sleepData, retro ? '#1E3A8A' : '#a78bfa', v => v.toFixed(1));
 }
 
 function isRetro() { return document.body.classList.contains('theme-retro'); }
@@ -9964,45 +9973,55 @@ function shareCardio(sessionId) {
    2) Toolbox: Scheibenrechner · 1RM · Warm-up-Generator
    ════════════════════════════════════════════════════════ */
 
-function renderTrainingHeatmap() {
-  const grid = document.getElementById('heatmapGrid');
-  if (!grid || !state) return;
+function heatmapDayKey(ts) {
+  const d = new Date(ts);
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
 
-  const dayKey = ts => {
-    const d = new Date(ts);
-    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-  };
-
+function getActivityCounts() {
   const counts = {};
   (state.workouts || []).forEach(w => {
-    const k = dayKey(w.activityDate || w.timestamp);
+    const k = heatmapDayKey(w.activityDate || w.timestamp);
     counts[k] = (counts[k] || 0) + 1;
   });
   (state.cardioSessions || []).forEach(c => {
-    const k = dayKey(c.date || c.timestamp || 0);
+    const k = heatmapDayKey(c.date || c.timestamp || 0);
     counts[k] = (counts[k] || 0) + 1;
   });
+  return counts;
+}
 
+function buildHeatmapCellsHTML(start, end, counts) {
   const today = new Date(); today.setHours(12,0,0,0);
-  const todayKey = dayKey(today.getTime());
-  const dow = (today.getDay() + 6) % 7;
-  const end = new Date(today); end.setDate(end.getDate() + (6 - dow));
-  const start = new Date(end); start.setDate(start.getDate() - (16 * 7 - 1));
-
+  const todayKey = heatmapDayKey(today.getTime());
   let html = '', total = 0;
   const cur = new Date(start);
   while (cur <= end) {
-    const k = dayKey(cur.getTime());
+    const k = heatmapDayKey(cur.getTime());
     const n = counts[k] || 0;
     const future = cur > today;
     if (!future) total += n;
     const lvl = n >= 4 ? 'l4' : n === 3 ? 'l3' : n === 2 ? 'l2' : n === 1 ? 'l1' : '';
     const cls = ['heatmap-cell', lvl, k === todayKey ? 'today' : ''].filter(Boolean).join(' ');
     const style = future ? ' style="opacity:0.18;"' : '';
-    const label = cur.toLocaleDateString(getLoc(), { day: 'numeric', month: 'short' }) + (n ? ` · ${n} Session${n > 1 ? 's' : ''}` : '');
+    const label = cur.toLocaleDateString(getLoc(), { day: 'numeric', month: 'short', year: 'numeric' }) + (n ? ` · ${n} Session${n > 1 ? 's' : ''}` : '');
     html += `<div class="${cls}"${style} title="${label}"></div>`;
     cur.setDate(cur.getDate() + 1);
   }
+  return { html, total };
+}
+
+function renderTrainingHeatmap() {
+  const grid = document.getElementById('heatmapGrid');
+  if (!grid || !state) return;
+
+  const counts = getActivityCounts();
+  const today = new Date(); today.setHours(12,0,0,0);
+  const dow = (today.getDay() + 6) % 7;
+  const end = new Date(today); end.setDate(end.getDate() + (6 - dow));
+  const start = new Date(end); start.setDate(start.getDate() - (52 * 7 - 1));
+
+  const { html, total } = buildHeatmapCellsHTML(start, end, counts);
   grid.innerHTML = html;
 
   const totalEl = document.getElementById('heatmapTotal');
@@ -10014,6 +10033,38 @@ function renderTrainingHeatmap() {
   }
   const scroller = grid.parentElement;
   if (scroller) requestAnimationFrame(() => { scroller.scrollLeft = scroller.scrollWidth; });
+}
+
+function openYearlyHeatmap() {
+  const body = document.getElementById('yearlyHeatmapBody');
+  if (!body) return;
+  const counts = getActivityCounts();
+  const currentYear = new Date().getFullYear();
+  let html = '';
+  for (let year = currentYear; year >= 2025; year--) {
+    const start = new Date(year, 0, 1, 12, 0, 0);
+    const end = new Date(year, 11, 31, 12, 0, 0);
+    const { html: cellsHtml, total } = buildHeatmapCellsHTML(start, end, counts);
+    html += `
+      <div class="heatmap-card" style="margin-bottom:16px;">
+        <div class="card-title" style="margin-bottom:12px;">
+          <span>${year}</span>
+          <span style="color:var(--accent);">${total} Sessions</span>
+        </div>
+        <div class="heatmap-scroll">
+          <div class="heatmap-grid">${cellsHtml}</div>
+        </div>
+      </div>`;
+  }
+  body.innerHTML = html;
+  document.getElementById('yearlyHeatmapOverlay').classList.add('active');
+  requestAnimationFrame(() => {
+    body.querySelectorAll('.heatmap-scroll').forEach(el => { el.scrollLeft = el.scrollWidth; });
+  });
+}
+
+function closeYearlyHeatmap() {
+  document.getElementById('yearlyHeatmapOverlay').classList.remove('active');
 }
 
 // =============================================
