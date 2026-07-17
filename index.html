@@ -10058,11 +10058,23 @@ function openYearlyHeatmap() {
           <span>${year}</span>
           <span style="color:var(--accent);">${total} Sessions</span>
         </div>
-        <div class="heatmap-year-grid" style="grid-template-columns:repeat(${cols},minmax(0,1fr));">${cellsHtml}</div>
+        <div class="heatmap-year-grid" data-cols="${cols}">${cellsHtml}</div>
       </div>`;
   }
   body.innerHTML = html;
   document.getElementById('yearlyHeatmapOverlay').classList.add('active');
+  requestAnimationFrame(sizeYearHeatmapGrids);
+}
+
+function sizeYearHeatmapGrids() {
+  const gap = 1.5;
+  document.querySelectorAll('.heatmap-year-grid').forEach(grid => {
+    const cols = parseInt(grid.dataset.cols, 10);
+    if (!cols) return;
+    const w = grid.clientWidth;
+    const cell = Math.max(1, Math.floor((w - gap * (cols - 1)) / cols));
+    grid.style.gridTemplateColumns = `repeat(${cols}, ${cell}px)`;
+  });
 }
 
 function closeYearlyHeatmap() {
