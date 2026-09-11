@@ -18,6 +18,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   
@@ -3658,6 +3659,7 @@ let rcOfferings = null;
 let firebaseApp = null;
 let firebaseAuth = null;
 let firebaseDb = null;
+let firebaseFunctions = null;
 let currentUser = null;
 let userIsPro = false;
 
@@ -4299,6 +4301,7 @@ function initFirebase() {
     firebaseAuth = firebase.auth();
     firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
     firebaseDb = firebase.firestore();
+    firebaseFunctions = firebase.functions();
     return true;
   } catch(e) { return false; }
 }
@@ -4370,7 +4373,7 @@ async function doRegister() {
       plan: ADMIN_EMAILS.includes(email.toLowerCase()) ? 'pro' : 'free',
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    try { await cred.user.sendEmailVerification(); } catch(ev) { console.error('sendEmailVerification error:', ev); showToast('Email error: ' + ev.message); }
+    // Verify-Mail wird serverseitig automatisch verschickt (functions/index.js: sendVerificationEmail, via Power Automate)
     currentUser = cred.user;
     await checkProStatus();
     const profiles = getProfiles();
@@ -4445,7 +4448,7 @@ async function doPasswordReset() {
   if (!email) return showAuthError(t('authEnterEmailFirst'));
   if (!isFirebaseReady()) return showAuthError(t('authFirebaseNotReady'));
   try {
-    await firebaseAuth.sendPasswordResetEmail(email);
+    await firebaseFunctions.httpsCallable('requestPasswordReset')({ email });
     const info = document.getElementById('authInfo');
     info.textContent = t('authResetSent');
     info.style.color = 'var(--accent)';
@@ -4607,7 +4610,7 @@ function spawnVerifyConfetti() {
 async function resendVerification() {
   if (!currentUser || verifyResendCooldown > 0) return;
   try {
-    await currentUser.sendEmailVerification();
+    await firebaseFunctions.httpsCallable('resendVerificationEmail')({});
     showToast(t('verifyResent'));
     startResendCooldown(60);
   } catch(e) {
