@@ -5407,6 +5407,22 @@ function logoutProfile() {
 async function deleteProfile() {
   if (!activeProfile) return;
   if (!await appConfirm('🗑', t('confirmDeleteProfile'))) return;
+
+  if (currentUser && isFirebaseReady()) {
+    try {
+      await firebaseDb.collection('users').doc(currentUser.uid).delete();
+    } catch(e) { console.warn('Firestore-Löschung fehlgeschlagen:', e); }
+    try {
+      await currentUser.delete();
+    } catch(e) {
+      if (e.code === 'auth/requires-recent-login') {
+        showToast('Bitte aus Sicherheitsgründen ab- und wieder einloggen, dann nochmal löschen');
+        return;
+      }
+      console.warn('Auth-User-Löschung fehlgeschlagen:', e);
+    }
+  }
+
   const profiles = getProfiles().filter(p => p !== activeProfile);
   saveProfiles(profiles);
   localStorage.removeItem(storageKey());
