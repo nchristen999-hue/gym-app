@@ -11,19 +11,20 @@
     "icons": "capacitor-assets generate --ios --iconBackgroundColor '#0a0a0a' --iconBackgroundColorDark '#0a0a0a'"
   },
   "dependencies": {
+    "@capacitor-community/apple-sign-in": "^7.0.1",
+    "@capacitor-community/background-geolocation": "^1.2.23",
     "@capacitor/app": "^6.0.0",
     "@capacitor/browser": "^6.0.0",
+    "@capacitor/camera": "^6.1.0",
     "@capacitor/core": "^6.1.0",
+    "@capacitor/geolocation": "^6.0.0",
     "@capacitor/ios": "^6.1.0",
     "@capacitor/local-notifications": "^6.1.0",
     "@capacitor/preferences": "^6.0.0",
     "@capacitor/push-notifications": "^6.0.0",
     "@capacitor/status-bar": "^6.0.0",
-    "@capacitor/camera": "^6.1.0",
-    "@capacitor/geolocation": "^6.0.0",
-    "@capacitor-community/background-geolocation": "^1.2.23",
-    "@perfood/capacitor-healthkit": "^7.1.0",
-    "@codetrix-studio/capacitor-google-auth": "^3.4.0",
+    "@codetrix-studio/capacitor-google-auth": "3.4.0-rc.4",
+    "@perfood/capacitor-healthkit": "2.0.0-alpha.2",
     "@revenuecat/purchases-capacitor": "^9.0.0"
   },
   "devDependencies": {

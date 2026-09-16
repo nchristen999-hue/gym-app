@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSCameraUsageDescription</key>
+	<string>GYMTRACK braucht die Kamera, um Fortschritts-Fotos aufzunehmen.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>GYMTRACK braucht Zugriff auf deine Fotos, um Fortschritts-Bilder auszuwählen.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>GYMTRACK kann Fortschritts-Fotos in deiner Mediathek speichern.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>GYMTRACK zeigt deine Schritte und deinen Schlaf in der App an.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>GYMTRACK liest deine Gesundheitsdaten nur zur Anzeige.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>GYMTRACK braucht deinen Standort, um Strecke und Route beim Cardio-Training aufzuzeichnen.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>GYMTRACK zeichnet deinen Standort auch im Hintergrund auf, damit dein Lauf/Cardio-Training nicht unterbrochen wird.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
+	<key>GIDClientID</key>
+	<string>31698189822-rjkk3lu3eub60okh78c7eup0atacoecp.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.31698189822-rjkk3lu3eub60okh78c7eup0atacoecp</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+        <string>GYMTRACK</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+</dict>
+</plist>

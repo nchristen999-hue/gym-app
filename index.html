@@ -1428,6 +1428,17 @@
   .auth-google-btn:active { transform: scale(0.97); }
   .auth-google-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
+  .auth-apple-btn {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: #fff; border: 1px solid #fff; color: #000;
+    padding: 14px; border-radius: 12px; margin-bottom: 10px;
+    font-family: inherit; font-weight: 600; font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .auth-apple-btn:active { transform: scale(0.97); }
+  .auth-apple-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
   /* ===== EMAIL VERIFICATION SCREEN ===== */
   .verify-screen {
     position: fixed; inset: 0; z-index: 10000;
@@ -1909,6 +1920,9 @@
   .paywall-close { background: transparent; color: var(--text-dim); border: 1px solid var(--border); padding: 12px; border-radius: 12px; width: 100%; cursor: pointer; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
   .paywall-restore { margin-top: 12px; }
   .paywall-restore a { color: var(--text-dim); font-size: 11px; text-decoration: none; }
+  .paywall-legal { margin-top: 10px; text-align: center; }
+  .paywall-legal a { color: var(--text-dim); font-size: 10px; text-decoration: underline; }
+  .paywall-legal span { color: var(--text-dim); font-size: 10px; margin: 0 6px; }
 
   .theme-option.active { border-color: var(--accent) !important; box-shadow: 0 0 0 2px var(--accent), 0 4px 12px rgba(212,255,58,0.15); }
   .theme-option:active { transform: scale(0.97); }
@@ -2415,6 +2429,11 @@
       <button class="auth-tab active" onclick="switchAuthTab('login')" data-i18n="login">Login</button>
       <button class="auth-tab" onclick="switchAuthTab('register')" data-i18n="register">Register</button>
     </div>
+
+    <button class="auth-apple-btn" onclick="doAppleSignIn()" id="appleSignInBtn">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="#000" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+      <span data-i18n="authAppleSignIn">Continue with Apple</span>
+    </button>
 
     <button class="auth-google-btn" onclick="doGoogleSignIn()" id="googleSignInBtn">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
@@ -3621,6 +3640,11 @@
     <button class="paywall-buy-btn" onclick="handlePurchase()" data-i18n="upgradeNow">Upgrade now</button>
     <button class="paywall-close" onclick="closePaywall()" data-i18n="later">Later</button>
     <div class="paywall-restore"><a href="#" onclick="restorePurchase();return false;" data-i18n="restorePurchase">Restore purchase</a></div>
+    <div class="paywall-legal">
+      <a href="#" onclick="openInAppBrowser('https://nchristen999-hue.github.io/gym-app/privacy-policy.html');return false;" data-i18n="privacyPolicy">Privacy Policy</a>
+      <span>·</span>
+      <a href="#" onclick="openInAppBrowser('https://www.apple.com/legal/internal/terms/site/ios/terms.html');return false;" data-i18n="termsOfUse">Terms of Use</a>
+    </div>
   </div>
 </div>
 
@@ -3964,6 +3988,8 @@ const TRANSLATIONS = {
   upgradeNow: { en:'Upgrade now', de:'Jetzt upgraden', es:'Mejorar ahora', fr:'Passer maintenant', it:'Aggiorna ora' },
   later: { en:'Later', de:'Später', es:'Más tarde', fr:'Plus tard', it:'Più tardi' },
   restorePurchase: { en:'Restore purchase', de:'Kauf wiederherstellen', es:'Restaurar compra', fr:'Restaurer achat', it:'Ripristina acquisto' },
+  privacyPolicy: { en:'Privacy Policy', de:'Datenschutz', es:'Privacidad', fr:'Confidentialité', it:'Privacy' },
+  termsOfUse: { en:'Terms of Use', de:'Nutzungsbedingungen', es:'Términos de uso', fr:'CGU', it:'Termini d\'uso' },
 
   // ── CELEBRATION ──
   workoutDone: { en:'WORKOUT DONE!', de:'WORKOUT FERTIG!', es:'¡ENTRENO COMPLETADO!', fr:'SÉANCE TERMINÉE !', it:'ALLENAMENTO FINITO!' },
@@ -4117,6 +4143,7 @@ const TRANSLATIONS = {
   verifyNotYet: { en:'Email not verified yet. Check your inbox and click the link.', de:'E-Mail noch nicht bestätigt. Prüfe dein Postfach und klicke den Link.', es:'Correo aún no verificado. Revisa tu bandeja y haz clic en el enlace.', fr:'E-mail pas encore vérifié. Vérifie ta boîte et clique sur le lien.', it:'Email non ancora verificata. Controlla la posta e clicca il link.' },
   authOr: { en:'or', de:'oder', es:'o', fr:'ou', it:'o' },
   authGoogleSignIn: { en:'Continue with Google', de:'Weiter mit Google', es:'Continuar con Google', fr:'Continuer avec Google', it:'Continua con Google' },
+  authAppleSignIn: { en:'Continue with Apple', de:'Weiter mit Apple', es:'Continuar con Apple', fr:'Continuer avec Apple', it:'Continua con Apple' },
 
   // ── NUTRITION ──
   nutrition: { en:'Nutrition', de:'Ernährung', es:'Nutrición', fr:'Nutrition', it:'Nutrizione' },
@@ -4502,6 +4529,55 @@ async function doGoogleSignIn() {
     }
   }
   btn.disabled = false;
+}
+
+// =============================================
+// SIGN IN WITH APPLE
+// =============================================
+async function doAppleSignIn() {
+  if (!isFirebaseReady()) return showAuthError(t('authFirebaseNotReady'));
+  const btn = document.getElementById('appleSignInBtn');
+  if (btn) btn.disabled = true;
+  try {
+    let cred;
+    if (window.Native && window.Native.isNative) {
+      const aUser = await window.Native.signInApple();
+      if (!aUser || !aUser.identityToken) throw new Error('Apple sign-in cancelled');
+      const provider = new firebase.auth.OAuthProvider('apple.com');
+      const credential = provider.credential({ idToken: aUser.identityToken, rawNonce: aUser.nonce });
+      cred = await firebaseAuth.signInWithCredential(credential);
+      if (aUser.givenName && !cred.user.displayName) {
+        const fullName = [aUser.givenName, aUser.familyName].filter(Boolean).join(' ');
+        try { await cred.user.updateProfile({ displayName: fullName }); } catch(e) {}
+      }
+    } else {
+      const provider = new firebase.auth.OAuthProvider('apple.com');
+      provider.addScope('email');
+      provider.addScope('name');
+      cred = await firebaseAuth.signInWithPopup(provider);
+    }
+    currentUser = cred.user;
+    await checkProStatus();
+    const name = cred.user.displayName || (cred.user.email ? cred.user.email.split('@')[0] : 'Apple User');
+    const profiles = getProfiles();
+    if (!profiles.includes(name)) { profiles.push(name); saveProfiles(profiles); }
+    if (cred.additionalUserInfo && cred.additionalUserInfo.isNewUser) {
+      await firebaseDb.collection('users').doc(cred.user.uid).set({
+        email: cred.user.email,
+        displayName: name,
+        provider: 'apple',
+        plan: ADMIN_EMAILS.includes((cred.user.email || '').toLowerCase()) ? 'pro' : 'free',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      await checkProStatus();
+    }
+    selectProfile(name);
+  } catch(e) {
+    if (e.code !== 'auth/popup-closed-by-user') {
+      showAuthError(e.message);
+    }
+  }
+  if (btn) btn.disabled = false;
 }
 
 // =============================================
@@ -10305,6 +10381,20 @@ try {
       try { await G.signOut(); } catch(e) {}
       const user = await G.signIn();
       return user;
+    },
+
+    // ---------- Sign in with Apple ----------
+    async signInApple() {
+      const A = P('SignInWithApple');
+      if (!A) throw new Error('Sign in with Apple ist in dieser App nicht konfiguriert.');
+      const nonce = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      const result = await A.authorize({
+        clientId: 'com.nchristen.gymtrack',
+        redirectURI: 'https://gymapp-bb929.firebaseapp.com/__/auth/handler',
+        scopes: 'email name',
+        nonce
+      });
+      return { ...result.response, nonce };
     },
 
     // ---------- Abo / In-App-Purchase via RevenueCat ----------
