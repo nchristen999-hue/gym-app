@@ -1,7 +1,7 @@
 {
   "appId": "com.nchristen.gymtrack",
   "appName": "GYMTRACK",
-  "webDir": ".",
+  "webDir": "www",
   "ios": {
     "contentInset": "automatic",
     "limitsNavigationsToAppBoundDomains": false,
