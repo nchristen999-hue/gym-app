@@ -1,41 +1,53 @@
 const functions = require('firebase-functions/v1');
 const admin = require('firebase-admin');
+const { verifyEmailHtml, resetEmailHtml } = require('./emailTemplates');
 admin.initializeApp();
 
-// URL des Power-Automate-Flows (HTTP-Trigger). In functions/.env setzen:
-//   POWERAUTOMATE_URL=https://prod-xx.westeurope.logic.azure.com/...
-const POWER_AUTOMATE_URL = process.env.POWERAUTOMATE_URL || '';
+// In functions/.env setzen:
+//   BREVO_API_KEY=xkeysib-xxxxx
+//   BREVO_FROM_EMAIL=gymtrack.noreply@gmail.com
+const BREVO_API_KEY = process.env.BREVO_API_KEY || '';
+const BREVO_FROM_EMAIL = process.env.BREVO_FROM_EMAIL || 'gymtrack.noreply@gmail.com';
 
-async function sendViaPowerAutomate(payload) {
-  if (!POWER_AUTOMATE_URL) {
-    console.error('powerautomate.url nicht konfiguriert – Mail wurde NICHT versendet.', payload);
+async function sendMail({ to, subject, html }) {
+  if (!BREVO_API_KEY) {
+    console.error('BREVO_API_KEY nicht konfiguriert – Mail wurde NICHT versendet.', { to, subject });
     return;
   }
-  const res = await fetch(POWER_AUTOMATE_URL, {
+  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    headers: {
+      'api-key': BREVO_API_KEY,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      sender: { email: BREVO_FROM_EMAIL, name: 'GYMTRACK' },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html
+    })
   });
   if (!res.ok) {
-    console.error('Power Automate Call fehlgeschlagen:', res.status, await res.text().catch(() => ''));
+    console.error('Brevo Call fehlgeschlagen:', res.status, await res.text().catch(() => ''));
   }
 }
 
 // Läuft automatisch bei jedem neuen Firebase-Auth-User.
-// Google-Logins sind bereits von Google verifiziert -> keine Verify-Mail nötig.
+// Google-/Apple-Logins sind bereits verifiziert -> keine Verify-Mail nötig.
 exports.sendVerificationEmail = functions.auth.user().onCreate(async (user) => {
   const isPasswordUser = user.providerData.some((p) => p.providerId === 'password');
   if (!isPasswordUser || user.emailVerified) return;
 
   const link = await admin.auth().generateEmailVerificationLink(user.email, {
-    url: 'https://gymapp-bb929.firebaseapp.com/' // Ziel-URL nach Klick auf den Link, bei Bedarf anpassen
+    url: 'https://gymapp-bb929.firebaseapp.com/'
   });
+  const displayName = user.displayName || user.email.split('@')[0];
 
-  await sendViaPowerAutomate({
-    type: 'verify',
-    email: user.email,
-    displayName: user.displayName || user.email.split('@')[0],
-    link
+  await sendMail({
+    to: user.email,
+    subject: 'Bestätige deine E-Mail – GYMTRACK',
+    html: verifyEmailHtml({ displayName, email: user.email, link })
   });
 });
 
@@ -50,12 +62,12 @@ exports.resendVerificationEmail = functions.https.onCall(async (data, context) =
   const link = await admin.auth().generateEmailVerificationLink(user.email, {
     url: 'https://gymapp-bb929.firebaseapp.com/'
   });
+  const displayName = user.displayName || user.email.split('@')[0];
 
-  await sendViaPowerAutomate({
-    type: 'verify',
-    email: user.email,
-    displayName: user.displayName || user.email.split('@')[0],
-    link
+  await sendMail({
+    to: user.email,
+    subject: 'Bestätige deine E-Mail – GYMTRACK',
+    html: verifyEmailHtml({ displayName, email: user.email, link })
   });
   return { ok: true };
 });
@@ -73,7 +85,11 @@ exports.requestPasswordReset = functions.https.onCall(async (data) => {
       admin.auth().getUserByEmail(email).catch(() => null)
     ]);
     const displayName = (userRecord && userRecord.displayName) || email.split('@')[0];
-    await sendViaPowerAutomate({ type: 'reset', email, displayName, link });
+    await sendMail({
+      to: email,
+      subject: 'Passwort zurücksetzen – GYMTRACK',
+      html: resetEmailHtml({ displayName, email, link })
+    });
   } catch (e) {
     // Absichtlich nicht nach außen geben ob die Email existiert (User-Enumeration vermeiden).
     console.warn('requestPasswordReset:', e.message);
